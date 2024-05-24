@@ -17,11 +17,17 @@ const sizes = {
   lg: "px-6 py-3",
 };
 
+// const styles = {
+//   outline: "border-2 border-black hover:bg-black text-black hover:text-white",
+//   primary:
+//     "bg-black text-white hover:bg-slate-900  border-2 border-transparent",
+// };
+
 const styles = {
   outline: "border-2 border-black hover:bg-black text-black hover:text-white",
-  primary:
-    "bg-black text-white hover:bg-slate-900  border-2 border-transparent",
+  primary: "bg-green-500 text-white hover:bg-green-700 border-2 border-transparent",
 };
+
 </script>
 
 <template>

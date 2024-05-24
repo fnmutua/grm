@@ -9,6 +9,7 @@ definePageMeta({
     <LandingHero></LandingHero>
     <LandingFeatures></LandingFeatures>
     <LandingLogos></LandingLogos>
-    <LandingCta></LandingCta>
+    <!-- <LandingCta></LandingCta> -->
+
   </LandingContainer>
 </template>

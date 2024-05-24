@@ -3,7 +3,7 @@
     <div class="p-24 md:order-1 hidden md:block">
       <img
         class="rounded-full transition-transform transform hover:scale-125"
-        src="~/assets/img/hero.jpg"
+        src="~/assets/img/grm1.png"
         alt="Starship starts the engine"
         loading="eager"
         format="avif"
@@ -14,19 +14,17 @@
 
     <div>
       <h1 class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight">
-        Marketing website done with Nuxt
+        Grievance Reporting System
       </h1>
       <p class="text-lg mt-4 text-slate-600 max-w-xl">
-        Nuxtship is a starter template for startups, marketing websites &
-        landing pages.<wbr /> Built with Nuxt & TailwindCSS. You can quickly
-        create any website with this starter.
+        Do you have any grievances with the implementation of KISIP project activities? Use this platform to let us know.
       </p>
       <div class="mt-6 flex flex-col sm:flex-row gap-3">
         <LandingLink
           href="https://github.com/Gr33nW33n/nuxtship-template"
           target="_blank"
           rel="noopener"
-          >Get Started</LandingLink
+          >File a Grievance</LandingLink
         >
         <LandingLink
           size="lg"
@@ -34,7 +32,7 @@
           rel="noopener"
           href="https://github.com/Gr33nW33n/nuxtship-template"
           target="_blank"
-          >View Repo</LandingLink
+          >View My Grievances</LandingLink
         >
       </div>
     </div>

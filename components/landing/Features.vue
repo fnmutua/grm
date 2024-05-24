@@ -1,39 +1,39 @@
 <script setup>
 const features = [
   {
-    title: "Bring Your Own Framework",
+    title: "Multiple Reporting Channels",
     description:
-      "Build your site using Vue, web components, or just plain ol' HTML + JavaScript.",
-    icon: "bx:bxs-briefcase",
+      "Dial *519*71# from your phone, use the android App or report here!",
+    icon: "bx:bx-bell-plus",
   },
   {
-    title: "100% Static HTML, No JS",
+    title: "Secure and Confidential",
     description:
-      "Nuxt renders your entire page to static HTML, removing all JavaScript from your final build by default.",
-    icon: "bx:bxs-window-alt",
+      "Your Grievance is recorded and managed securely. Only you and Grievance redress committee knows it! Feel free to report anonymously",
+    icon: "bx:bx-shield",
   },
   {
-    title: "On-Demand Components",
+    title: "Monitor your Grievances",
     description:
-      "Need some JS? Nuxt can automatically hydrate interactive components when they become visible on the page.  ",
-    icon: "bx:bxs-data",
+      "Dial *519*71# from your phone to monitor resolution progress or use the Check status link here ",
+    icon: "bx:bx-chart",
   },
   {
-    title: "Broad Integration",
+    title: "Escalate as needed",
     description:
-      "Nuxt supports TypeScript, Scoped CSS, CSS Modules, Sass, Tailwind, Markdown, MDX, and any other npm packages.",
-    icon: "bx:bxs-bot",
+      "Not satisfied by the GRC decision? Escalate via  *519*71#.",
+    icon: "bx:bx-arrow-to-top",
   },
   {
-    title: "SEO Enabled",
+    title: "Upload your documentation",
     description:
-      "Automatic sitemaps, RSS feeds, pagination and collections take the pain out of SEO and syndication. It just works!",
-    icon: "bx:bxs-file-find",
+      "DO you have sensitive documentation to share with us? Its securely managed and kept by us",
+    icon: "bx:bx-file",
   },
   {
-    title: "Community",
+    title: "Support",
     description:
-      "Nuxt is an open source project powered by hundreds of contributors making thousands of individual contributions.",
+      "Your grievances, compliments and complaints enable this project to be implemented successfully. Reach out",
     icon: "bx:bxs-user",
   },
 ];
@@ -42,11 +42,10 @@ const features = [
 <template>
   <div class="mt-16 md:mt-0">
     <h2 class="text-4xl lg:text-5xl font-bold lg:tracking-tight">
-      Everything you need to start a website
+      Your complaints and compliments matter to us
     </h2>
     <p class="text-lg mt-4 text-slate-600">
-      Nuxt comes batteries included. It takes the best parts of state-of-the-art
-      tools and adds its own innovations.
+      We provide multiple channels through which you can report and monitor the resolution of your grievances within the stipulated project safeguards
     </p>
   </div>
 

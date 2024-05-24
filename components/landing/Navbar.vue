@@ -1,12 +1,12 @@
 <script setup>
 const menuitems = [
   {
-    title: "Features",
-    path: "#",
+    title: "Home",
+    path: "/",
   },
   {
-    title: "Pricing",
-    path: "/pricing",
+    title: "Grievances",
+    path: "/grievances",
   },
   {
     title: "About",
@@ -26,11 +26,11 @@ const open = ref(false);
     <header class="flex flex-col lg:flex-row justify-between items-center my-5">
       <div class="flex w-full lg:w-auto items-center justify-between">
         <a href="/" class="text-lg"
-          ><span class="font-bold text-slate-800">Nuxt</span
-          ><span class="text-slate-500">ship</span>
+          ><span class="font-bold text-slate-800">e</span
+          ><span class="text-slate-500">GRM</span>
         </a>
         <div class="block lg:hidden">
-          <button @click="open = !open" class="text-gray-800">
+          <button @click="open = !open" class="text-green-800">
             <svg
               fill="currentColor"
               class="w-4 h-4"
@@ -75,7 +75,7 @@ const open = ref(false);
         </div>
       </nav>
       <div>
-        <div class="hidden lg:flex items-center gap-4">
+        <div class="hidden  lg:flex items-center gap-4">
           <a href="#">Log in</a>
           <LandingLink href="#" size="md">Sign up</LandingLink>
         </div>
