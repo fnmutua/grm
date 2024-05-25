@@ -1,124 +1,157 @@
-<script setup>
- 
- import axios from 'axios';
- import { ref } from 'vue';
+<script setup lang="ts">
+import axios from 'axios';
+import { ref } from 'vue';
 
- const formData = ref({
-      reference: '',
-      phone: ''
-    });
 
- const showGrievance=ref(false)
- const grievance=ref({})
- const loading=ref(false)
- const showAcceptButton=ref(false)
+import type { FormError, FormSubmitEvent } from '#ui/types'
+
+const form = reactive({
+  reference: undefined,
+  phone: undefined
+})
+
+const validate = (form: any): FormError[] => {
+  const errors = []
+  if (!form.reference) errors.push({ path: 'reference', message: 'Required' })
+  if (!form.phone) errors.push({ path: 'phone', message: 'Required' })
+  return errors
+}
+
+
+
+const formData = ref({
+  reference: '',
+  phone: ''
+});
+
+const showGrievance = ref(false);
+const grievance = ref({});
+const loading = ref(false);
+const showAcceptButton = ref(false);
+
+// Validation states
+const errors = ref({
+  reference: '',
+  phone: ''
+});
+
+const validateForm = () => {
+  let valid = true;
+  errors.value.reference = '';
+  errors.value.phone = '';
+
+  if (!formData.value.reference) {
+    errors.value.reference = 'Please provide a reference.';
+    valid = false;
+  }
+
+  const phoneRegex = /^[0-9]{10}$/;
+  if (!formData.value.phone) {
+    errors.value.phone = 'Please provide your phone number.';
+    valid = false;
+  } else if (!phoneRegex.test(formData.value.phone)) {
+    errors.value.phone = 'Please provide a valid phone number.';
+    valid = false;
+  }
+
+  return valid;
+};
+
+function convertPhoneNumber(phoneNumber) {
+  const trimmedPhoneNumber = phoneNumber.replace(/\s+/g, '').trim();
+
+
+  if (trimmedPhoneNumber.startsWith('0')) {
+    return '254' + trimmedPhoneNumber.slice(1);
+  }
+  return trimmedPhoneNumber;
+}
+
 
 async function handleSubmit() {
-  showAcceptButton.value=false
-       console.log(formData.value)
-       loading.value=true
-      try {
-        const response = await axios.post('https://ussd.ags.co.ke/verify', formData.value);
-        const responseData = response.data;
-        if(responseData) {
-          grievance.value =responseData.grievance
-          showGrievance.value=true
-          loading.value=false
-          console.log('responseData.grievance.Resolution',responseData.grievance)
-          if(responseData.grievance.resolution !="Pending"){
-            showAcceptButton.value=true
-          }
-            console.log('showAcceptButton',showAcceptButton.value)
-        }
-        console.log('Form submitted successfully:', responseData);
-        // Do something with the response data if needed
-      } catch (error) {
-        showGrievance.value=false
+  showAcceptButton.value = false;
+  console.log(form);
 
-        console.error('Error submitting form:', error.message);
-        // Handle the error
+  form.phone = convertPhoneNumber(form.phone)
+  // if (!validateForm()) {
+  //   return;
+  // }
+
+  loading.value = true;
+  try {
+    const response = await axios.post('https://ussd.ags.co.ke/verify', form);
+    const responseData = response.data;
+    if (responseData) {
+      grievance.value = responseData.grievance;
+      showGrievance.value = true;
+      loading.value = false;
+      console.log('responseData.grievance.Resolution', responseData.grievance);
+      if (responseData.grievance.resolution != "Pending") {
+        showAcceptButton.value = true;
       }
+      console.log('showAcceptButton', showAcceptButton.value);
     }
- 
- 
+    console.log('Form submitted successfully:', responseData);
+  } catch (error) {
+    showGrievance.value = false;
+    loading.value = false;
+    console.error('Error submitting form:', error.message);
+  }
+}
 </script>
+
 <template>
-  <div class="flex justify-center items-center h-full">
-    <form method="POST" class="needs-validation flex flex-wrap gap-4" novalidate ref="form">
-      <input type="checkbox" class="hidden" style="display: none" name="botcheck" />
-      <div class="flex flex-col w-full sm:w-auto">
-        <input type="text" placeholder="Reference" required
-          class="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-          name="reference" v-model="formData.reference" />
-        <div class="empty-feedback invalid-feedback text-red-400 text-sm mt-1">
-          Please provide a reference.
-        </div>
+  <div class="w-full flex flex-col gap-y-4">
+    <UCard :ui="{ body: { base: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4' } }">
+      <!-- Form Section -->
+      <div class="col-span-1 space-y-4">
+        <UFormGroup label="Grievance Reference Code" name="text">
+          <UInput v-model="form.reference" placeholder="GRM-2024-XXXX" />
+        </UFormGroup>
+
+        <UFormGroup label="Telephone" name="password">
+          <UInput v-model="form.phone" type="text" placeholder="0700 000 000" />
+        </UFormGroup>
+
+        <UButton label="Check Status" type="button" color="green" block @click="handleSubmit" />
       </div>
-      <div class="flex flex-col w-full sm:w-auto">
-        <input id="phone" type="tel" placeholder="Phone" required
-          class="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-none focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
-          name="phone" v-model="formData.phone" />
-        <div class="empty-feedback text-red-400 text-sm mt-1">
-          Please provide your phone number.
-        </div>
-        <div class="invalid-feedback text-red-400 text-sm mt-1">
-          Please provide a valid phone number.
-        </div>
+
+      <!-- Divider -->
+      <UDivider label="Status" orientation="vertical"  size="2xs"/>
+
+      <!-- Status Section -->
+      <div class="col-span-1 sm:col-span-2 lg:col-span-2 space-y-4">
+        <UCard v-show="!showGrievance">
+          <template #header>
+            <strong>Grievance Status</strong>
+          </template>
+          <p>No grievance for the given information</p>
+        </UCard>
+
+        <UCard v-show="showGrievance">
+          <template #header>
+            <strong>Grievance Status</strong>
+          </template>
+          <p><strong>Name:</strong> {{ grievance.name }}</p>
+          <p><strong>Phone:</strong> {{ grievance.phone }}</p>
+          <p><strong>County:</strong> {{ grievance.county }}</p>
+          <p><strong>Subcounty:</strong> {{ grievance.subcounty }}</p>
+          <p><strong>Complaint:</strong> {{ grievance.complaint }}</p>
+          <p><strong>Status:</strong> {{ grievance.status }}</p>
+          <p><strong>Resolution:</strong> {{ grievance.resolution }}</p>
+          <template #footer>
+            <UButtonGroup size="sm" orientation="horizontal">
+              <UButton v-show="showAcceptButton" icon="i-heroicons-check-badge-16-solid" label="Accept" color="green" />
+              <UButton icon="i-heroicons-arrow-uturn-left-20-solid" label="Withdraw" color="gray" />
+              <UButton icon="i-heroicons-arrow-right" label="Escalate" color="red" />
+            </UButtonGroup>
+          </template>
+        </UCard>
       </div>
-      <UButton  icon="i-heroicons-magnifying-glass-circle"   type="button" @click="handleSubmit"  color="green" 
-        class="self-end  text-white font-bold py-4 px-4 rounded">
-        Check Status
-      </UButton>  
- 
-      <div id="result" class="mt-3 text-center w-full"></div>
-    </form>
-
-
-
+    </UCard>
   </div>
-
-  
-  <UCard v-show="showGrievance">
-    <template #header>
-      <v-card-title><strong> Grievance Status</strong> </v-card-title>
-    </template>
-    <v-overlay :value="loading">
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
-    </v-overlay>
-
-    <v-card-text>
-      <p><strong>Name:</strong> {{ grievance.name }}</p>
-      <p><strong>Phone:</strong> {{ grievance.phone }}</p>
-      <p><strong>County:</strong> {{ grievance.county }}</p>
-      <p><strong>Subcounty:</strong> {{ grievance.subcounty }}</p>
-      <p><strong>Complaint:</strong> {{ grievance.complaint }}</p>
-      <p><strong>Status:</strong> {{ grievance.status }}</p>
-      <p><strong>Resolution:</strong> {{ grievance.resolution }}</p>
-    </v-card-text>
-    <template #footer>
-      <v-card-footer class="d-flex justify-end">
-        <UButtonGroup size="sm" orientation="horizontal">
-    <UButton v-show="showAcceptButton" icon="i-heroicons-check-badge-16-solid" label="Accept" color="green" />
-    <UButton icon= "i-heroicons-arrow-uturn-left-20-solid"  label="Withdraw"  color="gray" />
-    <UButton icon="i-heroicons-arrow-right"  label="Escalate"  color="red" />
-  </UButtonGroup>
-      </v-card-footer>
-    </template>
-
-  </UCard>
-
-  <UCard v-show="!showGrievance">
-    <template #header>
-      <v-card-title> <strong> Status </strong> </v-card-title>
-    </template>
-    <v-card-text>
-      <p>No grievance for the given information  </p>
-     
-    </v-card-text>
-  </UCard>
-
- 
 </template>
+
 
 
 <style>

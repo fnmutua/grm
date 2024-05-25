@@ -9,6 +9,10 @@ const menuitems = [
     path: "/grievances",
   },
   {
+    title: "Report",
+    path: "/report",
+  },
+  {
     title: "About",
     path: "/about",
   },
