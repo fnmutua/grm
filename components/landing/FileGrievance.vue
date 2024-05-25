@@ -46,7 +46,7 @@ const form = reactive({
   ward: '',
   settlement: '',
   complaint: '',
-  gbv:false,
+  gbv:'',
   file:undefined
 })
  

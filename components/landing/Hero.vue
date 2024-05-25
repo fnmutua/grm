@@ -21,7 +21,7 @@
       </p>
       <div class="mt-6 flex flex-col sm:flex-row gap-3">
         <LandingLink
-          to="/about"
+          to="/report"
            rel="noopener"
           >File a Grievance</LandingLink
         >
