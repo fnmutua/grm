@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { ref } from 'vue';
+import { onMounted, reactive, ref  } from 'vue';
+
+import { object, string, type InferType } from 'yup'
+ 
+type Schema = InferType<typeof schema>
+  const toast = useToast()
+
 
 
  
-import { object, string, type InferType } from 'yup'
-import type { FormSubmitEvent } from '#ui/types'
-
-type Schema = InferType<typeof schema>
-
-
  const schema = object({
    phone: string()
       .min(8, 'Must be at least 8 characters')
@@ -48,12 +48,133 @@ const form = reactive({
   gbv:false
 })
  
+const counties = ref([])
 
-const counties = ['Mombasa', 'Kwale', 'Kilifi']
-const subcounties = ['sub001', 'sub002', 'sub003']
-const wards = ['w001', 'w002', 'w003']
-const settlements = ['001', '002', '0003']
-const Gender = ['Male', 'Female' ]
+async function getCounties() {
+  let formData = { model: "county" };
+  try {
+    const response = await axios.post('https://ussd.ags.co.ke/admin', formData);
+    console.log(response)
+    const responseData = response.data.data;
+    if (responseData) {
+      // Assuming responseData is an array of objects with 'name' property
+      const countyOptions = responseData.map(county => ({
+        label: county.name, // Change 'name' to the actual property name from response data
+        value: county.code // Change 'id' to the actual property name from response data
+      }));
+
+      countyOptions.sort((a, b) => a.value - b.value);
+
+      console.log("County Options:", countyOptions);
+
+      // Assuming you have a 'counties' variable defined as ref or reactive
+      counties.value = countyOptions;
+    }
+  } catch (error) {
+    console.error('Error fetching counties:', error.message);
+  }
+}
+
+
+onMounted(getCounties);
+
+
+ 
+const subcounties = ref([])
+
+async function getSubCounties(parent) {
+  subcounties.value=[]
+  wards.value=[]
+  settlements.value=[]
+
+  let formData = { model: "subcounty", field: "county_id", filter_value:parseInt(parent) };
+  try {
+    const response = await axios.post('https://ussd.ags.co.ke/admin', formData);
+ 
+    const responseData = response.data.data;
+    if (responseData) {
+      // Assuming responseData is an array of objects with 'name' property
+      const adminOptions = responseData.map(admin => ({
+        label: admin.name, // Change 'name' to the actual property name from response data
+        value: admin.code // Change 'id' to the actual property name from response data
+      }));
+
+      adminOptions.sort((a, b) => a.value - b.value);
+
+      console.log("admin Options:", adminOptions);
+
+      // Assuming you have a 'counties' variable defined as ref or reactive
+      subcounties.value = adminOptions;
+    }
+  } catch (error) {
+    console.error('Error fetching counties:', error.message);
+  }
+}
+
+
+const wards = ref([])
+
+async function getWards(parent) {
+  wards.value=[]
+  settlements.value=[]
+
+  let formData = { model: "ward", field: "subcounty_id", filter_value:parseInt(parent) };
+  try {
+    const response = await axios.post('https://ussd.ags.co.ke/admin', formData);
+ 
+    const responseData = response.data.data;
+    if (responseData) {
+      // Assuming responseData is an array of objects with 'name' property
+      const adminOptions = responseData.map(admin => ({
+        label: admin.name, // Change 'name' to the actual property name from response data
+        value: admin.code // Change 'id' to the actual property name from response data
+      }));
+
+      adminOptions.sort((a, b) => a.value - b.value);
+
+      console.log("admin Options:", adminOptions);
+
+      // Assuming you have a 'counties' variable defined as ref or reactive
+      wards.value = adminOptions;
+    }
+  } catch (error) {
+    console.error('Error fetching counties:', error.message);
+  }
+}
+
+const settlements = ref([])
+
+async function getSettlements(parent) {
+ 
+  settlements.value=[]
+
+  let formData = { model: "settlement", field: "ward_id", filter_value:parseInt(parent) };
+  try {
+    const response = await axios.post('https://ussd.ags.co.ke/admin', formData);
+ 
+    const responseData = response.data.data;
+    if (responseData) {
+      // Assuming responseData is an array of objects with 'name' property
+      const adminOptions = responseData.map(admin => ({
+        label: admin.name, // Change 'name' to the actual property name from response data
+        value: admin.code // Change 'id' to the actual property name from response data
+      }));
+
+      adminOptions.sort((a, b) => a.value - b.value);
+
+      console.log("admin Options:", adminOptions);
+
+      // Assuming you have a 'counties' variable defined as ref or reactive
+      settlements.value = adminOptions;
+    }
+  } catch (error) {
+    console.error('Error fetching counties:', error.message);
+  }
+}
+
+
+ const Gender = ['Male', 'Female' ]
+const YesNo = ['Yes', 'No' ]
 
  
  
@@ -68,104 +189,118 @@ function convertPhoneNumber(phoneNumber: string | undefined) {
   return trimmedPhoneNumber;
 }
 
+ 
 
+
+function showToast() {
+  toast.add({
+    title: "Grievance Succesfully Reported" 
+  
+  })
+}
+
+function showErrorToast() {
+  toast.add({
+    title: "Grievance Reporting Failed",
+    color:"red"
+   
+  })
+}
+
+ 
 async function handleSubmit() {
-  showAcceptButton.value = false;
-  console.log(form);
+ 
 
   form.phone = convertPhoneNumber(form.phone)
-  // if (!validateForm()) {
-  //   return;
-  // }
-
-  loading.value = true;
+   
   try {
-    const response = await axios.post('https://ussd.ags.co.ke/verify', form);
+    const response = await axios.post('https://ussd.ags.co.ke/grv/add', form);
     const responseData = response.data;
-    if (responseData) {
-      grievance.value = responseData.grievance;
-      showGrievance.value = true;
-      loading.value = false;
-      console.log('responseData.grievance.Resolution', responseData.grievance);
-      if (responseData.grievance.resolution != "Pending") {
-        showAcceptButton.value = true;
-      }
-      console.log('showAcceptButton', showAcceptButton.value);
+    if(responseData.success){
+             showToast()
+    }
+    else {
+      showErrorToast()
     }
     console.log('Form submitted successfully:', responseData);
   } catch (error) {
-    showGrievance.value = false;
-    loading.value = false;
+    
     console.error('Error submitting form:', error.message);
   }
 }
+
+
+
 </script>
-
 <template>
-  <div class="w-full flex flex-col gap-y-4">
-    <UCard :ui="{ body: { base: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4' } }">
-      <!-- Form Section -->
-      <UForm :schema="schema" :state="form"   @submit="handleSubmit">
+   
 
-      <div class="col-span-2 space-y-4">
-        
-        <UFormGroup label="County" name="County">
-           <USelect v-model="form.county" :options="counties"  required/>
+  <UForm :schema="schema" :state="form" class="grid grid-cols-1 sm:grid-cols-2 gap-4" @submit="handleSubmit">
+    <div class="sm:col-span-1  space-y-4">
+      <UFormGroup label="Your Name (Optional)" name="Name">
+          <UInput v-model="form.name" placeholder="John Mpenda Pesa" variant="outline"     />
         </UFormGroup>
 
-        <UFormGroup label="Subcounty" name="County">
-           <USelect v-model="form.subcounty" :options="subcounties" required />
+        <UFormGroup label="Telephone" name="Telephone"  required  >
+          <UInput v-model="form.phone" type="text" placeholder="0700 000 000"  required />
         </UFormGroup>
 
-
-        <UFormGroup label="Ward" name="County">
-           <USelect v-model="form.ward" :options="wards" required />
-        </UFormGroup>
-
-
-        <UFormGroup label="Settlement" name="County">
-           <USelect v-model="form.settlement" :options="settlements"  />
-        </UFormGroup>
-
-       
-      </div>
-
-      <div class="col-span-2 space-y-4">
-        <UFormGroup label="Your Name (Optional)" name="text">
-          <UInput v-model="form.name" placeholder="John Mpenda Pesa" />
-        </UFormGroup>
-
-        <UFormGroup label="Telephone" name="phone" >
-          <UInput v-model="form.phone" type="text" placeholder="0700 000 000"  required/>
-        </UFormGroup>
-
-        <UFormGroup label="Gender" name="Gender">
-           <USelect v-model="form.gender" :options="Gender" required  />
+        <UFormGroup label="Gender" name="Gender"  required  >
+           <USelect v-model="form.gender" :options="Gender"    placeholder="Select" required />
         </UFormGroup>
          
-        <UFormGroup name="gbv">
-          <UCheckbox v-model="form.gbv" name="gbv" label="Is this related to Gender-based Violence?" required />
+        <UFormGroup label="Is this related to Gender-Based Violence(GBV)?" required  >
+           <USelect v-model="form.gbv" :options="YesNo"    placeholder="Select"  required/>
         </UFormGroup>
-      </div>
+
  
-      <div class="col-span-4 space-y-4">
-       <UFormGroup label="Grievance" name="text">
-          <UTextarea  v-model="form.complaint" placeholder="Provide a detailed description of your complaint"  required/>
+    </div>
+    
+    <div class="sm:col-span-1  space-y-4">
+      <UFormGroup label="County" name="County" required>
+      <USelect v-model="form.county" :options="counties"  placeholder="Select" @change="getSubCounties"   required>
+       </USelect>
+    </UFormGroup>
+    
+
+        <UFormGroup label="Subcounty" name="Subcounty" required>
+           <USelect v-model="form.subcounty" :options="subcounties"    placeholder="Select"  @change="getWards"   required />
+        </UFormGroup>
+
+
+        <UFormGroup label="Ward" name="Ward" required>
+           <USelect v-model="form.ward" :options="wards"   placeholder="Select"   @change="getSettlements"   required />
+        </UFormGroup>
+
+
+        <UFormGroup label="Settlement" name="Settlement" required>
+           <USelect v-model="form.settlement" :options="settlements"    placeholder="Select"  required/>
+        </UFormGroup>
+    </div>
+
+
+
+    <div class="sm:col-span-2  space-y-4">
+      <UFormGroup label="Grievance" name="Grievance" required>
+          <UTextarea  v-model="form.complaint" placeholder="Provide a detailed description of your complaint" required />
         </UFormGroup>
 
         <UFormGroup label="Do you have any supporting documentation?" name="documentation">
           <UInput type="file" size="sm" icon="i-heroicons-folder" />
         </UFormGroup>
 
+        <UButton label="Submit" type="submit" color="green" block @click="handleSubmit" />
 
 
-      <UButton label="Submit" type="submit" color="green" block @click="handleSubmit" />
     </div>
   </UForm>
+ 
 
-    </UCard>
-  </div>
 </template>
+
+
+
+
 
 
 
@@ -186,5 +321,23 @@ async function handleSubmit() {
 .is-invalid,
 .was-validated :invalid {
   border-color: #dc3545;
+}
+</style>
+
+
+<style>
+.notification-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999; /* Ensure it's above other content */
+  display: flex;
+  justify-content: center;
+  padding-top: 20px; /* Adjust as needed */
+}
+
+.notification {
+  width: 400px; /* Adjust width as needed */
 }
 </style>
