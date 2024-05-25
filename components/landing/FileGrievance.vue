@@ -226,8 +226,8 @@ async function handleSubmit() {
   // Perform file upload and form submission
  //uploadFile(formData)
 
-// const response = await axios.post('https://ussd.ags.co.ke/grv/add', formData, {
-  const response = await axios.post(' http://localhost/grv/add', formData, {
+ const response = await axios.post('https://ussd.ags.co.ke/grv/add', formData, {
+//  const response = await axios.post(' http://localhost/grv/add', formData, {
   headers: {
     'Content-Type': 'multipart/form-data'
   } 
