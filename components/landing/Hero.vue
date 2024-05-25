@@ -17,22 +17,20 @@
         Grievance Reporting System
       </h1>
       <p class="text-lg mt-4 text-slate-600 max-w-xl">
-        Do you have any grievances with the implementation of KISIP project activities? Use this platform to let us know.
+        Do you have any grievances with the implementation of DRiVE project activities? Use this platform to let us know.
       </p>
       <div class="mt-6 flex flex-col sm:flex-row gap-3">
         <LandingLink
-          href="https://github.com/Gr33nW33n/nuxtship-template"
-          target="_blank"
-          rel="noopener"
+          to="/about"
+           rel="noopener"
           >File a Grievance</LandingLink
         >
-        <LandingLink
+         <LandingLink
           size="lg"
           styleName="outline"
-          rel="noopener"
-          href="https://github.com/Gr33nW33n/nuxtship-template"
-          target="_blank"
-          >View My Grievances</LandingLink
+          to="/grievances"
+
+          >Check Status</LandingLink
         >
       </div>
     </div>

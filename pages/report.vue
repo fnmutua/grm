@@ -11,8 +11,7 @@ definePageMeta({
       <template v-slot:desc>Fill in all the required fields.</template>
     </LandingSectionhead>
 
-      
-      <div>
+            <div>
         <LandingFileGrievance />
       </div>
    </LandingContainer>

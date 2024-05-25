@@ -3,12 +3,13 @@ import axios from 'axios';
 import { onMounted, reactive, ref  } from 'vue';
 
 import { object, string, type InferType } from 'yup'
- 
+import type { FormError, FormSubmitEvent } from '#ui/types'
+
 type Schema = InferType<typeof schema>
   const toast = useToast()
 
 
-
+const disableSubmit =ref(true)
  
  const schema = object({
    phone: string()
@@ -191,8 +192,36 @@ function convertPhoneNumber(phoneNumber: string | undefined) {
 }
  
 
+async function handleClear() {
+  console.log("clear.......")
 
-async function handleSubmit() {
+  form.name =''
+  form.phone=''
+  form.gender=''
+  form.county=''
+  form.subcounty=''
+  form.ward=''
+  form.settlement=''
+  form.complaint=''
+  form.gbv=false,
+  form.file=undefined
+  
+}
+
+
+const validate = (state: any): FormError[] => {
+  const errors = []
+  if (!form.phone) errors.push({ path: 'phone', message: 'Required' })
+  if (!form.gender) errors.push({ path: 'gender', message: 'Required' })
+  if (!form.county) errors.push({ path: 'county', message: 'Required' })
+  if (!form.subcounty) errors.push({ path: 'subcounty', message: 'Required' })
+  if (!form.ward) errors.push({ path: 'ward', message: 'Required' })
+  if (!form.settlement) errors.push({ path: 'settlement', message: 'Required' })
+  if (!form.gbv) errors.push({ path: 'gbv', message: 'Required' })
+  return errors
+}
+
+async function onSubmit() {
   
  console.log("Submit.......")
 
@@ -246,10 +275,7 @@ console.log(response)
  
 }
 // Handle file input change event
-function xhandleFileChange(event) {
-  console.log(event.FileList  )
-  //form.file = event.target.file[0];
-}
+ 
 
 async function  handleFileChange(files:File[]){
          let fileObj = await files
@@ -258,71 +284,80 @@ async function  handleFileChange(files:File[]){
      }
 
 
+     async function xonSubmit (event: FormSubmitEvent<any>) {
+  // Do something with data
+  console.log(event.data)
+}
 </script>
 <template>
-   
-
-  <UForm :schema="schema" :state="form" class="grid grid-cols-1 sm:grid-cols-2 gap-4" @submit="handleSubmit">
-    <div class="sm:col-span-1  space-y-4">
-      <UFormGroup label="Your Name (Optional)" name="Name">
-          <UInput v-model="form.name" placeholder="John Mpenda Pesa" variant="outline"     />
-        </UFormGroup>
-
-        <UFormGroup label="Telephone" name="Telephone"  required  >
-          <UInput v-model="form.phone" type="text" placeholder="0700 000 000"  required />
-        </UFormGroup>
-
-        <UFormGroup label="Gender" name="Gender"  required  >
-           <USelect v-model="form.gender" :options="Gender"    placeholder="Select" required />
-        </UFormGroup>
-         
-        <UFormGroup label="Is this related to Gender-Based Violence(GBV)?" required  >
-           <USelect v-model="form.gbv" :options="YesNo"    placeholder="Select"  required/>
-        </UFormGroup>
-
  
-    </div>
-    
-    <div class="sm:col-span-1  space-y-4">
-      <UFormGroup label="County" name="County" required>
-      <USelect v-model="form.county" :options="counties"  placeholder="Select" @change="getSubCounties"   required>
-       </USelect>
-    </UFormGroup>
-    
 
-        <UFormGroup label="Subcounty" name="Subcounty" required>
-           <USelect v-model="form.subcounty" :options="subcounties"    placeholder="Select"  @change="getWards"   required />
-        </UFormGroup>
-
-
-        <UFormGroup label="Ward" name="Ward" required>
-           <USelect v-model="form.ward" :options="wards"   placeholder="Select"   @change="getSettlements"   required />
-        </UFormGroup>
-
-
-        <UFormGroup label="Settlement" name="Settlement" required>
-           <USelect v-model="form.settlement" :options="settlements"    placeholder="Select"  required/>
-        </UFormGroup>
-    </div>
-
-
-
-    <div class="sm:col-span-2  space-y-4">
-      <UFormGroup label="Grievance" name="Grievance" required>
-          <UTextarea  v-model="form.complaint" placeholder="Provide a detailed description of your complaint" required />
-        </UFormGroup>
-
-        <UFormGroup label="Do you have any supporting documentation?" name="documentation">
-        <UInput type="file" size="sm" icon="i-heroicons-folder" @change="handleFileChange" />
+  <UCard>
+   
+    <UForm :validate="validate" :state="form" class="grid grid-cols-1 sm:grid-cols-2 gap-4" @submit="onSubmit">
+    <div class="sm:col-span-1 space-y-4">
+      <UFormGroup label="Your Name (Optional)" name="Name">
+        <UInput v-model="form.name" placeholder="John Mpenda Pesa" variant="outline" />
       </UFormGroup>
 
-        <UButton label="Submit" type="submit" color="green" block @click="handleSubmit" />
+      <UFormGroup label="Telephone" name="Telephone" required>
+        <UInput v-model="form.phone" type="text" placeholder="0700 000 000" required />
+      </UFormGroup>
 
+      <UFormGroup label="Gender" name="Gender" required>
+        <USelect v-model="form.gender" :options="Gender" placeholder="Select" required />
+      </UFormGroup>
 
+      <UFormGroup label="Is this related to Gender-Based Violence(GBV)?" required>
+        <USelect v-model="form.gbv" :options="YesNo" placeholder="Select" required />
+      </UFormGroup>
+    
+      <UFormGroup label="Grievance" name="Grievance"  >
+        <UTextarea  v-model="form.complaint" placeholder="Provide a detailed description of your complaint" required />
+      </UFormGroup>
+     
     </div>
-  </UForm>
- 
 
+    <div class="sm:col-span-1 space-y-4">
+      <UFormGroup label="County" name="County" required>
+        <USelect v-model="form.county" :options="counties" placeholder="Select" @change="getSubCounties" required>
+        </USelect>
+      </UFormGroup>
+
+      <UFormGroup label="Subcounty" name="Subcounty" required>
+        <USelect v-model="form.subcounty" :options="subcounties" placeholder="Select" @change="getWards" required />
+      </UFormGroup>
+
+      <UFormGroup label="Ward" name="Ward" required>
+        <USelect v-model="form.ward" :options="wards" placeholder="Select" @change="getSettlements" required />
+      </UFormGroup>
+
+      <UFormGroup label="Settlement" name="Settlement" required>
+        <USelect v-model="form.settlement" :options="settlements" placeholder="Select" required />
+      </UFormGroup>
+
+      <UFormGroup label="Do you have any supporting documentation?" name="documentation">
+        <UInput type="file" size="sm" icon="i-heroicons-folder" @change="handleFileChange" />
+      </UFormGroup> 
+
+      <UButton label="Submit" type="submit" color="green" style="margin-right: 10px;" >
+
+      <template #trailing>
+        <UIcon name=" i-heroicons-cloud-arrow-up-solid" class="w-5 h-5" />
+      </template>
+    </UButton>
+
+      <!-- <UButton label="Clear" color="red" @click="handleClear"  /> -->
+
+      <UButton  label="Clear"   color="red" @click="handleClear" >
+      <template #trailing>
+        <UIcon name=" i-heroicons-x-circle-16-solid" class="w-5 h-5" />
+      </template>
+    </UButton>
+     </div>
+  </UForm>
+   
+  </UCard>
 </template>
 
 
@@ -366,5 +401,16 @@ async function  handleFileChange(files:File[]){
 
 .notification {
   width: 400px; /* Adjust width as needed */
+}
+</style>
+
+<style scoped>
+.button-group {
+  display: flex;
+  gap: 10px; /* Adjust the gap as needed */
+}
+
+.button-group > * {
+  flex: 2;
 }
 </style>
