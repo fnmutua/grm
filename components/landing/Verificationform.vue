@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref,computed } from 'vue';
 
 
 import type { FormError, FormSubmitEvent } from '#ui/types'
@@ -73,6 +73,10 @@ async function handleSubmit() {
   console.log(form);
 
   form.phone = convertPhoneNumber(form.phone)
+  form.reference = formattedValue
+
+ 
+
   // if (!validateForm()) {
   //   return;
   // }
@@ -99,6 +103,58 @@ async function handleSubmit() {
     console.error('Error submitting form:', error.message);
   }
 }
+
+
+////////////////////////Formatting Code input //////////////////////////
+//---------------------------------------------------------------------
+ 
+// Define a ref for the raw input value
+const value = ref('');
+
+// Define a computed property for the formatted value
+const formattedValue = computed({
+  get() {
+    return value.value;
+  },
+  set(newValue) {
+    value.value = formatValue(newValue);
+  }
+});
+
+// Function to format the input value
+function formatValue(value) {
+  // Remove all non-alphanumeric characters except the initial 'GRM'
+  let cleaned = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+  // Ensure the prefix 'GRM' is present
+  if (!cleaned.startsWith('GRM')) {
+    cleaned = 'GRM' + cleaned.substring(3);
+  }
+
+  // Limit to 12 characters (GRM + 8 digits)
+  cleaned = cleaned.slice(0, 12);
+
+  // Add the dashes back in
+  let formatted = cleaned.slice(0, 3);
+  if (cleaned.length > 3) {
+    formatted += '-' + cleaned.slice(3, 7);
+  }
+  if (cleaned.length > 7) {
+    formatted += '-' + cleaned.slice(7, 11);
+  }
+
+  return formatted;
+}
+
+// Function to handle input events
+function onInput(event) {
+  formattedValue.value = event.target.value;
+}
+//---------------------------------------------------------------------
+/////////////////////////////////////////////////////////////////////////
+
+
+
 </script>
 
 <template>
@@ -106,9 +162,13 @@ async function handleSubmit() {
     <UCard :ui="{ body: { base: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4' } }">
       <!-- Form Section -->
       <div class="col-span-1 space-y-4">
-        <UFormGroup label="Grievance Reference Code" name="text">
-          <UInput v-model="form.reference" placeholder="GRM-2024-XXXX" />
+  
+
+        <UFormGroup label="Grievance Code " name="text">
+          <UInput id="formattedInput"  v-model="formattedValue"  @input="onInput" placeholder="GRM-XXXX-XXXX" />
         </UFormGroup>
+
+
 
         <UFormGroup label="Telephone" name="password">
           <UInput v-model="form.phone" type="text" placeholder="0700 000 000" />
