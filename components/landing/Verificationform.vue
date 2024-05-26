@@ -125,9 +125,13 @@ async function handleSubmit() {
        
 
         <UCard >
+          <UProgress v-show="loading" animation="carousel" />
+
           <template #header>
             <strong>Grievance Status</strong>
           </template>
+
+
 
           <div v-show="showGrievance">
             <p><strong>Name:</strong> {{ grievance.name }}</p>
@@ -140,6 +144,8 @@ async function handleSubmit() {
           </div>
           <div v-show="!showGrievance">
             <p> {{missingGrievance}}</p>
+            <!-- <USkeleton class="h-4 w-[200px]" /> -->
+
 
           </div>
 

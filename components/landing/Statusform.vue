@@ -59,33 +59,34 @@ async function handleSubmit() {
 <template>
   <div class="w-full flex flex-col gap-y-4">
     <UCard  >
-      
-      <div  >
-        <!-- <UCard v-show="!showGrievance">
+       
+        <UCard  >
           <template #header>
             <strong>Grievance Status</strong>
           </template>
-          <p>No grievance for the given information</p>
-        </UCard> -->
 
-        <UCard v-show="showGrievance">
-          <template #header>
-            <strong>Grievance Status</strong>
-          </template>
-          <p><strong>Reference:</strong> {{ grievance.code }}</p>
+
+          <div v-show="showGrievance">
+            <p><strong>Reference:</strong> {{ grievance.code }}</p>
            <p><strong>Settlement:</strong> {{ grievance.settlement }}</p>
           <p><strong>Complaint:</strong> {{ grievance.complaint }}</p>
           <p><strong>Status:</strong> {{ grievance.status }}</p>
           <p><strong>Resolution:</strong> {{ grievance.resolution }}</p>
-          <template #footer>
-            <UButtonGroup size="sm" orientation="horizontal">
+          </div>
+          <div v-show="!showGrievance">
+            
+            <p> No grievances match the provided information</p>
+
+          </div>
+         <!--  <template #footer>
+            <UButtonGroup size="sm" orientation="horizontal"  v-show="showGrievance">
               <UButton v-show="showAcceptButton" icon="i-heroicons-check-badge-16-solid" label="Accept" color="green" />
               <UButton icon="i-heroicons-arrow-uturn-left-20-solid" label="Withdraw" color="gray" />
               <UButton icon="i-heroicons-arrow-right" label="Escalate" color="red" />
             </UButtonGroup>
-          </template>
+          </template> -->
         </UCard>
-      </div>
+ 
     </UCard>
   </div>
 </template>
