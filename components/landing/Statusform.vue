@@ -14,7 +14,7 @@ const grievance = ref({});
 const form = reactive({
   id: '' 
 })
-onMounted(() => {
+onMounted(async () => {
   console.log("get params", route.params.id)
   const grm_id= route.params.id
   form.id =grm_id
@@ -30,13 +30,16 @@ async function handleSubmit() {
  
   try {
     const response = await axios.post('https://ussd.ags.co.ke/id', form);
-    const responseData = response.data;
+    const responseData = response.data.data;
+    console.log('responseData', responseData);
+
     if (responseData) {
         loading.value = false;
         showGrievance.value = true;
+        grievance.value=responseData
 
-      console.log('responseData.grievance.Resolution', responseData.grievance);
-      if (responseData.grievance.resolution != "Pending") {
+      console.log('responseData.data.Resolution', responseData);
+      if (responseData.resolution != "Pending") {
         showAcceptButton.value = true;
       }
       console.log('showAcceptButton', showAcceptButton.value);
@@ -58,19 +61,19 @@ async function handleSubmit() {
     <UCard  >
       
       <div  >
-        <UCard v-show="!showGrievance">
+        <!-- <UCard v-show="!showGrievance">
           <template #header>
             <strong>Grievance Status</strong>
           </template>
           <p>No grievance for the given information</p>
-        </UCard>
+        </UCard> -->
 
         <UCard v-show="showGrievance">
           <template #header>
             <strong>Grievance Status</strong>
           </template>
-           <p><strong>County:</strong> {{ grievance.county }}</p>
-          <p><strong>Subcounty:</strong> {{ grievance.subcounty }}</p>
+          <p><strong>Reference:</strong> {{ grievance.code }}</p>
+           <p><strong>Settlement:</strong> {{ grievance.settlement }}</p>
           <p><strong>Complaint:</strong> {{ grievance.complaint }}</p>
           <p><strong>Status:</strong> {{ grievance.status }}</p>
           <p><strong>Resolution:</strong> {{ grievance.resolution }}</p>

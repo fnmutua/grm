@@ -67,7 +67,7 @@ function convertPhoneNumber(phoneNumber) {
   return trimmedPhoneNumber;
 }
 
-
+const missingGrievance = ref('')
 async function handleSubmit() {
   showAcceptButton.value = false;
   console.log(form);
@@ -90,11 +90,12 @@ async function handleSubmit() {
         showAcceptButton.value = true;
       }
       console.log('showAcceptButton', showAcceptButton.value);
-    }
-    console.log('Form submitted successfully:', responseData);
-  } catch (error) {
+    } 
+   } catch (error) {
     showGrievance.value = false;
     loading.value = false;
+    missingGrievance.value="No grievances match the provided information"
+
     console.error('Error submitting form:', error.message);
   }
 }
@@ -121,26 +122,30 @@ async function handleSubmit() {
 
       <!-- Status Section -->
       <div class="col-span-1 sm:col-span-2 lg:col-span-2 space-y-4">
-        <UCard v-show="!showGrievance">
-          <template #header>
-            <strong>Grievance Status</strong>
-          </template>
-          <p>No grievance for the given information</p>
-        </UCard>
+       
 
-        <UCard v-show="showGrievance">
+        <UCard >
           <template #header>
             <strong>Grievance Status</strong>
           </template>
-          <p><strong>Name:</strong> {{ grievance.name }}</p>
+
+          <div v-show="showGrievance">
+            <p><strong>Name:</strong> {{ grievance.name }}</p>
           <p><strong>Phone:</strong> {{ grievance.phone }}</p>
           <p><strong>County:</strong> {{ grievance.county }}</p>
           <p><strong>Subcounty:</strong> {{ grievance.subcounty }}</p>
           <p><strong>Complaint:</strong> {{ grievance.complaint }}</p>
           <p><strong>Status:</strong> {{ grievance.status }}</p>
           <p><strong>Resolution:</strong> {{ grievance.resolution }}</p>
-          <template #footer>
-            <UButtonGroup size="sm" orientation="horizontal">
+          </div>
+          <div v-show="!showGrievance">
+            <p> {{missingGrievance}}</p>
+
+          </div>
+
+
+          <template #footer  >
+            <UButtonGroup size="sm" orientation="horizontal" v-show="showGrievance" >
               <UButton v-show="showAcceptButton" icon="i-heroicons-check-badge-16-solid" label="Accept" color="green" />
               <UButton icon="i-heroicons-arrow-uturn-left-20-solid" label="Withdraw" color="gray" />
               <UButton icon="i-heroicons-arrow-right" label="Escalate" color="red" />

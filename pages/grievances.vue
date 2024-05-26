@@ -5,9 +5,11 @@ definePageMeta({
 </script>
 
 <template>
+    <NuxtLoadingIndicator />
+
   <LandingContainer>
     <LandingSectionhead >
-      <template v-slot:title>Status</template>
+      <template v-slot:title>Grievance Status</template>
       <template v-slot:desc>Enter the grievance code and phone number to check the status.</template>
     </LandingSectionhead>
 
