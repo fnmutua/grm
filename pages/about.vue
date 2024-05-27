@@ -9,7 +9,7 @@ const TeamImg3 = "https://source.unsplash.com/ZHvM3XIOHoE";
 
 const team = [
   {
-    name: "Janette Lynch",
+    name: "Jane Doe 1",
     title: "Senior Director",
     avatar: {
       src: TeamImg1,
@@ -18,7 +18,7 @@ const team = [
     },
   },
   {
-    name: "Marcell Ziemann",
+    name: "Jack Doe 1",
     title: "Principal Strategist",
     avatar: {
       src: TeamImg2,
@@ -27,7 +27,7 @@ const team = [
     },
   },
   {
-    name: "Robert Palmer",
+    name: "Jack Doe 2",
     title: "Marketing Engineer",
     avatar: {
       src: TeamImg3,

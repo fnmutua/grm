@@ -23,22 +23,26 @@ definePageMeta({
         <div class="mt-5">
           <div class="flex items-center mt-2 space-x-2 text-gray-600">
             <Icon class="text-gray-400 w-4 h-4" name="uil:map-marker" />
-            <span>KISIP 2 Project </span>
-            <span>Kings Prism Towers, 19th Floor</span>
+            <span>DRiVE Project </span>
           </div>
         
           <div class="flex items-center mt-2 space-x-2 text-gray-600">
+            <Icon class="text-gray-400 w-4 h-4" name="fe:building" />
+            <span>Ministry of Agriculture</span>
+          </div>
+          <div class="flex items-center mt-2 space-x-2 text-gray-600">
             <Icon class="text-gray-400 w-4 h-4" name="uil:envelope" /><a
               href="mailto:jakobaichmayr@gmail.com"
-              >kisip2@gmail.com</a
+              >drive@gmail.com</a
             >
           </div>
-          <!-- <div class="flex items-center mt-2 space-x-2 text-gray-600">
+
+           <div class="flex items-center mt-2 space-x-2 text-gray-600">
             <Icon class="text-gray-400 w-4 h-4" name="uil:phone" /><a
-              href="tel:+1 (234) 5678 999"
-              >+1 (234) 5678 999</a
+              href="tel:+254 (721) 000 000"
+              >+254 (721) 000 000</a
             >
-          </div> -->
+          </div>  
         </div>
       </div>
       <div>
