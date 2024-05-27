@@ -82,7 +82,11 @@ async function getCounties() {
 onMounted(getCounties);
 
 
- 
+const subcounty_disabled=ref(true)
+const ward_disabled=ref(true)
+const settlements_disabled=ref(true)
+
+
 const subcounties = ref([])
 
 async function getSubCounties(parent) {
@@ -105,6 +109,7 @@ async function getSubCounties(parent) {
       adminOptions.sort((a, b) => a.value - b.value);
 
       console.log("admin Options:", adminOptions);
+      subcounty_disabled.value=false
 
       // Assuming you have a 'counties' variable defined as ref or reactive
       subcounties.value = adminOptions;
@@ -136,7 +141,7 @@ async function getWards(parent) {
       adminOptions.sort((a, b) => a.value - b.value);
 
       console.log("admin Options:", adminOptions);
-
+      ward_disabled.value=false
       // Assuming you have a 'counties' variable defined as ref or reactive
       wards.value = adminOptions;
     }
@@ -146,7 +151,7 @@ async function getWards(parent) {
 }
 
 const settlements = ref([])
-
+ 
 async function getSettlements(parent) {
  
   settlements.value=[]
@@ -166,6 +171,7 @@ async function getSettlements(parent) {
       adminOptions.sort((a, b) => a.value - b.value);
 
       console.log("admin Options:", adminOptions);
+      settlements_disabled.value=false
 
       // Assuming you have a 'counties' variable defined as ref or reactive
       settlements.value = adminOptions;
@@ -225,21 +231,33 @@ const validate = (state: any): FormError[] => {
 const loading = ref(false)
 async function onSubmit() {
   
+
+  let select_county = counties.value.filter(obj => obj.value == form.county )
+  let select_subcounty = subcounties.value.filter(obj => obj.value == form.subcounty )
+  let select_ward = wards.value.filter(obj => obj.value == form.ward )
+  let select_settlement = settlements.value.filter(obj => obj.value == form.settlement )
+
+
+ 
  console.log("Submit.......")
  loading.value=true
     form.phone = convertPhoneNumber(form.phone)
 
     const formData = new FormData()
 
-  formData.append('name', form.name)
+  //formData.append('name', form.name)
+  formData.append('name',  form.name === '' ? 'Anonymous' :  form.name);
+
   formData.append('phone', form.phone)
   formData.append('gender', form.gender)
   formData.append('gbv', form.gbv)
-  formData.append('county', form.county)
-  formData.append('subcounty', form.subcounty)
-  formData.append('ward', form.ward)
-  formData.append('settlement', form.settlement)
+  formData.append('county', select_county[0].label )
+  formData.append('subcounty', select_subcounty[0].label)
+  formData.append('ward', select_ward[0].label)
+  formData.append('settlement', select_settlement[0].label)
+  formData.append('settlement_id', form.settlement)
   formData.append('complaint', form.complaint)
+  
   
   // Retrieve file from file input
  
@@ -332,15 +350,15 @@ async function  handleFileChange(files:File[]){
       </UFormGroup>
 
       <UFormGroup label="Subcounty" name="Subcounty" required>
-        <USelect v-model="form.subcounty" :options="subcounties" placeholder="Select" @change="getWards" required />
+        <USelect v-model="form.subcounty" :options="subcounties" placeholder="Select" @change="getWards" required :disabled="subcounty_disabled" />
       </UFormGroup>
 
       <UFormGroup label="Ward" name="Ward" required>
-        <USelect v-model="form.ward" :options="wards" placeholder="Select" @change="getSettlements" required />
+        <USelect v-model="form.ward" :options="wards" placeholder="Select" @change="getSettlements" required  :disabled="ward_disabled"/>
       </UFormGroup>
 
       <UFormGroup label="Settlement" name="Settlement" required>
-        <USelect v-model="form.settlement" :options="settlements" placeholder="Select" required />
+        <USelect v-model="form.settlement" :options="settlements" placeholder="Select" required  :disabled="settlements_disabled"/>
       </UFormGroup>
 
       <UFormGroup label="Do you have any supporting documentation?" name="documentation">

@@ -68,7 +68,10 @@ async function handleSubmit() {
 
           <div v-show="showGrievance">
             <p><strong>Reference:</strong> {{ grievance.code }}</p>
-           <p><strong>Settlement:</strong> {{ grievance.settlement }}</p>
+            <p><strong>County:</strong> {{ grievance.county }}</p>
+            <p><strong>SubCounty:</strong> {{ grievance.subcounty }}</p>
+            <p><strong>Ward:</strong> {{ grievance.ward }}</p>
+            <p><strong>Settlement:</strong> {{ grievance.settlement }}</p>
           <p><strong>Complaint:</strong> {{ grievance.complaint }}</p>
           <p><strong>Status:</strong> {{ grievance.status }}</p>
           <p><strong>Resolution:</strong> {{ grievance.resolution }}</p>
