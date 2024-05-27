@@ -174,7 +174,10 @@ function onInput(event) {
           <UInput v-model="form.phone" type="text" placeholder="0700 000 000" />
         </UFormGroup>
 
-        <UButton label="Check Status" type="button" color="green" block @click="handleSubmit" />
+        <!-- <UButton label="Check Status" type="button" color="green" block @click="handleSubmit" /> -->
+        <div @keyup="handleSubmit">
+            <UButton :loading="loading"  label="Submit" type="button" color="green" block @click="handleSubmit" />
+          </div>
       </div>
 
       <!-- Divider -->

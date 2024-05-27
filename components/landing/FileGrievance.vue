@@ -7,6 +7,7 @@ import type { FormError, FormSubmitEvent } from '#ui/types'
 
 type Schema = InferType<typeof schema>
   const toast = useToast()
+  const router = useRouter()
 
 
 const disableSubmit =ref(true)
@@ -221,10 +222,11 @@ const validate = (state: any): FormError[] => {
   return errors
 }
 
+const loading = ref(false)
 async function onSubmit() {
   
  console.log("Submit.......")
-
+ loading.value=true
     form.phone = convertPhoneNumber(form.phone)
 
     const formData = new FormData()
@@ -264,9 +266,14 @@ async function onSubmit() {
 
 if(response.data.success){
     toast.add({ title: 'Grievance reported successfully!' })
+    loading.value=false
+
+    router.push({ path: "/" })
+
 
   } else {
     toast.add({ title: 'Grievance reporting failed!', color:"red" })
+    loading.value=false
 
 
   }
@@ -340,7 +347,7 @@ async function  handleFileChange(files:File[]){
         <UInput type="file" size="sm" icon="i-heroicons-folder" @change="handleFileChange" />
       </UFormGroup> 
 
-      <UButton label="Submit" type="submit" color="green" style="margin-right: 10px;" >
+      <UButton  :loading="loading"  label="Submit" type="submit" color="green" style="margin-right: 10px;" >
 
       <template #trailing>
         <UIcon name=" i-heroicons-cloud-arrow-up-solid" class="w-5 h-5" />

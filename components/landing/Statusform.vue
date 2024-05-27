@@ -73,11 +73,14 @@ async function handleSubmit() {
           <p><strong>Status:</strong> {{ grievance.status }}</p>
           <p><strong>Resolution:</strong> {{ grievance.resolution }}</p>
           </div>
-          <div v-show="!showGrievance">
-            
-            <p> No grievances match the provided information</p>
-
+          <div v-show="loading">
+           <p> Loading...</p>
           </div>
+
+          <div v-show="!showGrievance && !loading">
+           <p> No grievances match the provided information</p>
+          </div>
+
          <!--  <template #footer>
             <UButtonGroup size="sm" orientation="horizontal"  v-show="showGrievance">
               <UButton v-show="showAcceptButton" icon="i-heroicons-check-badge-16-solid" label="Accept" color="green" />
