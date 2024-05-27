@@ -35,27 +35,25 @@ const errors = ref({
   phone: ''
 });
 
-const validateForm = () => {
-  let valid = true;
-  errors.value.reference = '';
-  errors.value.phone = '';
+ 
 
-  if (!formData.value.reference) {
-    errors.value.reference = 'Please provide a reference.';
-    valid = false;
-  }
 
-  const phoneRegex = /^[0-9]{10}$/;
-  if (!formData.value.phone) {
-    errors.value.phone = 'Please provide your phone number.';
-    valid = false;
-  } else if (!phoneRegex.test(formData.value.phone)) {
-    errors.value.phone = 'Please provide a valid phone number.';
-    valid = false;
-  }
-
-  return valid;
-};
+function maskPhoneNumber(number) {
+    // Convert number to string
+    let numberStr = number.toString();
+   
+    // Check if the string has at least 9 characters
+    if (numberStr.length >= 9) { 
+        // Replace characters between the third and ninth position with asterisks
+        
+        let maskedStr = numberStr.substring(0, 6) + '***' + numberStr.substring(9);
+        console.log('maskedStr',maskedStr)
+        return maskedStr;
+    } else {
+        // Return the original number if it's less than 9 characters
+        return numberStr;
+    }
+}
 
 function convertPhoneNumber(phoneNumber) {
   const trimmedPhoneNumber = phoneNumber.replace(/\s+/g, '').trim();
@@ -68,18 +66,14 @@ function convertPhoneNumber(phoneNumber) {
 }
 
 const missingGrievance = ref('')
+
 async function handleSubmit() {
   showAcceptButton.value = false;
   console.log(form);
 
   form.phone = convertPhoneNumber(form.phone)
   form.reference = formattedValue
-
  
-
-  // if (!validateForm()) {
-  //   return;
-  // }
 
   loading.value = true;
   try {
@@ -87,6 +81,10 @@ async function handleSubmit() {
     const responseData = response.data;
     if (responseData) {
       grievance.value = responseData.grievance;
+
+      grievance.value.phone = await maskPhoneNumber(grievance.value.phone )
+
+      console.log('grievance.phone',grievance.value.telephone)
       showGrievance.value = true;
       loading.value = false;
       console.log('responseData.grievance.Resolution', responseData.grievance);
@@ -103,6 +101,8 @@ async function handleSubmit() {
     console.error('Error submitting form:', error.message);
   }
 }
+
+
 
 
 ////////////////////////Formatting Code input //////////////////////////

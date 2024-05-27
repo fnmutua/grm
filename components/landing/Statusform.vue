@@ -24,7 +24,22 @@ onMounted(async () => {
 
 // When accessing /posts/1, route.params.id will be 1
 
-
+function maskPhoneNumber(number) {
+    // Convert number to string
+    let numberStr = number.toString();
+   
+    // Check if the string has at least 9 characters
+    if (numberStr.length >= 9) { 
+        // Replace characters between the third and ninth position with asterisks
+        
+        let maskedStr = numberStr.substring(0, 6) + '***' + numberStr.substring(9);
+        console.log('maskedStr',maskedStr)
+        return maskedStr;
+    } else {
+        // Return the original number if it's less than 9 characters
+        return numberStr;
+    }
+}
  
 async function handleSubmit() {
  
@@ -37,6 +52,10 @@ async function handleSubmit() {
         loading.value = false;
         showGrievance.value = true;
         grievance.value=responseData
+      // mask phone number 
+        grievance.value.phone = await maskPhoneNumber(grievance.value.phone )
+
+
 
       console.log('responseData.data.Resolution', responseData);
       if (responseData.resolution != "Pending") {
@@ -72,9 +91,9 @@ async function handleSubmit() {
             <p><strong>SubCounty:</strong> {{ grievance.subcounty }}</p>
             <p><strong>Ward:</strong> {{ grievance.ward }}</p>
             <p><strong>Settlement:</strong> {{ grievance.settlement }}</p>
-          <p><strong>Complaint:</strong> {{ grievance.complaint }}</p>
-          <p><strong>Status:</strong> {{ grievance.status }}</p>
-          <p><strong>Resolution:</strong> {{ grievance.resolution }}</p>
+            <p><strong>Complaint:</strong> {{ grievance.complaint }}</p>
+            <p><strong>Status:</strong> {{ grievance.status }}</p>
+            <p><strong>Resolution:</strong> {{ grievance.resolution }}</p>
           </div>
           <div v-show="loading">
            <p> Loading...</p>
