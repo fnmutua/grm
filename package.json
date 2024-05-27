@@ -5,9 +5,12 @@
   "scripts": {
     "build": "nuxt build",
     "start": "nuxt start",
-    "dev": "nuxt dev",
+    "xdev": "nuxt dev",
+    "dev": "concurrently \"nuxt dev\" \"node server/index.js\"",
+
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "server": "node server/index.js",
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
@@ -24,6 +27,8 @@
   "dependencies": {
     "@iconify/json": "^2.2.213",
     "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
     "yup": "^1.4.0"
   }
 }

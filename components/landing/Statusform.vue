@@ -78,12 +78,10 @@ async function handleSubmit() {
 <template>
   <div class="w-full flex flex-col gap-y-4">
     <UCard  >
-       
         <UCard  >
           <template #header>
             <strong>Grievance Status</strong>
           </template>
-
 
           <div v-show="showGrievance">
             <p><strong>Reference:</strong> {{ grievance.code }}</p>
