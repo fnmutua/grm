@@ -6,7 +6,7 @@ const menuitems = [
   },
   {
     title: "Grievances",
-    path: "/grievances",
+    path: "/grievances/status",
   },
   {
     title: "Report",

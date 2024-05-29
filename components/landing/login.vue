@@ -1,55 +1,85 @@
-<script setup lang="ts">
-import axios from 'axios';
-import { ref,computed } from 'vue';
-
-
-import type { FormError, FormSubmitEvent } from '#ui/types'
-
-const form = reactive({
-  reference: undefined,
-  phone: undefined
-})
-
- 
-
- 
-
-  const loading = ref(false);
-const showAcceptButton = ref(false);
-
- 
-
- 
-async function handleSubmit() {
-  showAcceptButton.value = false;
-  console.log(form);
-
- 
-}
- 
-
-</script>
-
 <template>
- <UCard :ui="{ body: { base: 'grid grid-cols-1 sm:grid-cols-1', justify: 'center' }, style: { width: '10%' },  shadow: 'shadow' }">
+  <UCard :ui="{ body: { base: 'grid grid-cols-1 sm:grid-cols-1', justify: 'center' }, style: { width: '10%' },  shadow: 'shadow' }">
     <!-- Form Section -->
     <div class="space-y-4">
-        <UFormGroup label="Email" name="text">
-            <UInput id="formattedInput"  v-model="form.reference"  />
-        </UFormGroup>
-        <UFormGroup label="Password" name="password">
-            <UInput v-model="form.phone" type="password" p  />
-        </UFormGroup>
-        <div @keyup="handleSubmit">
-            <UButton :loading="loading"  label="Sign In" type="button" color="green" block @click="handleSubmit" />
+      <UFormGroup label="Email" name="text">
+        <UInput id="formattedInput" v-model="form.username"  class="mr-2"  />
+        
+      </UFormGroup>
+
+
+      <UFormGroup  v-if="!showPassword" label="Password" name="password">
+        <div class="flex items-center">
+          <UInput v-model="form.password" type="password" class="mr-2" />
+          <UIcon name="i-heroicons-eye" class="text-gray-500 cursor-pointer" @click="togglePassword" />
         </div>
-    </div>
-</UCard>
+      </UFormGroup>
+
+      
+      <UFormGroup  v-if="showPassword" label="Password" name="password">
+        <div class="flex items-center">
+        <UInput v-model="form.password" type="text"   class="mr-2"   />
+        <UIcon name="i-heroicons-eye-slash" class="text-gray-500 cursor-pointer" @click="togglePassword" />
+      </div>
+
+      </UFormGroup>
+ 
+
+      <div @keyup="handleSubmit">
+        <UButton :loading="loading" label="Sign In" type="button" color="green" block @click="handleSubmit" />
+      </div>
 
 
- </template>
+     </div>
+  </UCard>
+</template>
+
+<script setup lang="ts">
+import axios from 'axios';
+import { ref } from 'vue';
+
+const form = ref({
+  username: '',
+  password: ''
+});
+const toast = useToast()
+const loading = ref(false);
+const showPassword = ref(false);
+
+async function handleSubmit() {
+  try {
+    loading.value = true;
+    const response = await axios.post('/api/login', {
+      username: form.value.username,
+      password: form.value.password
+    });
+    console.log(response)
+
+    if(response.data.code =='0000') {
+      console.log(response.data.message)
+      toast.add({ title:response.data.message })
 
 
+    }
+    else {
+      console.log(response.data.message)
+      toast.add({ title: response.data.message, color:"red" })
+
+    }
+  } catch (error) {
+    console.error('Error during login:', error.message);
+    // Handle error, maybe show an error message to the user
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function togglePassword() {
+  showPassword.value=!showPassword.value
+ }
+
+
+</script>
 
 <style>
 .invalid-feedback,

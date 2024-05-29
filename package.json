@@ -5,9 +5,8 @@
   "scripts": {
     "build": "nuxt build",
     "start": "nuxt start",
-    "xdev": "nuxt dev",
-    "dev": "concurrently \"nuxt dev\" \"node server/index.js\"",
-
+    "dev": "nuxt dev",
+    "xdev": "concurrently \"nuxt dev\" \"node server/index.js\"",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "server": "node server/index.js",
@@ -26,9 +25,14 @@
   },
   "dependencies": {
     "@iconify/json": "^2.2.213",
+    "@nuxt/nitro": "^0.10.0",
+    "@nuxtjs/axios": "^5.13.6",
     "axios": "^1.7.2",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "mongodb": "^6.6.2",
+    "mongoose": "^8.4.0",
     "yup": "^1.4.0"
   }
 }

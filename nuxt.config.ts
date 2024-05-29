@@ -1,13 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
   
+  devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
   postcss: {
     plugins: {
       tailwindcss: {},
-      autoprefixer: {},
-    },
+      autoprefixer: {}
+    }
   },
-  modules: ["nuxt-icon", "@nuxt/ui" ],
+  modules: ["nuxt-icon", "@nuxt/ui"]
 });
