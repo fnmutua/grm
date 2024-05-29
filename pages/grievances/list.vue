@@ -13,25 +13,15 @@
           <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
           <span class="truncate">{{ item.label }}</span>
           <span v-if="selected" class="absolute -right-4 w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400" />
-          <UBadge :color="item.color" :ui="{ rounded: 'rounded-full' }">{{ item.count }}</UBadge>
+          <UBadge :color="item.color" :ui="{ rounded: 'rounded-full' }">{{item.count}}</UBadge>
         </div>
       </template>
     </UTabs>
-    <div v-show="selectedTab === 0">
-    <table class="min-w-full">
-      <thead>
-        <tr>
-          <!-- Iterate over the keys of the first grievance object to generate table headers -->
-          <th v-for="(value, key) in grievances[0]"  :sortable=true :key="key" class="px-4 py-2">{{ key }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(grievance, index) in grievances" :key="index">
-          <!-- Iterate over the keys of each grievance object to generate table cells -->
-          <td v-for="(value, key) in grievance" :key="key" class="border px-4 py-2">{{ value }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div >
+    
+    <UTable :columns="columns" :rows="grievances" />
+
+
   </div>
     
   </LandingContainer>
@@ -47,45 +37,46 @@ const toast = useToast()
 
 const selectedTab = ref(0);
 
-const items = [{
+const items = ref([{
   label: 'Pending',
   icon: 'i-heroicons-bell-snooze',
-  count: '15',
+  count: undefined,
   color: 'green' 
 }, {
   label: 'Resolved',
   disabled: false,
   icon: 'i-heroicons-check-badge',
-  count: '58',
+  count: undefined,
   color: 'orange',
  }, {
   label: 'Escalated',
   icon: 'i-heroicons-arrow-up-right',
-  count: '5',
+  count: undefined,
   color: 'red',
- }];
+ }]);
 
  const grievances =ref([])
-const pendingGrievances = [
-  { id: 1, title: 'Grievance 1', status: 'Pending' },
-  { id: 2, title: 'Grievance 2', status: 'Pending' },
-  { id: 3, title: 'Grievance 3', status: 'Pending' },
-  // Add more grievance data as needed
-];
+ const count =ref({})
+ 
 
 async function onChange (index) {
-  const item = items[index].label
+  const item = items.value[index].label
   let status 
 
-  console.log('items[index]',items[index])
+ // count.value=undefined
+ // console.log('items[index]',items[index])
   if(item == 'Pending') {
     status='Open'
+    count[status]=0
   }
   else if(item == 'Resolved')
   {
     status='Resolved'
+    count[status]=0
   }else {
     status='Escalated'  
+    count[status]=0
+ 
   }
 
  
@@ -97,7 +88,12 @@ async function onChange (index) {
     console.log(response)
 
     if(response.data.code =='0000') {
-      console.log(response.data.data)
+     // console.log(response.data.data.length)
+     //console.log(selectedTab.value)
+     console.log(items[selectedTab.value])
+      count[status]=response.data.data.length
+     items.value[selectedTab.value].count = response.data.data.length
+      
       //toast.add({ title:response.data.message })
 
       grievances.value=response.data.data
@@ -128,7 +124,20 @@ async function onChange (index) {
   //alert(`${item.label} was clicked!`)
 }
 
-
+const columns = [  {
+  key: 'code',
+  label: 'Code',
+  sortable: true
+}, {
+  key: 'settlement',
+  label: 'Settlement',
+  sortable: true
+}, {
+  key: 'complaint',
+  label: 'Complaint',
+  sortable: true,
+ 
+} ]
 
 
 </script>
