@@ -17,7 +17,7 @@ export default defineEventHandler(async (req) => {
     const mongoString = process.env.MONGODB_URI;
 
     try {
-        await mongoose.connect(mongoString);
+        await mongoose.connect(mongoString,{dbName:'grm' });
         console.log('Database connected...');
 
         // Calculate skip value for pagination

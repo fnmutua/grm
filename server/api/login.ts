@@ -6,7 +6,7 @@ export default defineEventHandler(async (req) => {
     console.log(username, password)
     try {
         const client = await clientPromise;
-        const db = client.db('ussd');
+        const db = client.db('grm');
         const collection = db.collection('users');
 
         // Find the user by username

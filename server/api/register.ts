@@ -15,7 +15,7 @@ export default defineEventHandler(async (req) => {
         const hashedPassword = await bcrypt.hash(password, 10);
     
         const client = await clientPromise;
-        const db = client.db('ussd');
+        const db = client.db('grm');
         const collection = db.collection('users');
     
         // Check if the username already exists
@@ -23,7 +23,7 @@ export default defineEventHandler(async (req) => {
         if (existingUser) {
          // return res.status(400).json({ error: 'Username already exists' });
           return {
-            error: 'Username already exists' ,
+            message: 'Username already exists' ,
           };
         }
     
