@@ -12,21 +12,20 @@ const grievanceSchema = new mongoose.Schema({
 // Define the Mongoose model for grievances
 const Grievance = mongoose.model('Grievance', grievanceSchema);
 
-
 export default defineEventHandler(async (req) => {
-    const { status } = await readBody(req);
+    const { status, page, pageCount } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
-    console.log('status',status)
 
     try {
         await mongoose.connect(mongoString);
-
         console.log('Database connected...');
 
-        // Find all grievances
-        const data = await Grievance.find({status:status});
-        //console.log(data);
+        // Calculate skip value for pagination
+        const skip = (page - 1) * pageCount;
 
+        // Find grievances based on status and include pagination
+        const data = await Grievance.find({ status: status }).skip(skip).limit(pageCount);
+ 
         if (data.length === 0) {
             return {
                 message: 'Grievances not found',
@@ -34,9 +33,13 @@ export default defineEventHandler(async (req) => {
                 code: '0000'
             };
         } else {
+            // Fetch total count of grievances
+            const totalCount = await Grievance.countDocuments({ status: status });
+
             return {
                 message: 'Grievances found',
                 data: data,
+                total: totalCount, // Return total count for pagination
                 code: '0000'
             };
         }
@@ -48,8 +51,8 @@ export default defineEventHandler(async (req) => {
         };
     } finally {
         // Close the MongoDB connection
-      //  await mongoose.disconnect();
-       // console.log('Database disconnected...');
+        // await mongoose.disconnect();
+        // console.log('Database disconnected...');
     }
 });
 

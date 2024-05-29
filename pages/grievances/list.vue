@@ -8,6 +8,7 @@
     </LandingSectionhead>
 
     <UTabs :items="items" class="w-full" v-model=selectedTab @change="onChange" >
+ 
       <template #default="{ item, index, selected }">
         <div class="flex items-center gap-2 relative truncate">
           <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
@@ -17,12 +18,92 @@
         </div>
       </template>
     </UTabs>
-    <div >
+   
+    <UCard
+      class="w-full"
+      :ui="{
+        base: '',
+        ring: '',
+        divide: 'divide-y divide-gray-200 dark:divide-gray-700',
+        header: { padding: 'px-4 py-5' },
+        body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+        footer: { padding: 'p-4' }
+      }"
+    >
+
+    <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">
+      <UInput v-model="q" placeholder="Filter..." />
+      <UButton   v-if="total>0"
+        icon="i-heroicons-cloud-arrow-down"
+        size="sm"
+        color="primary"
+        variant="link"
+        label="Download"
+        :trailing="false"
+        @click="downloadXLSX"
+      />
+    </div>
+
+
+
     
-    <UTable :columns="columns" :rows="grievances" />
+ 
+    <UTable :columns="columns" :rows="filteredRows"  class="w-full"  @select="select" >
+      <template #caption>
+      <caption> </caption>
+    </template>
+    </UTable>
+    
+    <template #footer>
+      <div class="flex flex-wrap justify-between items-center">
+        <div class="flex items-center gap-1.5">
+          <span   v-if="total>0" class="text-sm leading-5">Rows per page:</span>
+          <USelect 
+            v-model="pageCount"
+            :options="[3, 5, 10, 20, 30, 40]"
+            @change="onPageCountChange"
+            @click="onPageChange"
+            class="me-2 w-20"
+            size="xs"
+            v-if="total>0"
+          />
+        </div>
 
+        <div class="flex items-center gap-1.5">
+          <span class="text-sm leading-5" v-if="total>0">
+              Showing
+              <span class="font-medium">{{ pageFrom }}</span>
+              to
+              <span class="font-medium">{{ pageTo }}</span>
+              of
+              <span class="font-medium">{{ total }}</span>
+              results
+          </span>
 
-  </div>
+          <UPagination  
+            v-if="total>0"
+            v-model="page"
+            :page-count="pageCount"
+            :total="total"
+            @click="onPageChange"
+            :prev-button="{ icon: 'i-heroicons-arrow-small-left-20-solid', label: 'Prev', color: 'gray' }"
+            :next-button="{ icon: 'i-heroicons-arrow-small-right-20-solid', trailing: true, label: 'Next', color: 'gray' }"
+
+            :ui="{
+              wrapper: 'flex items-center gap-1',
+              rounded: '!rounded-full min-w-[32px] justify-center',
+              default: {
+                activeButton: {
+                  variant: 'outline'
+                }
+              }
+            }"
+          />
+        </div>
+      </div>
+    </template>
+
+    </UCard>
     
   </LandingContainer>
 </template>
@@ -32,10 +113,30 @@ definePageMeta({
   layout: "landing",
 });
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+
+import exportFromJSON from 'export-from-json'
+
+
+
 const toast = useToast()
 
 const selectedTab = ref(0);
+const pageCount = ref(5)
+const q = ref('')
+
+const filteredRows = computed(() => {
+  if (!q.value) {
+    return grievances.value
+  }
+  return grievances.value.filter((grv) => {
+    return Object.values(grv).some((value) => {
+      return String(value).toLowerCase().includes(q.value.toLowerCase())
+    })
+  })
+})
+
+console.log('filteredRows',filteredRows)
 
 const items = ref([{
   label: 'Pending',
@@ -55,76 +156,10 @@ const items = ref([{
   color: 'red',
  }]);
 
+
  const grievances =ref([])
  const count =ref({})
- 
-
-async function onChange (index) {
-  const item = items.value[index].label
-  let status 
-
- // count.value=undefined
- // console.log('items[index]',items[index])
-  if(item == 'Pending') {
-    status='Open'
-    count[status]=0
-  }
-  else if(item == 'Resolved')
-  {
-    status='Resolved'
-    count[status]=0
-  }else {
-    status='Escalated'  
-    count[status]=0
- 
-  }
-
- 
-  try {
- 
-    const response = await axios.post('/api/grievances/list', {
-      status: status 
-    });
-    console.log(response)
-
-    if(response.data.code =='0000') {
-     // console.log(response.data.data.length)
-     //console.log(selectedTab.value)
-     console.log(items[selectedTab.value])
-      count[status]=response.data.data.length
-     items.value[selectedTab.value].count = response.data.data.length
-      
-      //toast.add({ title:response.data.message })
-
-      grievances.value=response.data.data
-      // Extracting specific properties from each object in the response
-      const extractedGrievances = response.data.data.map(grievance => ({
-        code: grievance.code,
-        county: grievance.county,
-        settlement: grievance.settlement,
-        complaint: grievance.complaint
-      }));
-
-        // Assigning the extracted properties to the grievances array
-        grievances.value = extractedGrievances;
-
-
-    }
-    else {
-      console.log(response.data.message)
-      toast.add({ title: response.data.message, color:"red" })
-
-    }
-  } catch (error) {
-    console.error('Error during login:', error.message);
-    // Handle error, maybe show an error message to the user
-  }  
-
-
-  //alert(`${item.label} was clicked!`)
-}
-
-const columns = [  {
+ const columns = [  {
   key: 'code',
   label: 'Code',
   sortable: true
@@ -132,12 +167,99 @@ const columns = [  {
   key: 'settlement',
   label: 'Settlement',
   sortable: true
-}, {
+}, 
+  {
+  key: 'status',
+  label: 'Status',
+  sortable: true
+},
+{
   key: 'complaint',
   label: 'Complaint',
   sortable: true,
  
 } ]
+
+const page = ref(1)
+const total = ref(0)
+const pageFrom = computed(() => (page.value - 1) * pageCount.value + 1)
+const pageTo = computed(() => Math.min(page.value * pageCount.value, total.value))
+
+ 
+
+onMounted(async () => {
+ await onChange(0)
+});
+
+
+async function onChange(index) {
+  q.value=''
+  const item = items.value[index].label;
+  let status;
+
+  if (item === 'Pending') {
+    status = 'Open';
+    count[status] = 0;
+  } else if (item === 'Resolved') {
+    status = 'Resolved';
+    count[status] = 0;
+  } else {
+    status = 'Escalated';
+    count[status] = 0;
+  }
+
+  try {
+    const response = await axios.post('/api/grievances/list', {
+      status: status,
+      page: page.value,  // Add page parameter
+      pageCount: pageCount.value  // Add pageCount parameter
+    });
+
+    if (response.data.code === '0000') {
+      //count[status] = response.data.data.length;
+      items.value[selectedTab.value].count = response.data.total;
+      total.value =response.data.total; // Update total value
+      grievances.value = response.data.data;
+
+      console.log('totalCount',response.data)
+      const extractedGrievances = response.data.data.map(grievance => ({
+        code: grievance.code,
+        county: grievance.county,
+        settlement: grievance.settlement,
+        status: grievance.status,
+        complaint: grievance.complaint
+      }));
+      grievances.value = extractedGrievances;
+    } else {
+      console.log(response.data.message);
+      toast.add({ title: response.data.message, color: "red" });
+    }
+  } catch (error) {
+    console.error('Error during login:', error.message);
+    // Handle error, maybe show an error message to the user
+  }
+}
+
+const onPageCountChange = async () => {
+  // Call onChange function to fetch grievances with updated page count
+  await onChange(selectedTab.value);
+};
+
+
+const onPageChange = async () => {
+  // Call onChange function to fetch grievances with updated page count
+  await onChange(selectedTab.value);
+};
+
+ 
+
+const downloadXLSX = () => {
+  //downloadLoading.value = true
+  const data = filteredRows.value
+  const fileName = 'grievances_'+items.value[selectedTab.value].label
+  const exportType = exportFromJSON.types.csv
+  if (data) exportFromJSON({ data, fileName, exportType })
+}
 
 
 </script>

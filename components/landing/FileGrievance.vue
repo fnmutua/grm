@@ -286,7 +286,7 @@ if(response.data.success){
     toast.add({ title: 'Grievance reported successfully!' })
     loading.value=false
 
-    router.push({ path: "/" })
+  router.push({ path: "/" })
 
 
   } else {
