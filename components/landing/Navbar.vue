@@ -90,7 +90,7 @@ const open = ref(false);
       <nav class="w-full lg:w-auto mt-2 lg:flex lg:mt-0" :class="{ block: open, hidden: !open }">
         <ul class="flex flex-col lg:flex-row lg:gap-3">
           <li v-for="item of menuitems" :key="item.path">
-            <a :href="item.path" :class="{'nuxt-green': route.path === item.path, 'flex lg:px-3 py-2 text-gray-600 hover:text-gray-900': true}">
+            <a :href="item.path" :class="{'nuxt-green': route.path === item.path, 'flex lg:px-3 py-2 text-gray-600 hover:text-green-900': true}">
               {{ item.title }}
             </a>
           </li>
