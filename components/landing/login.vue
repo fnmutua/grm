@@ -37,6 +37,8 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
+ 
+
 
 const form = ref({
   username: '',
@@ -45,6 +47,13 @@ const form = ref({
 const toast = useToast()
 const loading = ref(false);
 const showPassword = ref(false);
+
+const router = useRouter()
+
+ 
+const { logout , login} = useAuth();
+
+
 
 async function handleSubmit() {
   try {
@@ -59,6 +68,11 @@ async function handleSubmit() {
       console.log(response.data.message)
       toast.add({ title:response.data.message })
 
+     // Set the user data in the global state
+       
+      //await login( ); // call authenticateUser and pass the user object
+        login()
+      router.push('/grievances/list');
 
     }
     else {

@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  
+  ssr: true,
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
   postcss: {
@@ -9,5 +9,6 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  modules: ["nuxt-icon", "@nuxt/ui"]
+  modules: ["nuxt-icon", "@nuxt/ui" ],
+ 
 });

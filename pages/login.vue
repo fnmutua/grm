@@ -2,6 +2,9 @@
 definePageMeta({
   layout: "landing",
 });
+ 
+
+
 </script>
 
 <template>

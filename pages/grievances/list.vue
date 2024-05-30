@@ -43,16 +43,25 @@
         @click="downloadXLSX"
       />
     </div>
-
-
-
-    
+  
  
-    <UTable :columns="columns" :rows="filteredRows"  class="w-full"  @select="select" >
+    <!-- <UTable :columns="columns" :rows="filteredRows"    @select="select" >
       <template #caption>
       <caption> </caption>
     </template>
-    </UTable>
+    </UTable> -->
+
+    <UTable
+       v-model:sort="sort"
+      :rows="filteredRows"
+      :columns="columns"
+      :loading="pending"
+       class="w-full"
+      :ui="{ td: { base: 'max-w-[0] truncate' }, default: { checkbox: { color: 'gray' } } }"
+    
+    >
+  </UTable>
+
     
     <template #footer>
       <div class="flex flex-wrap justify-between items-center">
@@ -111,6 +120,8 @@
 <script setup>
 definePageMeta({
   layout: "landing",
+  middleware: 'auth',
+
 });
 import axios from 'axios';
 import { ref, computed } from 'vue';
@@ -118,12 +129,14 @@ import { ref, computed } from 'vue';
 import exportFromJSON from 'export-from-json'
 
 
+const sort = ref({ column: 'code', direction: 'asc' })
 
 const toast = useToast()
 
 const selectedTab = ref(0);
 const pageCount = ref(5)
 const q = ref('')
+const pending = ref(false)
 
 const filteredRows = computed(() => {
   if (!q.value) {
@@ -196,6 +209,7 @@ async function onChange(index) {
   q.value=''
   const item = items.value[index].label;
   let status;
+  pending.value=true 
 
   if (item === 'Pending') {
     status = 'Open';
@@ -217,7 +231,7 @@ async function onChange(index) {
 
     if (response.data.code === '0000') {
       //count[status] = response.data.data.length;
-      items.value[selectedTab.value].count = response.data.total;
+      items.value[selectedTab.value].count = response.data.total ? response.data.total :0;
       total.value =response.data.total; // Update total value
       grievances.value = response.data.data;
 
@@ -229,6 +243,7 @@ async function onChange(index) {
         status: grievance.status,
         complaint: grievance.complaint
       }));
+      pending.value = false
       grievances.value = extractedGrievances;
     } else {
       console.log(response.data.message);

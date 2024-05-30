@@ -27,7 +27,7 @@
          <LandingLink
           size="lg"
           styleName="outline"
-          to="/grievances"
+          to="/grievances/status"
 
           >Check Status</LandingLink
         >

@@ -1,6 +1,8 @@
 <script setup>
 definePageMeta({
   layout: "landing",
+  middleware: 'auth',
+
 });
 </script>
 
