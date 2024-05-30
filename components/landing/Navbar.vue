@@ -22,6 +22,16 @@ const menuitems = [
   },
 ];
 
+const colorMode = useColorMode()
+const isDark = computed({
+  get () {
+    return colorMode.value === 'dark'
+  },
+  set () {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+  }
+})
+
 const open = ref(false);
 </script>
 
@@ -34,7 +44,7 @@ const open = ref(false);
           ><span class="text-slate-500">GRM</span>
         </a>
         <div class="block lg:hidden">
-          <button @click="open = !open" class="text-green-800">
+          <button @click="open = !open" class="text-white-800">
             <svg
               fill="currentColor"
               class="w-4 h-4"
@@ -72,17 +82,32 @@ const open = ref(false);
           </li>
         </ul>
         <div class="lg:hidden flex items-center mt-3 gap-4">
-          <LandingLink href="#" styleName="muted" block size="md"
+          <LandingLink to="/login" styleName="muted" block size="md"
             >Log in</LandingLink
           >
-          <LandingLink href="#" size="md" block>Sign up</LandingLink>
+          <LandingLink to="/login" size="md" block>Sign up</LandingLink>
         </div>
       </nav>
+      <ClientOnly>
+        <UButton
+          :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
+          color="gray"
+          variant="ghost"
+          aria-label="Theme"
+          @click="isDark = !isDark"
+        />
+        <template #fallback>
+          <div class="w-8 h-8" />
+        </template>
+      </ClientOnly>
+
       <div>
         <div class="hidden  lg:flex items-center gap-4">
-          <a href="#">Log in</a>
-          <LandingLink href="#" size="md">Sign up</LandingLink>
+          <a to="/login">Log in</a>
+          <LandingLink to="/register" size="md">Sign up</LandingLink>
         </div>
+
+        
       </div>
     </header>
   </LandingContainer>

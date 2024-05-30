@@ -181,7 +181,7 @@ function onInput(event) {
       </div>
 
       <!-- Divider -->
-      <UDivider label="Status" orientation="vertical"  size="2xs"/>
+      <UDivider label="..." orientation="vertical"  size="2xs"/>
 
       <!-- Status Section -->
       <div class="col-span-1 sm:col-span-2 lg:col-span-2 space-y-4">
