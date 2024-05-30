@@ -102,10 +102,7 @@
 
     </UCard>
     
-    <LandingPageHead>
-      <template v-slot:desc>Fill in all the required fields.</template>
-    </LandingPageHead>
-    
+   
   </LandingContainer>
 
  
