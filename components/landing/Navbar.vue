@@ -4,10 +4,13 @@
 const { logout } = useAuth();
 let isAuthenticated =false 
 if (process.client) {
-    isAuthenticated = localStorage.getItem("isAuthenticated") == "true";
+    isAuthenticated = localStorage.getItem("isAuthenticated") =="true"?true :false
 
   }
-  
+ 
+
+
+
 const menuitems = [
   {
     title: "Home",
@@ -57,13 +60,15 @@ const isDark = computed({
 
 const open = ref(false);
 </script>
-
 <template>
   <LandingContainer>
-    <header class="flex flex-col lg:flex-row justify-between items-center my-5">
+    <header class="fixed top-0 left-0 w-full bg-white bg-opacity-75 backdrop-blur-lg z-50 flex flex-col lg:flex-row justify-between items-center py-4 px-5 shadow-md">
+      <!-- <header class="flex flex-col lg:flex-row justify-between items-center my-5"> -->
+
       <div class="flex w-full lg:w-auto items-center justify-between">
-        <a href="/" class="text-lg"><span class="font-bold text-slate-800">e</span><span
-            class="text-slate-500">GRM</span>
+        <a href="/" class="text-lg">
+          <span class="font-bold text-slate-800">e</span>
+          <span class="text-slate-500">GRM</span>
         </a>
         <div class="block lg:hidden">
           <button @click="open = !open" class="text-white-800">
@@ -92,33 +97,38 @@ const open = ref(false);
           <LandingLink to="/login" size="md" block>Logout</LandingLink>
         </div>
       </nav>
-      <ClientOnly>
+      
+
+      <div class="hidden lg:flex items-center gap-4 navbar-end">
+        <ClientOnly>
         <UTooltip text="Change theme">
-          <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="gray"
-            variant="ghost" aria-label="Theme" @click="isDark = !isDark" />
+          <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="gray" variant="ghost" aria-label="Theme" @click="isDark = !isDark" />
         </UTooltip>
 
         <template #fallback>
           <div class="w-8 h-8" />
         </template>
       </ClientOnly>
-
-      <div class="hidden  lg:flex items-center gap-4 navbar-end">
-        <UTooltip v-if="!isAuthenticated" text="Sign In" >
-           <UButton icon='i-heroicons-lock-open' color="gray" variant="ghost" aria-label="Theme"
-            @click="logoff" />
+      
+        <UTooltip v-if="!isAuthenticated" text="Sign In">
+          <UButton icon='i-heroicons-lock-open' color="gray" variant="ghost" aria-label="Theme" @click="logoff" />
         </UTooltip>
 
         <UTooltip v-if="isAuthenticated" text="Logout">
-          <UButton icon='i-heroicons-lock-closed' color="gray" variant="ghost" aria-label="Theme"
-            @click="logoff" />
+          <UButton icon='i-heroicons-lock-closed' color="gray" variant="ghost" aria-label="Theme" @click="logoff" />
         </UTooltip>
-
       </div>
-
     </header>
+  
   </LandingContainer>
 </template>
+
+<style scoped>
+.header {
+  backdrop-filter: blur(10px); /* Optional: for a more pronounced effect */
+}
+</style>
+
 
 
 <style>

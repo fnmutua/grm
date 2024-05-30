@@ -1,13 +1,8 @@
 <template>
   <NuxtLoadingIndicator />
-
-  <LandingContainer>
-    <LandingSectionhead >
-      <template v-slot:title>Grievances</template>
-      <template v-slot:desc>...</template>
-    </LandingSectionhead>
-
-    <UTabs :items="items" class="w-full" v-model=selectedTab @change="onChange" >
+     <LandingContainer>
+    
+    <UTabs :items="items" class="w-full py-11" v-model=selectedTab @change="onChange" >
  
       <template #default="{ item, index, selected }">
         <div class="flex items-center gap-2 relative truncate">
@@ -43,14 +38,7 @@
         @click="downloadXLSX"
       />
     </div>
-  
- 
-    <!-- <UTable :columns="columns" :rows="filteredRows"    @select="select" >
-      <template #caption>
-      <caption> </caption>
-    </template>
-    </UTable> -->
-
+   
     <UTable
        v-model:sort="sort"
       :rows="filteredRows"
@@ -114,7 +102,14 @@
 
     </UCard>
     
+    <LandingPageHead>
+      <template v-slot:desc>Fill in all the required fields.</template>
+    </LandingPageHead>
+    
   </LandingContainer>
+
+ 
+
 </template>
 
 <script setup>

@@ -7,7 +7,7 @@ defineProps({
 </script>
 
 <template>
-  <div :class="['mt-16', align === 'center' && 'text-center' ]">
+  <div :class="['mt-16 py-10', align === 'center' && 'text-center' ]">
     <h1 class="text-4xl lg:text-5xl font-bold lg:tracking-tight">
       <slot name="title">Title</slot>
     </h1>
