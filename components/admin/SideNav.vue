@@ -20,8 +20,7 @@
   </template>
    
 
-
-  <script setup lang="ts">
+<script setup lang="ts">
 
 // Reactive variable to track sidebar collapse state
 const isCollapsed = ref(false);

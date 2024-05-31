@@ -37,6 +37,10 @@ const menuitems = [
     title: "Contact",
     path: "/contact",
   },
+  {
+    title: "Dashboard",
+    path: "/dashboard/main",
+  },
 ];
 
 
