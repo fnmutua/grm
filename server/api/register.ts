@@ -5,12 +5,11 @@ import clientPromise from '../utils/mongodb';
 
 export default defineEventHandler(async (req) => {
  
-    const {  username, password } = await readBody(req);
-    console.log(username, password)
+  let  reg_body = await readBody(req);
     try {
-     //   const { username, password } = req.body;
-      //  console.log(req.body)
-    
+       //  console.log(req.body)
+       const { username, password } = reg_body;
+
         // Encrypt the password
         const hashedPassword = await bcrypt.hash(password, 10);
     
@@ -19,6 +18,10 @@ export default defineEventHandler(async (req) => {
         const collection = db.collection('users');
     
         // Check if the username already exists
+        reg_body.password = hashedPassword
+        console.log(reg_body)
+
+
         const existingUser = await collection.findOne({ username });
         if (existingUser) {
          // return res.status(400).json({ error: 'Username already exists' });
@@ -27,12 +30,14 @@ export default defineEventHandler(async (req) => {
           };
         }
     
+
         // Insert the user into the database
-        await collection.insertOne({ username, password: hashedPassword });
+        await collection.insertOne(reg_body);
     
        // return res.status(201).json({ message: 'User registered successfully' });
         return {
             message: 'User registered successfully' ,
+            code :'0000'
           };
       } catch (error) {
         console.error('Error registering user:', error);

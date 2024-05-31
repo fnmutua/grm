@@ -1,20 +1,16 @@
 <template>
-  <NuxtLoadingIndicator />
-     <LandingContainer>
-    
-    <UTabs :items="items" class="w-full py-11" v-model=selectedTab @change="onChange" >
+  <div class="grid lg:grid-cols-6 place-items-left pt-16 pb-8 md:pt-8 mt-20">
+    <!-- Left Column -->
+    <div class="lg:col-span-1">
+      <AdminSideNav></AdminSideNav>
+    </div>
+  
+
+    <!-- Right Column -->
+    <main class="lg:col-span-4 pt-16 pb-8 md:pt-8 pl-4">
  
-      <template #default="{ item, index, selected }">
-        <div class="flex items-center gap-2 relative truncate">
-          <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
-          <span class="truncate">{{ item.label }}</span>
-          <span v-if="selected" class="absolute -right-4 w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400" />
-          <UBadge :color="item.color" :ui="{ rounded: 'rounded-full' }">{{item.count}}</UBadge>
-        </div>
-      </template>
-    </UTabs>
-   
-    <UCard
+
+  <UCard
       class="w-full"
       :ui="{
         base: '',
@@ -103,18 +99,21 @@
     </UCard>
     
    
-  </LandingContainer>
 
- 
-
+  
+</main>
+  </div>
 </template>
 
 <script setup>
+ 
 definePageMeta({
   layout: "landing",
   middleware: 'auth',
-
 });
+
+ 
+
 import axios from 'axios';
 import { ref, computed } from 'vue';
 
@@ -126,7 +125,7 @@ const sort = ref({ column: 'code', direction: 'asc' })
 const toast = useToast()
 
 const selectedTab = ref(0);
-const pageCount = ref(5)
+const pageCount = ref(10)
 const q = ref('')
 const pending = ref(false)
 
@@ -143,27 +142,9 @@ const filteredRows = computed(() => {
 
 console.log('filteredRows',filteredRows)
 
-const items = ref([{
-  label: 'Pending',
-  icon: 'i-heroicons-bell-snooze',
-  count: undefined,
-  color: 'green' 
-}, {
-  label: 'Resolved',
-  disabled: false,
-  icon: 'i-heroicons-check-badge',
-  count: undefined,
-  color: 'orange',
- }, {
-  label: 'Escalated',
-  icon: 'i-heroicons-arrow-up-right',
-  count: undefined,
-  color: 'red',
- }]);
 
 
- const grievances =ref([])
- const count =ref({})
+const grievances =ref([])
  const columns = [  {
   key: 'code',
   label: 'Code',
@@ -196,23 +177,17 @@ onMounted(async () => {
  await onChange(0)
 });
 
+onMounted(async () => {
+ await onChange(0)
+});
+
 
 async function onChange(index) {
   q.value=''
-  const item = items.value[index].label;
-  let status;
+   let status = 'Resolved';
   pending.value=true 
 
-  if (item === 'Pending') {
-    status = 'Open';
-    count[status] = 0;
-  } else if (item === 'Resolved') {
-    status = 'Resolved';
-    count[status] = 0;
-  } else {
-    status = 'Escalated';
-    count[status] = 0;
-  }
+  
 
   try {
     const response = await axios.post('/api/grievances/list', {
@@ -223,8 +198,7 @@ async function onChange(index) {
 
     if (response.data.code === '0000') {
       //count[status] = response.data.data.length;
-      items.value[selectedTab.value].count = response.data.total ? response.data.total :0;
-      total.value =response.data.total; // Update total value
+       total.value =response.data.total; // Update total value
       grievances.value = response.data.data;
 
       console.log('totalCount',response.data)
@@ -263,10 +237,11 @@ const onPageChange = async () => {
 const downloadXLSX = () => {
   //downloadLoading.value = true
   const data = filteredRows.value
-  const fileName = 'grievances_'+items.value[selectedTab.value].label
+  const fileName = 'open_grievances' 
   const exportType = exportFromJSON.types.csv
   if (data) exportFromJSON({ data, fileName, exportType })
 }
+
 
 
 </script>

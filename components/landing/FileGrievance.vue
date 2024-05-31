@@ -80,8 +80,7 @@ async function getCounties() {
 
 
 onMounted(getCounties);
-
-
+ 
 const subcounty_disabled=ref(true)
 const ward_disabled=ref(true)
 const settlements_disabled=ref(true)

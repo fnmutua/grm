@@ -21,10 +21,10 @@ const menuitems = [
     title: "Grievances",
     path: "/grievances/status",
   },
-  {
-    title: "List",
-    path: "/grievances/list",
-  },
+  // {
+  //   title: "List",
+  //   path: "/grievances/list",
+  // },
   {
     title: "Report",
     path: "/report",
@@ -94,6 +94,9 @@ const open = ref(false);
               {{ item.title }}
             </a>
           </li>
+      
+
+
         </ul>
         <div class="lg:hidden flex items-center mt-3 gap-4">
           <LandingLink to="/login" styleName="muted" block size="md">Log in</LandingLink>

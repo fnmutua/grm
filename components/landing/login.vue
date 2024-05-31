@@ -1,7 +1,9 @@
 <template>
-  <UCard :ui="{ body: { base: 'grid grid-cols-1 sm:grid-cols-1', justify: 'center' }, style: { width: '10%' },  shadow: 'shadow' }">
+     <div class="flex items-center justify-center ">  
+
+    <UCard :ui="{ body: { base: 'space-y-4' }, style: { width: '90%', maxWidth: '400px' }, shadow: 'shadow' }">
     <!-- Form Section -->
-    <div class="space-y-4">
+    <div class="space-y-4 p-4">
       <UFormGroup label="Email" name="text">
         <UInput id="formattedInput" v-model="form.username"  class="mr-2"  />
         
@@ -32,11 +34,15 @@
 
      </div>
   </UCard>
+</div>
 </template>
 
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
+definePageMeta({
+  layout: "landing",
+});
  
 
 
@@ -72,7 +78,7 @@ async function handleSubmit() {
        
       //await login( ); // call authenticateUser and pass the user object
         login()
-      router.push('/grievances/list');
+      router.push('/dashboard/main');
 
     }
     else {
