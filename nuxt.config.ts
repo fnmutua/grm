@@ -9,7 +9,7 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  modules: ["nuxt-icon", "@nuxt/ui", "@sidebase/nuxt-auth", "@element-plus/nuxt"],
+  modules: ["nuxt-icon", "@nuxt/ui", "@sidebase/nuxt-auth", "radix-vue/nuxt", "@element-plus/nuxt"],
      auth: {
     baseURL: '/',
     provider: {
