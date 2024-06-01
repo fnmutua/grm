@@ -1,9 +1,13 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+const secret = 'maluini'; // Ideally, store this in an environment variable
+
 import clientPromise from '../utils/mongodb';
 
 export default defineEventHandler(async (req) => {
     const { username, password } = await readBody(req);
-    console.log(username, password)
+    const body = await readBody(req);
+    console.log('-----',body)
     try {
         const client = await clientPromise;
         const db = client.db('grm');
@@ -26,11 +30,18 @@ export default defineEventHandler(async (req) => {
                 code: '9999'
             };
         } else {
+            const access_token = jwt.sign({ id: user._id, username: user.username }, secret, { expiresIn: '1h' });
+            console.log('access_token',access_token)
 
             // Login successful
             return {
-                message: 'Login successful',
-                code: '0000'
+                //message: 'Login successful',
+               // code: '0000',
+               token :  access_token
+                // token: {
+                //     access_token
+                //   },
+                  
             };
         }
 

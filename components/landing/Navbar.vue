@@ -2,11 +2,17 @@
  const router = useRouter()
  const route = useRoute();
 
-const { logout } = useAuth();
+const { signOut, getSession } = useAuth();
 let isAuthenticated =false 
-if (process.client) {
-    isAuthenticated = localStorage.getItem("isAuthenticated") =="true"?true :false
 
+const session = await getSession({ force: true })
+   console.log(session)
+
+
+if (session) {
+    isAuthenticated = true
+  }else {
+    isAuthenticated =false 
   }
  
 
@@ -46,12 +52,16 @@ const menuitems = [
 
  async function logoff() {
   console.log("Logging off")
-  logout()
-  isAuthenticated=false
-  router.push('/login');
+  //logout()
+   
+  
 
+  await signOut({ callbackUrl: '/login' })
 
-}
+ 
+ 
+
+} 
 
 const colorMode = useColorMode()
 const isDark = computed({

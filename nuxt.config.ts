@@ -9,6 +9,20 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  modules: ["nuxt-icon", "@nuxt/ui" ],
- 
+  modules: ["nuxt-icon", "@nuxt/ui", "@sidebase/nuxt-auth"],
+     auth: {
+    baseURL: '/',
+    provider: {
+      type: 'local',
+      endpoints: {
+        signIn: { path: '/api/login', method: 'post' },
+        signOut: { path: '/login', method: 'post' },
+        signUp: { path: '/api/register', method: 'post' },
+        //getSession: { path: '/api/session', method: 'get' }
+         getSession: { path: '/api/session' }
+
+      },
+      token: { signInResponseTokenPointer: '/token' },
+    }
+  }
 });

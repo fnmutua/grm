@@ -40,6 +40,9 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
+
+const { redirectedFrom } = useRoute();
+
 definePageMeta({
   layout: "landing",
 });
@@ -57,37 +60,59 @@ const showPassword = ref(false);
 const router = useRouter()
 
  
-const { logout , login} = useAuth();
+//const { logout , login} = useAuth();
 
+const { signIn } = useAuth()
 
 
 async function handleSubmit() {
   try {
     loading.value = true;
-    const response = await axios.post('/api/login', {
-      username: form.value.username,
-      password: form.value.password
-    });
-    console.log(response)
+    // const response = await axios.post('/api/login', {
+    //   username: form.value.username,
+    //   password: form.value.password
+    // });
 
-    if(response.data.code =='0000') {
-      console.log(response.data.message)
-      toast.add({ title:response.data.message })
+    const credentials = {
+       username: form.value.username,
+       password: form.value.password
+    }
+    console.log(credentials)
 
-     // Set the user data in the global state
+     //  await signIn(credentials)
+
+      await signIn(
+        credentials,
+            {
+                callbackUrl: redirectedFrom ? redirectedFrom.fullPath : '/dashboard/main',
+            },
+        );
+
+      //router.push('/register');
+      
+
+
+    console.log('Login token'  )
+
+    // if(response.data.code =='0000') {
+    //   console.log(response.data.message)
+    //   toast.add({ title:response.data.message })
+
+    //  // Set the user data in the global state
        
-      //await login( ); // call authenticateUser and pass the user object
-        login()
-      router.push('/dashboard/main');
+    //   //await login( ); // call authenticateUser and pass the user object
+    //   //  login()
+    //   await signIn(credentials)
+    //   router.push('/dashboard/main');
 
-    }
-    else {
-      console.log(response.data.message)
-      toast.add({ title: response.data.message, color:"red" })
+    // }
+    // else {
+    //   console.log(response.data.message)
+    //   toast.add({ title: response.data.message, color:"red" })
 
-    }
+    // }
   } catch (error) {
-    console.error('Error during login:', error.message);
+    console.error('Error during login:', error);
     // Handle error, maybe show an error message to the user
   } finally {
     loading.value = false;
