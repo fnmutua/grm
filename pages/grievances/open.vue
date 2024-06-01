@@ -1,5 +1,5 @@
 <template>
-  <div class="grid lg:grid-cols-6 place-items-left pt-16 pb-8 md:pt-8 mt-20">
+  <div class="grid lg:grid-cols-6 place-items-left pt-5 pb-8 md:pt-8 ">
     <!-- Left Column -->
     <div class="lg:col-span-1">
       <AdminSideNav></AdminSideNav>

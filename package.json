@@ -13,6 +13,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@element-plus/nuxt": "^1.0.9",
     "@nuxt/ui": "^2.16.0",
     "@sidebase/nuxt-auth": "^0.7.2",
     "@tailwindcss/typography": "^0.5.10",

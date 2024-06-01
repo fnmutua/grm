@@ -1,35 +1,29 @@
 <template>
-  <div class="grid lg:grid-cols-6 place-items-left pt-16 pb-8 md:pt-8 mt-20">
-    <!-- Left Column -->
+  <div class="grid lg:grid-cols-12 place-items-left pt-5 pb-8 md:pt-8">
+    <!-- Left Column (Side Navigation) -->
     <div class="lg:col-span-1">
-      <AdminSideNav></AdminSideNav>
+      <AdminSideNav :collapse="isCollapse" @toggleCollapse="toggleCollapse" />
     </div>
     
-    <!-- Divider -->
- 
+    <!-- Right Column (Main Content) -->
+    <main class="lg:col-span-11 pt-16 pb-8 md:pt-8 pl-4">
 
-    <!-- Right Column -->
-    <main class="lg:col-span-4 pt-16 pb-8 md:pt-8  ">
       
-      <div class="grid md:grid-cols-4 gap-10 mx-auto max-w-4xl mt-16">
-        
-        <div>
-          <h2 class="font-medium text-2xl text-gray-800">Main Dashboard</h2>
-          <p class="text-lg leading-relaxed text-slate-500 mt-3">
-            in progress.....
-          </p>
-          
+         <div>
+          <h2 class="font-medium text-2xl text-gray-800">GRV Dashboard</h2>
+          <p class="text-lg leading-relaxed text-slate-500 mt-3">in progress.....</p>
         </div>
-         
-      </div>
-    </main>
+     </main>
   </div>
 </template>
 
 <script setup>
- 
 definePageMeta({
   layout: "landing",
   middleware:"auth"
+
 });
 </script>
+
+
+ 
