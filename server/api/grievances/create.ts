@@ -2,12 +2,26 @@ import mongoose from 'mongoose';
 import Grievance from "./../../models/grievance";
 import Document from "./../../models/grievance";
 import axios from 'axios';
-import multer from 'multer';
+import fs from 'fs';
 
  
 import {writeFile} from 'fs/promises'
  
  
+const directoryPath = './uploads'
+
+
+// Check if the directory exists
+if (!fs.existsSync(directoryPath)) {
+    // If it doesn't exist, create the directory
+    fs.mkdirSync(directoryPath);
+  
+    console.log(`Directory '${directoryPath}' created.`);
+  } else {
+    console.log(`Directory '${directoryPath}' already exists.`);
+  }
+
+  
 // generate grievance
 async function generateGrievanceReferenceNumber() {
     const currentYear = new Date().getFullYear();
