@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Grievance from "./../../models/grievance";
 
 // Define a Mongoose schema for grievances
 const grievanceSchema = new mongoose.Schema({
@@ -10,7 +11,7 @@ const grievanceSchema = new mongoose.Schema({
 });
 
 // Define the Mongoose model for grievances
-const Grievance = mongoose.model('Grievance', grievanceSchema);
+//const Grievance = mongoose.model('Grievance', grievanceSchema);
 
 export default defineEventHandler(async (req) => {
     const { status, page, pageCount } = await readBody(req);

@@ -274,12 +274,15 @@ async function onSubmit() {
   // Perform file upload and form submission
  //uploadFile(formData)
 
- const response = await axios.post('https://ussd.ags.co.ke/grv/add', formData, {
-//  const response = await axios.post(' http://localhost/grv/add', formData, {
-  headers: {
-    'Content-Type': 'multipart/form-data'
-  } 
-})
+  const response = await axios.post('/api/grievances/create', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    } 
+  })
+ 
+
+
+
 
 if(response.data.success){
     toast.add({ title: 'Grievance reported successfully!' })
@@ -307,11 +310,7 @@ async function  handleFileChange(files:File[]){
         form.file = fileObj[0];
      }
 
-
-     async function xonSubmit (event: FormSubmitEvent<any>) {
-  // Do something with data
-  console.log(event.data)
-}
+ 
 </script>
 <template>
  
