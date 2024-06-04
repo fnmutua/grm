@@ -47,7 +47,8 @@ const dataSchema = new Schema({
   },
   code: {
     type: String,
-    required: false,
+    required: true,
+    unique: true,
   },
   status: {
     type: String,
