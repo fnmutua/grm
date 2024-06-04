@@ -2,37 +2,7 @@ import jwt from 'jsonwebtoken';
 import { createError, eventHandler, getRequestHeader, H3Event } from 'h3'
 
 const SECRET = 'maluini'; // Ideally, store this in an environment variable
-
-// export default defineEventHandler(async (req) => {
-//     // Extract the token from the request headers
-//     const authHeader = req.headers['authorization'];
-//     const token = authHeader && authHeader.split(' ')[1];
-
-//     if (!token) {
-//         return {
-//             error: 'No token provided',
-//         };
-//     }
-
-//     try {
-//         // Verify the token
-//         const decoded = jwt.verify(token, secret);
-
-//         // Token is valid, return the decoded payload
-//         return {
-//             message: 'Token is valid',
-//             decoded,
-//         };
-//     } catch (err) {
-//         // Token verification failed
-//         console.error('Token verification failed:', err.message);
-//         return {
-//             error: 'Token is invalid or expired',
-//         };
-//     }
-// });
-
-
+ 
 
 const TOKEN_TYPE = 'Bearer'
 
