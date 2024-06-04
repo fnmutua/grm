@@ -1,42 +1,51 @@
 <template>
-     <div class="flex items-center justify-center ">  
-
+  <div class="flex items-center justify-center ">  
     <UCard :ui="{ body: { base: 'space-y-4' }, style: { width: '90%', maxWidth: '400px' }, shadow: 'shadow' }">
-    <!-- Form Section -->
-    <div class="space-y-4 p-4">
-      <UFormGroup label="Email" name="text">
-        <UInput id="formattedInput" v-model="form.username"  class="mr-2"  />
-        
-      </UFormGroup>
+      <!-- Form Section -->
+      <div class="space-y-4 p-4">
+        <UFormGroup label="Email" name="text">
+          <UInput 
+            id="formattedInput" 
+            v-model="form.username"  
+            class="mr-2"  
+            :state="!errors.username ? 'valid' : 'invalid'"
+          />
+          <div v-if="errors.username" class="text-red-500 text-sm">{{ errors.username }}</div>
+        </UFormGroup>
 
+        <UFormGroup v-if="!showPassword" label="Password" name="password">
+          <div class="flex items-center">
+            <UInput 
+              v-model="form.password" 
+              type="password" 
+              class="mr-2"
+              :state="!errors.password ? 'valid' : 'invalid'"
+            />
+            <UIcon name="i-heroicons-eye" class="text-gray-500 cursor-pointer" @click="togglePassword" />
+          </div>
+          <div v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</div>
+        </UFormGroup>
 
-      <UFormGroup  v-if="!showPassword" label="Password" name="password">
-        <div class="flex items-center">
-          <UInput v-model="form.password" type="password" class="mr-2" />
-          <UIcon name="i-heroicons-eye" class="text-gray-500 cursor-pointer" @click="togglePassword" />
+        <UFormGroup v-if="showPassword" label="Password" name="password">
+          <div class="flex items-center">
+            <UInput 
+              v-model="form.password" 
+              type="text" 
+              class="mr-2"
+              :state="!errors.password ? 'valid' : 'invalid'"
+            />
+            <UIcon name="i-heroicons-eye-slash" class="text-gray-500 cursor-pointer" @click="togglePassword" />
+          </div>
+          <div v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</div>
+        </UFormGroup>
+
+        <div @keyup="handleSubmit">
+          <UButton :loading="loading" label="Sign In" type="button" color="green" block @click="handleSubmit" />
         </div>
-      </UFormGroup>
-
-      
-      <UFormGroup  v-if="showPassword" label="Password" name="password">
-        <div class="flex items-center">
-        <UInput v-model="form.password" type="text"   class="mr-2"   />
-        <UIcon name="i-heroicons-eye-slash" class="text-gray-500 cursor-pointer" @click="togglePassword" />
       </div>
-
-      </UFormGroup>
- 
-
-      <div @keyup="handleSubmit">
-        <UButton :loading="loading" label="Sign In" type="button" color="green" block @click="handleSubmit" />
-      </div>
-
-
-     </div>
-  </UCard>
-</div>
+    </UCard>
+  </div>
 </template>
-
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
@@ -62,10 +71,41 @@ const router = useRouter()
  
 //const { logout , login} = useAuth();
 
+const errors = reactive({
+      username: null,
+      password: null
+    });
+
+const validate = () => {
+      errors.username = !form.value.username ? 'Email is required' : null;
+      errors.password = !form.value.password ? 'Password is required' : null;
+      
+      return !errors.username && !errors.password;
+    };
+
+
 const { signIn } = useAuth()
 
 
-async function handleSubmit() {
+const handleSubmit = async () => {
+      if (validate()) {
+        loading.value = true;
+        const credentials = {
+          username: form.value.username,
+          password: form.value.password
+            }
+    await signIn(
+        credentials,
+            {
+                callbackUrl: redirectedFrom ? redirectedFrom.fullPath : '/dashboard/main',
+            },
+        );
+        loading.value = false;
+      }
+    };
+
+
+async function xhandleSubmit() {
   try {
     loading.value = true;
     // const response = await axios.post('/api/login', {
