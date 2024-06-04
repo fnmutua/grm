@@ -44,7 +44,7 @@ function maskPhoneNumber(number) {
 async function handleSubmit() {
  
   try {
-    const response = await axios.post('https://ussd.ags.co.ke/id', form);
+    const response = await axios.post('/api/grievances/one', form);
     const responseData = response.data.data;
     console.log('responseData', responseData);
 

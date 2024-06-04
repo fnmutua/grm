@@ -36,7 +36,7 @@ export default defineEventHandler(async (req) => {
     console.log("Phone:", phone);
 
     await mongoose.connect(mongoString,{dbName:'grm' });
-        console.log('Database connected...');
+        console.log('Database  verify connected...');
   
     try {
       // Check grievance status by code and phone number

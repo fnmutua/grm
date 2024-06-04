@@ -77,7 +77,7 @@ async function handleSubmit() {
 
   loading.value = true;
   try {
-    const response = await axios.post('https://ussd.ags.co.ke/verify', form);
+    const response = await axios.post('/api/grievances/verify', form);
     const responseData = response.data;
     if (responseData) {
       grievance.value = responseData.grievance;
