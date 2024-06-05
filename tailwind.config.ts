@@ -9,6 +9,7 @@ export default {
     "./plugins/**/*.{js,ts}",
     "./app.vue",
     "./error.vue",
+    "./node_modules/flowbite/**/*.{js,ts}",
   ],
   theme: {
     extend: {
@@ -17,5 +18,7 @@ export default {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [require("@tailwindcss/typography"),
+  require('flowbite/plugin')
+    ],
 };

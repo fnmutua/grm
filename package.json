@@ -36,6 +36,7 @@
     "cors": "^2.8.5",
     "export-from-json": "^1.7.4",
     "express": "^4.19.2",
+    "flowbite": "^2.3.0",
     "formidable": "^3.5.1",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",

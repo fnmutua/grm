@@ -1,12 +1,12 @@
 <template>
-  <div class="grid lg:grid-cols-11 place-items-left pt-5 pb-8 md:pt-8 ">
+  <div class="grid lg:grid-cols-12 place-items-left pt-5 pb-8 md:pt-8 ">
       <!-- Left Column -->
       <div class="lg:col-span-2">
         <AdminSideNav></AdminSideNav>
       </div> 
 
       <!-- Right Column -->
-      <main class="lg:col-span-8 pt-16 pb-8 md:pt-8 pl-4">
+      <main class="lg:col-span-9 pt-16 pb-8 md:pt-8 pl-4 pr-5">
   
 
         <UCard
@@ -49,7 +49,7 @@
       
           </div>
         
-          <UTable
+<!--           <UTable
             v-model:sort="sort"
             @select="select"
             v-model="selected"
@@ -65,7 +65,27 @@
                 <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
             </UDropdown>
           </template>
-        </UTable>
+         
+          <template #completed-data="{ row }">
+          <UBadge
+            size="xs"
+            :label="row.acceptance === 'Pending' ? 'Pending' : (row.acceptance === 'Accepted' ? 'Accepted' : 'Rejected')"
+            :color="row.acceptance === 'Pending' ? 'orange' : (row.acceptance === 'Accepted' ? 'emerald' : 'red')"
+            variant="subtle"
+          />
+        </template>
+
+        <template #expand-data="{ row }">
+         
+          <UButton label="More..." color="gray">
+          <template #trailing>
+            <UIcon name="i-heroicons-arrow-right-20-solid" class="w-5 h-5" />
+          </template>
+        </UButton>
+
+        </template>
+  
+        </UTable> -->
 
         <div>
       
@@ -89,12 +109,7 @@
           </template>
             </UCard>
           </UModal>
-        </div>
-
-
-          
-
-
+        </div> 
           <template #footer>
             <div class="flex flex-wrap justify-between items-center">
               <div class="flex items-center gap-1.5">
@@ -144,6 +159,105 @@
             </div>
           </template>
 
+
+          <div style="width: 100%; margin-top:50px">
+            <UTable v-model="selected" :rows="filteredRows" :columns="columns" :loading="pending"
+            class="w-full"
+            :ui="{ td: { base: 'max-w-[0] truncate' }, default: { checkbox: { color: 'green' } } }" >
+              <template #name-data="{ row }">
+                <span :class="[selected.find(row => row.id === row.id) && 'text-primary-500 dark:text-primary-400']">{{ row.code }}</span>
+              </template>
+              <template #completed-data="{ row }">
+          <UBadge
+            size="xs"
+            :label="row.acceptance === 'Pending' ? 'Pending' : (row.acceptance === 'Accepted' ? 'Accepted' : 'Rejected')"
+            :color="row.acceptance === 'Pending' ? 'orange' : (row.acceptance === 'Accepted' ? 'emerald' : 'red')"
+            variant="subtle"
+          />
+        </template>
+
+        
+              <template #actions-data="{ row }">
+                <UDropdown :items="items(row)">
+                  <UButton  variant="ghost" icon="i-heroicons-ellipsis-vertical " />
+                </UDropdown>
+              </template>
+            </UTable>
+          </div>
+
+ 
+          <UModal v-model="showDetailsModal"  >
+      <div class="p-4">
+        <el-descriptions
+          class="margin-top"
+          title="Grievance Details"
+          :column="2"
+          :size="size"
+          border
+        >
+    <template #extra>
+      <UIcon name="i-heroicons-x-mark" @click="showDetailsModal =false" />
+    </template>
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <UIcon name="i-heroicons-qr-code" />
+          Code
+        </div>
+      </template>
+      {{grv_details.code}}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <el-icon :style="iconStyle">
+            <iphone />
+          </el-icon>
+          Status
+        </div>
+      </template>
+      {{grv_details.status}}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <el-icon :style="iconStyle">
+            <iphone />
+          </el-icon>
+          Complaint
+        </div>
+      </template>
+      {{grv_details.complaint}}
+    </el-descriptions-item>
+
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <el-icon :style="iconStyle">
+            <iphone />
+          </el-icon>
+          Outcome
+        </div>
+      </template>
+      {{grv_details.acceptance}}
+    </el-descriptions-item>
+  
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <el-icon :style="iconStyle">
+            <iphone />
+          </el-icon>
+          Resolution
+        </div>
+      </template>
+      {{grv_details.resolution}}
+
+    </el-descriptions-item> 
+  </el-descriptions>
+      </div>
+    </UModal>
+
         </UCard>
       
     
@@ -163,7 +277,7 @@ definePageMeta({
  
 
 import axios from 'axios';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 import exportFromJSON from 'export-from-json'
 
@@ -212,8 +326,35 @@ const grievances =ref([])
   key: 'complaint',
   label: 'Complaint',
   sortable: true,
+},
+{
+  key: 'resolution',
+  label: 'Resolution',
+  sortable: true,
  
-}  ]
+},
+// {
+//   key: 'acceptance',
+//   label: 'Accepted',
+//   sortable: true,
+ 
+// },
+
+{
+  key: 'completed',
+  label: 'Outcome',
+
+},
+
+// {
+//   key: 'expand',
+//   label: 'Details',
+
+// },
+{
+  key: 'actions'
+}
+]
 
 const page = ref(1)
 const total = ref(0)
@@ -255,7 +396,9 @@ async function onChange(index) {
         county: grievance.county,
         settlement: grievance.settlement,
         status: grievance.status,
-        complaint: grievance.complaint
+        complaint: grievance.complaint,
+        acceptance: grievance.acceptance,
+        resolution: grievance.resolution,
       }));
       pending.value = false
       grievances.value = extractedGrievances;
@@ -308,7 +451,7 @@ function select(row) {
     selected.value.splice(index, 1);
   }
 
-  console.log('Investiagte....',selected.value )
+ 
   selected_ids.value = selected.value.map(obj => obj.id);
   selected_rows.value = selected.value.map(obj => obj.code);
 
@@ -346,7 +489,8 @@ const onInvestigate= async () => {
     const response = await axios.post('/api/grievances/update', {
       ids: selected_ids.value,
       field: 'status',  // Add page parameter
-      field_value: 'Investigate' // Add pageCount parameter
+      field_value: 'Investigate', // Add pageCount parameter
+      resolution:null
     });
 
    // console.log(response.data.data[0].code)
@@ -549,7 +693,62 @@ const actions = [
    }]
 ]
 
+// Watch for changes in the selected items
+watch(selected, (newValue, oldValue) => {
+  // newValue contains the updated selected items array
+  // oldValue contains the previous selected items array
+  console.log('Selected items changed:', newValue);
+  
+  if(newValue.length >0){
+    ShowMultipleActions.value = true 
+
+    selected_ids.value = newValue.map(obj => obj.id);
+    selected_rows.value = newValue.map(obj => obj.code);
+
+    console.log('Selected items changed:', selected_ids.value );
+
+  } 
+  else {
+    ShowMultipleActions.value = false 
+
+  }
+});
+
 // Open Modal 
 const isOpen =ref(false)
 
+ 
+/////////////-----------
+const grv_details = ref()
+const getDetails = async (row) => {
+  //downloadLoading.value = true
+ console.log('getDetails....', row)
+ showDetailsModal.value=true
+ grv_details.value=row
+ 
+}
+
+
+const items = (row) => [
+  [{
+    label: 'Details',
+    icon: 'i-heroicons-pencil-square-20-solid',
+ 
+    click: () => {
+      // markResolved()
+      getDetails(row)
+    }
+
+  } ]  
+]
+
+const showDetailsModal = ref(false)
+ 
+
 </script>
+
+<style scoped>
+.el-table th {
+  color: black;
+}
+</style>

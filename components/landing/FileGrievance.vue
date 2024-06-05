@@ -252,6 +252,7 @@ async function onSubmit() {
   formData.append('settlement', select_settlement[0].label)
   formData.append('settlement_id', form.settlement)
   formData.append('complaint', form.complaint)
+  formData.append('acceptance', 'Pending')
   
   
   // Retrieve file from file input

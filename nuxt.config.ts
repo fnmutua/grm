@@ -6,7 +6,8 @@ export default defineNuxtConfig({
   postcss: {
     plugins: {
       tailwindcss: {},
-      autoprefixer: {}
+      autoprefixer: {},
+
     }
   },
   modules: ["nuxt-icon", "@nuxt/ui", "@sidebase/nuxt-auth", "radix-vue/nuxt", "@element-plus/nuxt"],

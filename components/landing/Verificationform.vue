@@ -80,6 +80,7 @@ async function handleSubmit() {
     const response = await axios.post('/api/grievances/verify', form);
     const responseData = response.data;
     console.log('responseData',responseData)
+
     if (responseData.success) {
       grievance.value = responseData.grievance;
 
@@ -157,9 +158,47 @@ function onInput(event) {
   formattedValue.value = event.target.value;
 }
 //---------------------------------------------------------------------
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////////Acccetp Resolution//////////////////////////////////////
 
 
+ 
+const acceptDecision= async () => {
+ try {
+    const response = await axios.post('/api/grievances/update', {
+      ids: selected_ids.value,
+      field: 'status',  // Add page parameter
+      field_value: 'Investigate' // Add pageCount parameter
+    });
+
+   // console.log(response.data.data[0].code)
+   // let msg = 'your grievance '+response.data.data[0].code+ ' is currently under review.'
+
+    for (let i = 0; i < selected_rows.value.length; i++) {
+      // func(array[i]);
+      console.log(selected_rows.value[i])
+      let msg = 'your grievance ' + selected_rows.value[i] +' is currently under review.'
+        sendNotification(msg)
+        
+    }
+    selected_rows.value=[]
+
+    
+    if(response.data.success){
+      toast.add({ title: 'Status updated successfuly', color: "primary" });
+    }
+    else {
+      toast.add({ title: 'Status update failed', color: "red" });
+
+    }
+
+  } catch (error) {
+    console.error('Error during login:', error.message);
+    // Handle error, maybe show an error message to the user
+    selected_rows.value=[]
+  }
+
+
+}
 
 </script>
 
@@ -221,7 +260,7 @@ function onInput(event) {
 
           <template #footer  >
             <UButtonGroup size="sm" orientation="horizontal" v-show="showGrievance" >
-              <UButton v-show="showAcceptButton" icon="i-heroicons-check-badge-16-solid" label="Accept" color="green" />
+              <UButton v-show="showAcceptButton" icon="i-heroicons-check-badge-16-solid" label="Accept" color="green"  @click="acceptDecision()" />
               <UButton icon="i-heroicons-arrow-uturn-left-20-solid" label="Withdraw" color="gray" />
               <UButton icon="i-heroicons-arrow-right" label="Escalate" color="red" />
             </UButtonGroup>

@@ -87,7 +87,7 @@
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'radix-vue';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-const scrollbarHeight = ref(window.innerHeight); // Initial height based on current window size
+const scrollbarHeight = ref(890); // Initial height based on current window size
 
 
 

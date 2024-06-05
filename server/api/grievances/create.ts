@@ -156,6 +156,7 @@ async function generateGrievanceReferenceNumber() {
         phone: fields.phone,
         status: "Open",
         resolution: "Pending", // default
+        acceptance: fields.acceptance, // default
       });
  
       const code = await generateGrievanceReferenceNumber();

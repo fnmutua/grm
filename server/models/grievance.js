@@ -59,6 +59,12 @@ const dataSchema = new Schema({
     type: String,
     required: false,
   },
+  acceptance: {
+    type: String,
+    enum:  ['Accepted',  'Rejected', 'Pending' ],
+    required: false,
+  },
+  
 
 }, {
   timestamps: true
