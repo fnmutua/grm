@@ -34,9 +34,6 @@ async function generateGrievanceReferenceNumber() {
       { sort: { createdAt: -1 } }
     ).exec();
 
- 
-
-  
     let newGrievanceNumber;
   
  
@@ -337,7 +334,7 @@ async function resolutionAction(grievance_code, action) {
     const updatedGrievance = await Grievance.findOneAndUpdate(
       { code: grievance_code }, // Filter
       { resolution: action }, // Update
-      { status: action == "Accepted" ? "closed" : "Rejected" },
+      { status: action == "Accepted" ? "Closed" : "Escalated" },
       { new: true } // Options: Return the updated document
     ).exec();
 
@@ -356,7 +353,7 @@ async function resolutionAction(grievance_code, action) {
 }
 
   
-  export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event) => {
 
     const mongoString = process.env.MONGODB_URI;
 
@@ -494,7 +491,7 @@ async function resolutionAction(grievance_code, action) {
               if (status == "Not found") {
                 response = `END Your complaint ref: ${grievance_code} is ${status}`;
               } else {
-                response = `END Your complaint ref: ${grievance_code} is now marked resolved`;
+                response = `END Your complaint ref: ${grievance_code} has been escalated`;
               }
       
               break;
