@@ -79,7 +79,8 @@ async function handleSubmit() {
   try {
     const response = await axios.post('/api/grievances/verify', form);
     const responseData = response.data;
-    if (responseData) {
+    console.log('responseData',responseData)
+    if (responseData.success) {
       grievance.value = responseData.grievance;
 
       grievance.value.phone = await maskPhoneNumber(grievance.value.phone )
@@ -92,7 +93,12 @@ async function handleSubmit() {
         showAcceptButton.value = true;
       }
       console.log('showAcceptButton', showAcceptButton.value);
-    } 
+    } else {
+
+    showGrievance.value = false;
+    loading.value = false;
+    missingGrievance.value="No grievances match the provided information" 
+    }
    } catch (error) {
     showGrievance.value = false;
     loading.value = false;

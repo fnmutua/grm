@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
- 
+const toast = useToast()
+
 
 const route = useRoute()
 const loading = ref(true)
@@ -70,8 +71,76 @@ async function handleSubmit() {
   }
 }
 
+/// Up,laod File 
+const uploads =ref([])
+const showSubmit =ref(false)
+async function  handleFileChange(files:File[]){
+  uploads.value=[]
+         let fileObj = await files
+        console.log(fileObj[0])
+        uploads.value.push(fileObj[0]);
+  console.log('files.value',uploads.value[0])
+  showSubmit.value=true
+
+     }
+
+ async function uploadFile() {
+  
+ console.log("Submit.......")
+ loading.value=true
+ 
+    const formData = new FormData()
+ 
+ 
+  
+  // Retrieve file from file input
+
+  if ( uploads.value.length>0 ) {
+    console.log("Has uplaods....",uploads.value[0]  )
+    formData.append('file', uploads.value[0]  )
+    formData.append('fileName',uploads.value[0].name)
+    console.log( 'grievance.code', grievance.value.code)
+    formData.append('grievanceCode', grievance.value.code)
+
+  }else {
+    showSubmit.value=false
+  }
+ 
+ 
 
 
+    // Log each entry in the FormData object
+    for (let [key, value] of formData.entries()) {
+    console.log(`${key}: ${value}`);
+  }
+ 
+  const response = await axios.post('/api/grievances/documentation', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    } 
+  })
+  
+
+if(response.data.success){
+  uploads.value=[]
+  showSubmit.value=false
+    toast.add({ title: 'Documentation uploaded successfully!' })
+   
+    loading.value=false
+
+
+ 
+
+  } else {
+    toast.add({ title: response.data.message, color:"red" })
+    loading.value=false
+
+
+  }
+  
+console.log(response)
+ 
+}   
 
 </script>
 
@@ -100,14 +169,19 @@ async function handleSubmit() {
           <div v-show="!showGrievance && !loading">
            <p> No grievances match the provided information</p>
           </div>
+          <UDivider label="***" />
 
-         <!--  <template #footer>
-            <UButtonGroup size="sm" orientation="horizontal"  v-show="showGrievance">
-              <UButton v-show="showAcceptButton" icon="i-heroicons-check-badge-16-solid" label="Accept" color="green" />
-              <UButton icon="i-heroicons-arrow-uturn-left-20-solid" label="Withdraw" color="gray" />
-              <UButton icon="i-heroicons-arrow-right" label="Escalate" color="red" />
-            </UButtonGroup>
-          </template> -->
+          <UFormGroup label="Do you wish to upload supporting documentation?" name="documentation">
+            <UInput  type="file" size="sm" icon="i-heroicons-folder" @change="handleFileChange" />
+          </UFormGroup> 
+    
+
+          <UButton  :loading="loading"  v-if="showSubmit"  label="Submit" :onClick="uploadFile" color="green" style="margin-right: 10px; margin-top:10px" >
+          <template #trailing>
+            <UIcon name=" i-heroicons-cloud-arrow-up-solid"  />
+          </template>
+        </UButton>
+
         </UCard>
  
     </UCard>

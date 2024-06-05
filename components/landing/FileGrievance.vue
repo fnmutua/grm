@@ -4,13 +4,8 @@ import { onMounted, reactive, ref  } from 'vue';
 
 import { object, string, type InferType } from 'yup'
 import type { FormError, FormSubmitEvent } from '#ui/types'
+const toast = useToast()
 
-type Schema = InferType<typeof schema>
-  const toast = useToast()
-  const router = useRouter()
-
-
-const disableSubmit =ref(true)
  
  const schema = object({
    phone: string()
