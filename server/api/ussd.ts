@@ -333,7 +333,7 @@ async function resolutionAction(grievance_code, action) {
 
     const updatedGrievance = await Grievance.findOneAndUpdate(
       { code: grievance_code }, // Filter
-      { resolution: action }, // Update
+   //   { resolution: action }, // Update
       { status: action == "Accepted" ? "Closed" : "Escalated" },
       { new: true } // Options: Return the updated document
     ).exec();
@@ -491,7 +491,7 @@ export default defineEventHandler(async (event) => {
               if (status == "Not found") {
                 response = `END Your complaint ref: ${grievance_code} is ${status}`;
               } else {
-                response = `END Your complaint ref: ${grievance_code} has been escalated`;
+                response = `END Your complaint ref: ${grievance_code} has been escalated to the next level`;
               }
       
               break;

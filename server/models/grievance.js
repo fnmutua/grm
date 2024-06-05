@@ -52,13 +52,11 @@ const dataSchema = new Schema({
   },
   status: {
     type: String,
-    enum:  ['Open', 'Review', 'Investigation', 'Resolved','Pending'],
+    enum:  ['Open',  'Investigation',  'Review','Resolved','Escalated','Closed'],
     required: false,
   },
   resolution: {
     type: String,
-    enum:  ['Accepted', 'Rejected', 'Pending' ],
-    defaultValue:'Pending',
     required: false,
   },
 

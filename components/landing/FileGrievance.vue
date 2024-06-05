@@ -4,6 +4,7 @@ import { onMounted, reactive, ref  } from 'vue';
 
 import { object, string, type InferType } from 'yup'
 import type { FormError, FormSubmitEvent } from '#ui/types'
+const router = useRouter()
 const toast = useToast()
 
  

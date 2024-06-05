@@ -233,7 +233,7 @@ onMounted(async () => {
 
 async function onChange(index) {
   q.value=''
-   let status = 'Resolved';
+   let status = 'Investigate';
   pending.value=true 
  
   try {
