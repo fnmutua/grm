@@ -204,7 +204,9 @@ import { ref, computed, watch } from 'vue';
 
 import exportFromJSON from 'export-from-json'
 
+const { data } = useAuth()
 
+console.log("Logged in user", data.value)
 const sort = ref({ column: 'code', direction: 'asc' })
 
 const toast = useToast()
@@ -287,8 +289,14 @@ onMounted(async () => {
   await onChange(0)
 });
 
-
+ 
 async function onChange(index) {
+
+     
+   
+
+
+
   q.value = ''
   let status = 'Resolved';
   pending.value = true

@@ -104,60 +104,7 @@ const handleSubmit = async () => {
       }
     };
 
-
-async function xhandleSubmit() {
-  try {
-    loading.value = true;
-    // const response = await axios.post('/api/login', {
-    //   username: form.value.username,
-    //   password: form.value.password
-    // });
-
-    const credentials = {
-       username: form.value.username,
-       password: form.value.password
-    }
-    console.log(credentials)
-
-     //  await signIn(credentials)
-
-      await signIn(
-        credentials,
-            {
-                callbackUrl: redirectedFrom ? redirectedFrom.fullPath : '/dashboard/main',
-            },
-        );
-
-      //router.push('/register');
-      
-
-
-    console.log('Login token'  )
-
-    // if(response.data.code =='0000') {
-    //   console.log(response.data.message)
-    //   toast.add({ title:response.data.message })
-
-    //  // Set the user data in the global state
-       
-    //   //await login( ); // call authenticateUser and pass the user object
-    //   //  login()
-    //   await signIn(credentials)
-    //   router.push('/dashboard/main');
-
-    // }
-    // else {
-    //   console.log(response.data.message)
-    //   toast.add({ title: response.data.message, color:"red" })
-
-    // }
-  } catch (error) {
-    console.error('Error during login:', error);
-    // Handle error, maybe show an error message to the user
-  } finally {
-    loading.value = false;
-  }
-}
+ 
 
 async function togglePassword() {
   showPassword.value=!showPassword.value

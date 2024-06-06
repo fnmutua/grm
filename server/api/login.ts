@@ -30,17 +30,13 @@ export default defineEventHandler(async (req) => {
                 code: '9999'
             };
         } else {
-            const access_token = jwt.sign({ id: user._id, username: user.username }, secret, { expiresIn: '1h' });
+            const access_token = jwt.sign({ id: user._id, username: user.username, name:user.name, roles:user.roles }, secret, { expiresIn: '1h' });
             console.log('access_token',access_token)
 
-            // Login successful
-            return {
-                //message: 'Login successful',
-               // code: '0000',
+             return {
+            
                token :  access_token
-                // token: {
-                //     access_token
-                //   },
+             
                   
             };
         }

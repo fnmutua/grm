@@ -1,12 +1,15 @@
 import mongoose from 'mongoose';
 import User from "./../../models/user";
-
-
+ 
+ 
 
 export default defineEventHandler(async (req) => {
+ 
+
     const { page, pageCount } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
 
+   
     try {
         await mongoose.connect(mongoString,{dbName:'grm' });
         console.log('Database connected...');
@@ -17,7 +20,7 @@ export default defineEventHandler(async (req) => {
         // Find grievances based on status and include pagination
         const data = await User.find().skip(skip).limit(pageCount);
 
-        console.log('users',data)
+       // console.log('users',data)
  
         if (data.length === 0) {
             return {

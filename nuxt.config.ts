@@ -24,6 +24,13 @@ export default defineNuxtConfig({
 
       },
       token: { signInResponseTokenPointer: '/token' },
-    }
+      sessionDataType: {
+        id: 'string',
+        username: 'string',
+        name: 'string',
+        role: 'array' // Define role as 'string' type
+      },
+    },
+  
   }
 });

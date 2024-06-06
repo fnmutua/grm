@@ -6,7 +6,7 @@ const { signOut, getSession } = useAuth();
 let isAuthenticated =false 
 
 const session = await getSession({ force: true })
-   console.log(session)
+   console.log("session",session)
 
 
 if (session) {
