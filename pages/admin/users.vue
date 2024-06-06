@@ -95,69 +95,48 @@
 
 
         <UModal v-model="showDetailsModal">
-          <div class="p-4">
-            <el-descriptions class="margin-top" title="Grievance Details" :column="2" :size="size" border>
-              <template #extra>
-                <UIcon name="i-heroicons-x-mark" @click="showDetailsModal = false" />
-              </template>
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">
-                    <UIcon name="i-heroicons-qr-code" />
-                    Code
-                  </div>
-                </template>
-                {{ grv_details.code }}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">
-                    <el-icon :style="iconStyle">
-                      <iphone />
-                    </el-icon>
-                    Status
-                  </div>
-                </template>
-                {{ grv_details.status }}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">
-                    <el-icon :style="iconStyle">
-                      <iphone />
-                    </el-icon>
-                    Complaint
-                  </div>
-                </template>
-                {{ grv_details.complaint }}
-              </el-descriptions-item>
+          
+          <UCard :ui="{
+          base: 'h-full flex flex-col',
+          rounded: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+          body: {
+            base: 'grow'
+          }
+        }">
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                Rights Allocation
+              </h3>
+              <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
+                @click="showDetailsModal = false" />
+            </div>
+          </template>
+          <div>
 
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">
-                    <el-icon :style="iconStyle">
-                      <iphone />
-                    </el-icon>
-                    Outcome
-                  </div>
-                </template>
-                {{ grv_details.acceptance }}
-              </el-descriptions-item>
+            <p>
+              You are allocating <span class="highlight">{{ user_details.jina }}</span> the selected roles below:
+            </p>
+            <UDivider label="***" />
 
-              <el-descriptions-item>
-                <template #label>
-                  <div class="cell-item">
-                    <el-icon :style="iconStyle">
-                      <iphone />
-                    </el-icon>
-                    Resolution
-                  </div>
-                </template>
-                {{ grv_details.resolution }}
-
-              </el-descriptions-item>
-            </el-descriptions>
           </div>
+          <div class="checkbox-container" style="margin-top: 20px">
+            <UCheckbox v-for="(role, index) in roles" :key="index" v-model="checkedRoles" :value="role">
+              <template #label>
+                <span>{{ role }}</span>
+              </template>
+            </UCheckbox>
+          </div>
+
+          <template #footer>
+            <div class="flex justify-end items-center gap-2">
+              <UButton @click="showDetailsModal = false" variant="outline" color="gray">Cancel</UButton>
+              <UButton @click="EditRights" variant="outline" color="green">Submit</UButton>
+            </div>
+          </template>
+
+        </UCard>
         </UModal>
 
       </UCard>
@@ -333,6 +312,7 @@ async function onChange(index) {
         settlement: user.settlement,
         gender: user.gender,
         phone: user.phone,
+        roles: user.roles,
       }));
       pending.value = false
       users.value = extractedUsers;
@@ -442,7 +422,9 @@ const EditRights = async () => {
     console.log(response)
 
     if (response.data.success) {
-      toast.add({ title: 'Rights allocation is successfull', color: "primary" });
+      toast.add({ title: 'Rights allocation is successful', color: "primary" });
+      isOpenRights.value=false
+      showDetailsModal.value=false
     } else {
       toast.add({ title: 'Rights allocation  failed', color: "red" });
 
@@ -614,13 +596,14 @@ const isOpen = ref(false)
 
 
 /////////////-----------
-const grv_details = ref()
+const user_details = ref()
 const getDetails = async (row) => {
   //downloadLoading.value = true
   console.log('getDetails....', row)
   showDetailsModal.value = true
-  grv_details.value = row
-
+  user_details.value = row
+  checkedRoles.value = row.roles
+  selected_ids.value=[row.id]
 }
 
 

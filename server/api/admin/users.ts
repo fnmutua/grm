@@ -16,6 +16,8 @@ export default defineEventHandler(async (req) => {
 
         // Find grievances based on status and include pagination
         const data = await User.find().skip(skip).limit(pageCount);
+
+        console.log('users',data)
  
         if (data.length === 0) {
             return {
