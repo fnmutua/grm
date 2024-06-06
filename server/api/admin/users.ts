@@ -1,16 +1,7 @@
 import mongoose from 'mongoose';
+import User from "./../../models/user";
 
-// Define a Mongoose schema for grievances
-const UserSchema = new mongoose.Schema({
-    // Define the schema fields as needed
-    // For example:
-    name: String,
-    username: String,
-    phone: String
-});
 
-// Define the Mongoose model for grievances
-const User = mongoose.model('User', UserSchema);
 
 export default defineEventHandler(async (req) => {
     const { page, pageCount } = await readBody(req);

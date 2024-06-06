@@ -217,12 +217,7 @@ async function xonSubmit() {
   // Perform file upload and form submission
  //uploadFile(formData)
 
- const response = await axios.post('/api/register', formData, {
-//  const response = await axios.post(' http://localhost/grv/add', formData, {
-  headers: {
-    'Content-Type': 'multipart/form-data'
-  } 
-})
+ const response = await axios.post('/api/admin/register', formData)
 
  
 
