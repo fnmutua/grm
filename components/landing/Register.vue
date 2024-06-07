@@ -181,63 +181,7 @@ async function onSubmit() {
 
 const router = useRouter()
 
-async function xonSubmit() {
-  
-
-  let select_county = counties.value.filter(obj => obj.value == form.county )
-  let select_subcounty = subcounties.value.filter(obj => obj.value == form.subcounty )
-  let select_ward = wards.value.filter(obj => obj.value == form.ward )
-  let select_settlement = settlements.value.filter(obj => obj.value == form.settlement )
-
-
  
- console.log("Submit.......")
- loading.value=true
-    form.phone = convertPhoneNumber(form.phone)
-
-    const formData = new FormData()
-
-  //formData.append('name', form.name)
-  formData.append('name',  form.name === '' ? 'Anonymous' :  form.name);
-  formData.append('username', form.username)
-  formData.append('password', form.password)
-  formData.append('phone', form.phone)
-  formData.append('gender', form.gender)
-  formData.append('gbv', form.gbv)
-  formData.append('county', select_county[0].label )
-  formData.append('subcounty', select_subcounty[0].label)
-  formData.append('ward', select_ward[0].label)
-  formData.append('settlement', select_settlement[0].label)
-  formData.append('settlement_id', form.settlement)
-    
-    // Log each entry in the FormData object
-    for (let [key, value] of formData.entries()) {
-    console.log(`${key}: ${value}`);
-  }
-  // Perform file upload and form submission
- //uploadFile(formData)
-
- const response = await axios.post('/api/admin/register', formData)
-
- 
-
-if(response.data.success){
-    toast.add({ title: 'Registered successfully!' })
-    loading.value=false
-
-  router.push({ path: "/login" })
-
-
-  } else {
-    toast.add({ title: 'User registration failed!', color:"red" })
-    loading.value=false
-
-
-  }
-  
-console.log(response)
- 
-}
 
 async function togglePassword() {
   showPassword.value=!showPassword.value

@@ -17,8 +17,9 @@ export default defineEventHandler(async (req) => {
         // Calculate skip value for pagination
         const skip = (page - 1) * pageCount;
 
-        // Find grievances based on status and include pagination
-        const data = await User.find().skip(skip).limit(pageCount);
+        // Find   based on status and include pagination
+      // const data = await User.find().skip(skip).limit(pageCount);
+        const data = await User.find().skip(skip).limit(pageCount).select('-password');
 
        // console.log('users',data)
  
