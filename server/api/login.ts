@@ -21,6 +21,27 @@ export default defineEventHandler(async (req) => {
             };
         }
 
+         const isAdmin =  user.roles.includes("ADMIN");
+         const isUser =  user.roles.includes("USER");
+         const isSettGRC =  user.roles.includes("SETTLEMENT_GRC");
+         const isCountyGRC =  user.roles.includes("COUNTY_GRC");
+         const isNationalGRC =  user.roles.includes("NATIONAL_GRC");
+         const isGBV =  user.roles.includes("GBV");
+
+        const jwt_obj={
+            id: user._id, 
+            username: user.username, 
+            name:user.name, 
+            roles:user.roles,
+            isAdmin:isAdmin,
+            isUser:isUser,
+            isSettGRC:isSettGRC,
+            isCountyGRC:isCountyGRC,
+            isNationalGRC:isNationalGRC,
+            isGBV:isGBV
+
+        }
+
         // Compare the password
         const passwordMatch = await bcrypt.compare(password, user.password);
         console.log(passwordMatch)
@@ -30,7 +51,8 @@ export default defineEventHandler(async (req) => {
                 code: '9999'
             };
         } else {
-            const access_token = jwt.sign({ id: user._id, username: user.username, name:user.name, roles:user.roles }, secret, { expiresIn: '1h' });
+           //const access_token = jwt.sign({ id: user._id, username: user.username, name:user.name, roles:user.roles }, secret, { expiresIn: '1h' });
+            const access_token = jwt.sign(jwt_obj, secret, { expiresIn: '1h' });
             console.log('access_token',access_token)
 
              return {

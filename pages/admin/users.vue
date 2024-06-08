@@ -453,7 +453,7 @@
 <script setup>
 definePageMeta({
   layout: "landing",
-  middleware: "auth",
+  middleware: ["auth", "admin"],
 });
 
 import axios from "axios";
