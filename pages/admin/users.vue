@@ -654,6 +654,8 @@ const allocateRights = async () => {
 const EditRights = async () => {
   const allocated_roles = [];
 
+  console.log('selected_ids.value',selected_ids.value,)
+
   // Loop through objectsArray and append roles property
   selected_ids.value.forEach((obj) => {
     let obj_role = {};
@@ -802,7 +804,10 @@ const getDetails = async (row) => {
   showDetailsModal.value = true;
   user_details.value = row;
   checkedRoles.value = row.roles;
-  selected_ids.value = [row.id];
+  selected_ids.value = [row._id];
+
+  console.log("getDetails....", selected_ids.value );
+
 };
 
 const showUserModal = async (row) => {
