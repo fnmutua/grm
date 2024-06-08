@@ -22,15 +22,13 @@ const menuitems = [
   {
     title: "Home",
     path: "/",
-  },
+   },
+
+  
   {
     title: "Grievances",
     path: "/grievances/status",
   },
-  // {
-  //   title: "List",
-  //   path: "/grievances/list",
-  // },
   {
     title: "Report",
     path: "/report",

@@ -65,7 +65,7 @@
         <div :class="{ 'hidden': isCollapsed }">
           <div>
             <el-scrollbar :height="scrollbarHeight + 'px'">
-              <UVerticalNavigation :links="links">
+              <UVerticalNavigation :links="filteredLinks">
                 <template #default="{ link }">
                   <span 
                     class="group-hover:text-primary relative" 
@@ -86,6 +86,10 @@
 <script setup lang="ts">
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'radix-vue';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+
+const { data } = useAuth();  // user data from session 
+
+
 
 const scrollbarHeight = ref(890); // Initial height based on current window size
 
@@ -115,6 +119,15 @@ const isCollapsed = ref(false);
 const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value;
 };
+
+
+// const isAdmin =  user.roles.includes("ADMIN");
+// const isUser =  user.roles.includes("USER");
+// const isSettGRC =  user.roles.includes("SETTLEMENT_GRC");
+// const isCountyGRC =  user.roles.includes("COUNTY_GRC");
+// const isNationalGRC =  user.roles.includes("NATIONAL_GRC");
+// const isGBV =  user.roles.includes("GBV");
+
 
 const links = [
   // Group 1
@@ -146,71 +159,158 @@ const links = [
   [
     {
       label: 'Grievances',
-      type: 'header'
+      type: 'header',
+      roles:['isAdmin','isGBV','isSettGRC','isCountyGRC','isNationalGRC','isGBV']
+
     }
   ],
   [
     {
       label: 'Open',
       icon: 'i-heroicons-shield-exclamation',
-      to: '/grievances/open'
+      to: '/grievances/open',
+      roles:['isAdmin','isGBV','isSettGRC','isCountyGRC','isNationalGRC','isGBV']
+
     },
     {
       label: 'Investigate',
       icon: 'i-heroicons-question-mark-circle',
-      to: '/grievances/investigate'
+      to: '/grievances/investigate',
+      roles:['isAdmin','isGBV','isSettGRC','isCountyGRC','isNationalGRC','isGBV']
+
     },
     {
       label: 'Resolved',
       icon: 'i-heroicons-check',
-      to: '/grievances/resolved'
+      to: '/grievances/resolved',
+      roles:['isAdmin','isGBV','isSettGRC','isCountyGRC','isNationalGRC','isGBV']
+
     },
     {
       label: 'Escalated',
       icon: 'i-heroicons-bars-arrow-up',
-      to: '/grievances/escalated'
+      to: '/grievances/escalated',
+      roles:['isAdmin','isGBV','isSettGRC','isCountyGRC','isNationalGRC','isGBV']
+
     }
   ],
+  [
+    {
+      label: 'GBV',
+      type: 'header',
+      roles:['isGBV']
+
+    }
+  ],
+  [
+    {
+      label: 'Open',
+      icon: 'i-heroicons-shield-exclamation',
+      to: '/grievances/open',
+      roles:['isGBV']
+
+    },
+    {
+      label: 'Investigate',
+      icon: 'i-heroicons-question-mark-circle',
+      to: '/grievances/investigate',
+      roles:['isGBV']
+
+    },
+    {
+      label: 'Resolved',
+      icon: 'i-heroicons-check',
+      to: '/grievances/resolved',
+      roles:['isGBV']
+
+    },
+    {
+      label: 'Escalated',
+      icon: 'i-heroicons-bars-arrow-up',
+      to: '/grievances/escalated',
+      roles:['isGBV']
+
+    }
+  ],
+
   // Group 4
   [
     {
       label: 'Admin',
-      type: 'header'
+      type: 'header',
+      roles:['isAdmin']
+
     }
   ],
   [
     {
       label: 'Users',
       icon: 'i-heroicons-user',
-      to: '/admin/users'
+      to: '/admin/users',
+      roles:['isAdmin']
     },
     {
       label: 'GRCs',
-      icon: 'i-heroicons-user-group'
+      icon: 'i-heroicons-user-group',
+      roles:['isAdmin']
+
     }
   ],
   // Group 5
   [
     {
       label: 'Settings',
-      type: 'header'
+      type: 'header',
+      roles:['isAdmin']
+
     }
   ],
   [
     {
       label: 'Logs',
-      icon: 'i-heroicons-user'
+      icon: 'i-heroicons-user',
+      roles:['isAdmin']
+
     },
     {
       label: 'Roles',
-      icon: 'i-heroicons-user-group'
+      icon: 'i-heroicons-user-group',
+      roles:['isAdmin']
+
     },
     {
       label: 'Settlements',
-      icon: 'i-heroicons-map-pin'
+      icon: 'i-heroicons-map-pin',
+      roles:['isAdmin']
+
     }
   ]
 ];
+
+
+
+ // Computed property to filter the links based on user roles
+// Computed property to filter the links based on user roles and remove empty groups
+const filteredLinks = computed(() => {
+  return links
+    .map(group => {
+      // Filter links within each group
+      const filteredGroup = group.filter(link => {
+        if (link.roles) {
+          // Check if the user has at least one of the roles required for this link
+          return link.roles.some(role => data.value[role]);
+        }
+        // Include links without roles
+        return true;
+      });
+      // Return the filtered group if it's not empty
+      return filteredGroup.length > 0 ? filteredGroup : null;
+    })
+    .filter(group => group !== null); // Remove null groups
+});
+console.log('filteredLinks',filteredLinks.value)
+
+
 </script>
 
 <style scoped>

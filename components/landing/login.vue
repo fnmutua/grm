@@ -87,22 +87,48 @@ const validate = () => {
 const { signIn } = useAuth()
 
 
+
+const mySignInHandler = async ({ username, password }: { username: string, password: string }) => {
+  const { error, url } = await signIn('credentials', { username, password, redirect: false })
+  if (error) {
+    // Do your custom error handling here
+    alert('You have made a terrible mistake while entering your credentials')
+  } else {
+    // No error, continue with the sign in, e.g., by following the returned redirect:
+    return navigateTo(url, { external: true })
+  }
+}
+
+
 const handleSubmit = async () => {
-      if (validate()) {
-        loading.value = true;
-        const credentials = {
-          username: form.value.username,
-          password: form.value.password
-            }
-    await signIn(
-        credentials,
-            {
-                callbackUrl: redirectedFrom ? redirectedFrom.fullPath : '/dashboard/main',
-            },
-        );
-        loading.value = false;
-      }
+  if (validate()) {
+    loading.value = true;
+    const credentials = {
+      username: form.value.username,
+      password: form.value.password
     };
+
+    try {
+     const response =  await signIn(
+        credentials,
+        {
+          callbackUrl: redirectedFrom ? redirectedFrom.fullPath : '/dashboard/main',
+        },
+      );
+      console.log(response)
+    } catch (error) {
+
+      console.log('Error during sign-in:', error);
+      toast.add({ title: 'Invalid credentials', color:"red" })
+      loading.value = false;
+
+      
+      // Optionally handle the error, e.g., show an error message to the user
+    } finally {
+      loading.value = false;
+    }
+  }
+};
 
  
 
