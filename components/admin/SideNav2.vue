@@ -294,15 +294,4 @@ const links = [
 
 
 </script>
-
-<style scoped>
-/* Your scoped styles go here */
-
-/* Hide sidebar on smaller screens when collapsed */
-@media (max-width: 767px) {
-  .place-items-left {
-    display: flex;
-    flex-direction: column;
-  }
-}
-</style>
+ 
