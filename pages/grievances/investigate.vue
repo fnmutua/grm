@@ -1,12 +1,10 @@
 <template>
 
-
-<LandingSectionhead>
-      <template v-slot:title>Grievances Under Investigation</template>
-      <template v-slot:desc>By GRCs.</template>
-    </LandingSectionhead>
-
-    <div class=" pt-16 pb-8 md:pt-8 pl-4 pr-5">
+<div class="grid lg:grid-cols-12 place-items-left pt-5 pb-8 md:pt-8 ">
+      <!-- Left Column -->
+      <div class="lg:col-span-2">
+        <AdminSideNav2></AdminSideNav2>
+      </div> 
   
       <div class="lg:col-span-9 pt-16 pb-8 md:pt-8 pl-4 pr-5">
         <UCard

@@ -1,16 +1,13 @@
 <template>
 
-<LandingSectionhead>
-      <template v-slot:title>Users</template>
-      <template v-slot:desc>Manage user rights.</template>
-    </LandingSectionhead>
-
-
-  <div >
+<div class="grid lg:grid-cols-12 place-items-left pt-5 pb-8 md:pt-8 ">
+      <!-- Left Column -->
+      <div class="lg:col-span-2">
+        <AdminSideNav></AdminSideNav>
+      </div> 
   
-
-    <!-- Right Column -->
-    <div class=" pt-16 pb-8 md:pt-8 pl-4 pr-5">
+      <div class="lg:col-span-9 pt-16 pb-8 md:pt-8 pl-4 pr-5">
+    
       <UCard
         class="w-full"
         :ui="{

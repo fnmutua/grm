@@ -42,7 +42,7 @@
 
           <div class="lg:col-span-1" :class="{ 'hidden': !isCollapsed }">
             <div>
-              <el-scrollbar :height="scrollbarHeight + 'px'">
+              <!-- <el-scrollbar :height="scrollbarHeight + 'px'">
                 <UVerticalNavigation :links="links">
                   <template #default="{ link }">
                     <span 
@@ -53,7 +53,31 @@
                     </span>
                   </template>
                 </UVerticalNavigation>
-              </el-scrollbar>
+              </el-scrollbar> -->
+              <UAccordion :items="items">
+              <template #item="{ item, index, open, close }">
+                <div>
+                  <div   class="accordion-content">
+                    <ul>
+                      <li v-for="link in item.links" :key="link.url">
+                        <!-- <NuxtLink :to="link.url" class="flex items-center space-x-4"> <i :class="link.icon"></i>
+                          <span>{{ link.text }}</span>
+                        </NuxtLink> -->
+
+                        <ULink
+                          :to="link.url" 
+                          active-class="text-primary"
+                          class="flex items-center p-1.5 pl-6"
+                          inactive-class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                        >
+                        {{ link.text }}
+                        </ULink>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </template>
+            </UAccordion>
             </div>
           </div>
         </UCard>
@@ -64,18 +88,31 @@
       <UCard class="flex flex-col flex-3" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
         <div :class="{ 'hidden': isCollapsed }">
           <div>
-            <el-scrollbar :height="scrollbarHeight + 'px'">
-              <UVerticalNavigation :links="links">
-                <template #default="{ link }">
-                  <span 
-                    class="group-hover:text-primary relative" 
-                    :class="{ 'font-bold': link.type === 'header' }"
-                  >
-                    {{ link.label }}
-                  </span>
-                </template>
-              </UVerticalNavigation>
-            </el-scrollbar>
+            <UAccordion :items="items">
+              <template #item="{ item, index, open, close }">
+                <div>
+                  <div   class="accordion-content">
+                    <ul>
+                      <li v-for="link in item.links" :key="link.url">
+                        <!-- <NuxtLink :to="link.url" class="flex items-center space-x-4"> <i :class="link.icon"></i>
+                          <span>{{ link.text }}</span>
+                        </NuxtLink> -->
+
+                        <ULink
+                          :to="link.url" 
+                          active-class="text-primary"
+                          class="flex items-center p-1.5 pl-6"
+                          inactive-class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                        >
+                        {{ link.text }}
+                        </ULink>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </template>
+            </UAccordion>
+
           </div>
         </div>
       </UCard>
@@ -211,6 +248,51 @@ const links = [
     }
   ]
 ];
+
+ const items = [{
+  label: 'Dashboards',
+  icon: 'i-heroicons-chart-bar',
+  defaultOpen: true,
+  links: [
+    { text: 'Overview', url: '/dashboard/main', icon: 'i-heroicons-information-circle' },
+    { text: 'Quick Start', url: '/dashboard/grv', icon: 'i-heroicons-information-circle' }
+  ]
+}, {
+  label: 'Grievances',
+  icon: 'i-heroicons-arrow-down-tray',
+    links: [
+    { text: 'Open', url: '/grievances/open', icon: 'i-heroicons-outline-clipboard-list' },
+    { text: 'Investigate', url: '/grievances/investigate', icon: 'i-heroicons-outline-steps' },
+    { text: 'Resolved', url: '/grievances/resolved', icon: 'i-heroicons-outline-steps' },
+    { text: 'Escalated', url: '/grievances/escalated', icon: 'i-heroicons-outline-steps' },
+  ]
+}, {
+  label: 'Admin',
+  icon: 'i-heroicons-eye-dropper',
+   links: [
+    { text: 'Users', url: '/admin/users', icon: 'i-heroicons-person' },
+    { text: 'GRCS', url: '/admin/users', icon: 'i-heroicons-outline-light-bulb' },
+
+  ]
+}, {
+  label: 'Administrative Units',
+  icon: 'i-heroicons-rectangle-group',
+   links: [
+   { text: 'Counties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
+    { text: 'Subcounties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
+    { text: 'Wards', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
+    { text: 'Settlements', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' }
+  ]
+}, {
+  label: 'Settings',
+  icon: 'i-heroicons-square-3-stack-3d',
+   links: [
+    { text: 'Buttons', url: '/components/buttons', icon: 'i-heroicons-outline-button' },
+    { text: 'Cards', url: '/components/cards', icon: 'i-heroicons-outline-card' }
+  ]
+} ]
+
+
 </script>
 
 <style scoped>
