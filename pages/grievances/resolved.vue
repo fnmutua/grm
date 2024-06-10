@@ -1,12 +1,10 @@
 <template>
-  <div class="grid lg:grid-cols-12 place-items-left pt-5 pb-8 md:pt-8 ">
-      <!-- Left Column -->
-      <div class="lg:col-span-2">
-        <AdminSideNav></AdminSideNav>
-      </div> 
-
-      <!-- Right Column -->
-      <main class="lg:col-span-9 pt-16 pb-8 md:pt-8 pl-4 pr-5">
+  <div  >
+    <LandingSectionhead>
+      <template v-slot:title>Resolved Grievances</template>
+      <template v-slot:desc>Resolved and resolutions accepted by complainant.</template>
+    </LandingSectionhead>  
+    
   
 
         <UCard
@@ -185,85 +183,11 @@
             </UTable>
           </div>
 
- 
-          <UModal v-model="showDetailsModal"  >
-      <div class="p-4">
-        <el-descriptions
-          class="margin-top"
-          title="Grievance Details"
-          :column="2"
-          :size="size"
-          border
-        >
-    <template #extra>
-      <UIcon name="i-heroicons-x-mark" @click="showDetailsModal =false" />
-    </template>
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <UIcon name="i-heroicons-qr-code" />
-          Code
-        </div>
-      </template>
-      {{grv_details.code}}
-    </el-descriptions-item>
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <iphone />
-          </el-icon>
-          Status
-        </div>
-      </template>
-      {{grv_details.status}}
-    </el-descriptions-item>
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <iphone />
-          </el-icon>
-          Complaint
-        </div>
-      </template>
-      {{grv_details.complaint}}
-    </el-descriptions-item>
-
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <iphone />
-          </el-icon>
-          Outcome
-        </div>
-      </template>
-      {{grv_details.acceptance}}
-    </el-descriptions-item>
   
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <iphone />
-          </el-icon>
-          Resolution
-        </div>
-      </template>
-      {{grv_details.resolution}}
-
-    </el-descriptions-item> 
-  </el-descriptions>
-      </div>
-    </UModal>
 
         </UCard>
       
-    
-
-    
-      </main>
+     
   </div>
 </template>
 

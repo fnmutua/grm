@@ -10,7 +10,10 @@ export default defineNuxtConfig({
 
     }
   },
-  modules: ["nuxt-icon", "@nuxt/ui", "@sidebase/nuxt-auth", "radix-vue/nuxt", "@element-plus/nuxt"],
+  colorMode: {
+    preference: 'light'
+  },
+  modules: ["nuxt-icon", "@nuxt/ui", "@sidebase/nuxt-auth",'@nuxtjs/color-mode'],
      auth: {
     baseURL: '/',
     provider: {

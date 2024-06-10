@@ -6,77 +6,23 @@
         v-if="isCollapsed" 
         icon="i-heroicons-bars-2" 
         color="gray" 
-        variant="ghost"  
         @click="isOpen = true" 
       />
-
-      <USlideover v-model="isOpen" side="left" :style="{ width: '250px' }" prevent-close>
-        <UCard class="flex flex-col flex-1" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-          <template #header>
-            <div class="flex items-center justify-between">
-              <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">Menu</h3>
-              <div class="flex gap-5">
-                <AvatarRoot class="bg-blackA3 inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full align-middle">
-                  <AvatarImage
-                    class="h-full w-full rounded-[inherit] object-cover"
-                    src="https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80"
-                    alt="Colm Tuite"
-                  />
-                  <AvatarFallback
-                    class="text-grass11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium"
-                    :delay-ms="600"
-                  >
-                    CT
-                  </AvatarFallback>
-                </AvatarRoot>
-              </div>
-              <UButton 
-                color="gray" 
-                variant="ghost" 
-                icon="i-heroicons-chevron-double-left" 
-                class="-my-1" 
-                @click="isOpen = false" 
-              />
-            </div>
-          </template>
-
-          <div class="lg:col-span-1" :class="{ 'hidden': !isCollapsed }">
-            <div>
-              <el-scrollbar :height="scrollbarHeight + 'px'">
-                <UVerticalNavigation :links="links">
-                  <template #default="{ link }">
-                    <span 
-                      class="group-hover:text-primary relative" 
-                      :class="{ 'font-bold': link.type === 'header' }"
-                    >
-                      {{ link.label }}
-                    </span>
-                  </template>
-                </UVerticalNavigation>
-              </el-scrollbar>
-            </div>
-          </div>
-        </UCard>
-      </USlideover>
+      <ColorMode></ColorMode>
     </div>
 
-    <div class="grid lg:grid-cols-1">
-      <UCard class="flex flex-col flex-3" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-        <div :class="{ 'hidden': isCollapsed }">
+    <div>
+      <UCard >
+        <div>
           <div>
-            <el-scrollbar :height="scrollbarHeight + 'px'">
-              <UVerticalNavigation :links="filteredLinks">
+               <UVerticalNavigation :links="filteredLinks">
                 <template #default="{ link }">
-                  <span 
-                    class="group-hover:text-primary relative" 
-                    :class="{ 'font-bold': link.type === 'header' }"
-                  >
+                  <span >
                     {{ link.label }}
                   </span>
                 </template>
               </UVerticalNavigation>
-            </el-scrollbar>
-          </div>
+           </div>
         </div>
       </UCard>
     </div>
@@ -313,7 +259,7 @@ console.log('filteredLinks',filteredLinks.value)
 
 </script>
 
-<style scoped>
+<style>
 /* Your scoped styles go here */
 
 /* Hide sidebar on smaller screens when collapsed */

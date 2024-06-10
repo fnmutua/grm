@@ -5,6 +5,8 @@ definePageMeta({
 </script>
 
 <template>
+
+
   <div class="maintenance-container">
     <img
       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBcBYWudeH_bn6w-LcUzhLPhf9PGhkhy-1Qg&usqp=CAU"

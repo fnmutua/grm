@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import Grievance from "./../../models/grievance";
-import Document from "./../../models/grievance";
+import Document from "./../../models/document";
 import axios from 'axios';
 import fs from 'fs';
 
@@ -178,6 +178,7 @@ async function generateGrievanceReferenceNumber() {
                 // Assuming you have a model named Document to save the file details
                 const documentData = new Document({
                 fileName: file.filename,
+                grievanceCode: code,
                 filePath: file.filename // Assuming the file path is the same as the filename
                 });
 
