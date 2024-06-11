@@ -631,6 +631,8 @@ const getDetails = async (row) => {
  console.log('getDetails....', row)
  showDetailsModal.value=true
  grv_details.value=row
+ await navigateTo('/grievances/'+row.id)
+
  
 }
 

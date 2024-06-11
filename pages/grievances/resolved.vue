@@ -648,10 +648,12 @@ const isOpen =ref(false)
 /////////////-----------
 const grv_details = ref()
 const getDetails = async (row) => {
-  //downloadLoading.value = true
- console.log('getDetails....', row)
- showDetailsModal.value=true
- grv_details.value=row
+//   //downloadLoading.value = true
+//  console.log('getDetails....', row)
+//  showDetailsModal.value=true
+//  grv_details.value=row
+ await navigateTo('/grievances/'+row.id)
+
  
 }
 
