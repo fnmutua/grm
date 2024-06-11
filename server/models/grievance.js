@@ -52,7 +52,7 @@ const dataSchema = new Schema({
   },
   status: {
     type: String,
-    enum:  ['Open',  'Investigation',  'Review','Resolved','Escalated','Closed'],
+    enum: ['Open', 'Investigation', 'Review', 'Resolved', 'Escalated', 'Closed'],
     required: false,
   },
   resolution: {
@@ -61,14 +61,14 @@ const dataSchema = new Schema({
   },
   acceptance: {
     type: String,
-    enum:  ['Accepted',  'Rejected', 'Pending' ],
+    enum: ['Accepted', 'Rejected', 'Pending'],
     required: false,
   },
-  
-
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
-export default model('Grievance', dataSchema);
+// Create a compound index to ensure uniqueness on `complaint`, `name`, and `phone`
+dataSchema.index({ complaint: 1, name: 1, phone: 1 }, { unique: true });
 
+export default model('Grievance', dataSchema);

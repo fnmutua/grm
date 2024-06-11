@@ -42,28 +42,13 @@
 
           <div class="lg:col-span-1" :class="{ 'hidden': !isCollapsed }">
             <div>
-              <!-- <el-scrollbar :height="scrollbarHeight + 'px'">
-                <UVerticalNavigation :links="links">
-                  <template #default="{ link }">
-                    <span 
-                      class="group-hover:text-primary relative" 
-                      :class="{ 'font-bold': link.type === 'header' }"
-                    >
-                      {{ link.label }}
-                    </span>
-                  </template>
-                </UVerticalNavigation>
-              </el-scrollbar> -->
-              <UAccordion :items="items">
+
+              <UAccordion :items="items" multiple default-open>
               <template #item="{ item, index, open, close }">
                 <div>
                   <div   class="accordion-content">
                     <ul>
                       <li v-for="link in item.links" :key="link.url">
-                        <!-- <NuxtLink :to="link.url" class="flex items-center space-x-4"> <i :class="link.icon"></i>
-                          <span>{{ link.text }}</span>
-                        </NuxtLink> -->
-
                         <ULink
                           :to="link.url" 
                           active-class="text-primary"
@@ -88,7 +73,7 @@
       <UCard class="flex flex-col flex-3" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
         <div :class="{ 'hidden': isCollapsed }">
           <div>
-            <UAccordion :items="items">
+            <UAccordion :items="items" multiple default-open>
               <template #item="{ item, index, open, close }">
                 <div>
                   <div   class="accordion-content">

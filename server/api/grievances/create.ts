@@ -121,6 +121,7 @@ async function generateGrievanceReferenceNumber() {
 
 
       const data = await readMultipartFormData(event);
+      console.log('data',data)
  
       const fields = {};
       const files = [];
@@ -154,8 +155,8 @@ async function generateGrievanceReferenceNumber() {
         settlement_id: fields.settlement_id,
         complaint: fields.complaint,
         phone: fields.phone,
-        status: "Open",
-        resolution: "Pending", // default
+        status: fields.status ? fields.status : 'Open',
+        resolution: fields.resolution ? fields.resolution : 'Pending',
         acceptance: fields.acceptance, // default
       });
  
@@ -165,6 +166,8 @@ async function generateGrievanceReferenceNumber() {
       // Save the data to the database
       const result = await grv_data.save();
       grv_data.id = result._id; 
+
+      // recall to reactivay
       sendSMS(grv_data);
  
      
