@@ -92,8 +92,8 @@
               sort-asc-icon="i-heroicons-arrow-up"
               sort-desc-icon="i-heroicons-arrow-down"
               sort-mode="manual"
-              class="w-full"
-              :ui="{ td: { base: 'max-w-[0] truncate' }, default: { checkbox: { color: 'gray' } } }"
+              class="w-full "
+              :ui="{ td: { base: 'max-w-[0] truncate text-transform: normal-case border-collapse border' }, default: { checkbox: { color: 'gray' } } }"
               @select="select">
           
             <template #actions-data="{ row }">
