@@ -17,7 +17,14 @@ definePageMeta({
     </LandingSectionhead>
  
     <div class="grid md:grid-cols-3 gap-10 mx-auto max-w-screen-lg mt-12">
-      <LandingPricing v-for="item of pricing" :plan="item" />
-    </div>
+        <Accordion type="single" class="w-full" collapsible :default-value="defaultValue">
+    <AccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
+      <AccordionTrigger>{{ item.title }}</AccordionTrigger>
+      <AccordionContent>
+        {{ item.content }}
+      </AccordionContent>
+    </AccordionItem>
+  </Accordion>
+      </div>
   </LandingContainer>
 </template>

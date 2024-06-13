@@ -52,7 +52,7 @@
                         <ULink
                           :to="link.url" 
                           active-class="text-primary"
-                          class="flex items-center p-1.5 pl-6"
+                          class="flex items-center p-1.5 pl-6 border-l-2 "
                           inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-900 dark:hover:text-gray-200"
                         >
                         {{ link.text }}
@@ -83,7 +83,7 @@
                         <ULink
                           :to="link.url" 
                           active-class="text-primary"
-                          class="flex items-center p-1.5 pl-6"
+                          class="flex items-center p-1.5 pl-6 border-l-2 "
                           inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200"
                         >
                         {{ link.text }}

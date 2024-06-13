@@ -12,7 +12,7 @@
         divide: 'divide-y divide-gray-200 dark:divide-gray-700',
         header: { padding: 'px-4 py-5' },
         body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
-        footer: { padding: 'p-4' }
+        footer: { padding: 'p-2' }
       }">
         <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">
           <UInput v-model="q" placeholder="Filter..." />
@@ -93,7 +93,7 @@
               sort-desc-icon="i-heroicons-arrow-down"
               sort-mode="manual"
               class="w-full"
-              :ui="{ td: { base: 'max-w-[0] text-pretty' }, default: { checkbox: { color: 'gray' } } }"
+              :ui="{ td: { base: 'max-w-[0] truncate' }, default: { checkbox: { color: 'gray' } } }"
               @select="select">
           
             <template #actions-data="{ row }">
