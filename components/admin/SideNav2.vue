@@ -135,101 +135,7 @@ const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value;
 };
 
-const links = [
-  // Group 1
-  [
-    {
-      label: 'Dashboards',
-      type: 'header'
-    }
-  ],
-  // Group 2
-  [
-    {
-      label: 'Home',
-      icon: 'i-heroicons-home',
-      to: '/dashboard/main',
-    },
-    {
-      label: 'Contact',
-      icon: 'i-heroicons-chart-bar',
-      to: '/dashboard/grv'
-    },
-    {
-      label: 'Command Palette',
-      icon: 'i-heroicons-command-line',
-      to: '/contact'
-    }
-  ],
-  // Group 3
-  [
-    {
-      label: 'Grievances',
-      type: 'header'
-    }
-  ],
-  [
-    {
-      label: 'Open',
-      icon: 'i-heroicons-shield-exclamation',
-      to: '/grievances/open'
-    },
-    {
-      label: 'Investigate',
-      icon: 'i-heroicons-question-mark-circle',
-      to: '/grievances/investigate'
-    },
-    {
-      label: 'Resolved',
-      icon: 'i-heroicons-check',
-      to: '/grievances/resolved'
-    },
-    {
-      label: 'Escalated',
-      icon: 'i-heroicons-bars-arrow-up',
-      to: '/grievances/escalated'
-    }
-  ],
-  // Group 4
-  [
-    {
-      label: 'Admin',
-      type: 'header'
-    }
-  ],
-  [
-    {
-      label: 'Users',
-      icon: 'i-heroicons-user',
-      to: '/admin/users'
-    },
-    {
-      label: 'GRCs',
-      icon: 'i-heroicons-user-group'
-    }
-  ],
-  // Group 5
-  [
-    {
-      label: 'Settings',
-      type: 'header'
-    }
-  ],
-  [
-    {
-      label: 'Logs',
-      icon: 'i-heroicons-user'
-    },
-    {
-      label: 'Roles',
-      icon: 'i-heroicons-user-group'
-    },
-    {
-      label: 'Settlements',
-      icon: 'i-heroicons-map-pin'
-    }
-  ]
-];
+
 
  const items = [{
   label: 'Dashboards',
@@ -241,22 +147,15 @@ const links = [
   ]
 }, {
   label: 'Grievances',
-  icon: 'i-heroicons-arrow-down-tray',
+  icon: 'i-heroicons-swatch',
     links: [
     { text: 'Open', url: '/grievances/open', icon: 'i-heroicons-outline-clipboard-list' },
     { text: 'Investigate', url: '/grievances/investigate', icon: 'i-heroicons-outline-steps' },
     { text: 'Resolved', url: '/grievances/resolved', icon: 'i-heroicons-outline-steps' },
     { text: 'Escalated', url: '/grievances/escalated', icon: 'i-heroicons-outline-steps' },
-  ]
-}, {
-  label: 'Admin',
-  icon: 'i-heroicons-eye-dropper',
-   links: [
-    { text: 'Users', url: '/admin/users', icon: 'i-heroicons-person' },
-    { text: 'GRCS', url: '/admin/users', icon: 'i-heroicons-outline-light-bulb' },
+  ] 
 
-  ]
-}, {
+},  {
   label: 'Administrative Units',
   icon: 'i-heroicons-rectangle-group',
    links: [
@@ -266,13 +165,21 @@ const links = [
     { text: 'Settlements', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' }
   ]
 }, {
+  label: 'Admin',
+  icon: 'i-heroicons-user-circle',
+   links: [
+    { text: 'Users', url: '/admin/users', icon: 'i-heroicons-person' },
+    { text: 'GRCS', url: '/admin/users', icon: 'i-heroicons-outline-light-bulb' },
+
+  ]
+},{
   label: 'Settings',
-  icon: 'i-heroicons-square-3-stack-3d',
+  icon: 'i-heroicons-wrench-screwdriver',
    links: [
     { text: 'Buttons', url: '/components/buttons', icon: 'i-heroicons-outline-button' },
     { text: 'Cards', url: '/components/cards', icon: 'i-heroicons-outline-card' }
   ]
-} ]
+}, ]
 
 
 </script>
