@@ -83,21 +83,22 @@
           </div>
         </template>
         <div style="width: 100%; margin-top:50px">
-          <UTable v-model="selected" :rows="filteredRows" :columns="columns" :loading="pending" class="w-full"
-            :ui="{ td: { base: 'max-w-[0] truncate' }, default: { checkbox: { color: 'green' } } }">
-            <template #name-data="{ row }">
-              <span :class="[selected.find(row => row.id === row.id) && 'text-primary-500 dark:text-primary-400']">{{
-                row.code }}</span>
-            </template>
-            <template #completed-data="{ row }">
-              <UBadge size="xs"
-                :label="row.acceptance === 'Pending' ? 'Pending' : (row.acceptance === 'Accepted' ? 'Accepted' : 'Rejected')"
-                :color="row.acceptance === 'Pending' ? 'orange' : (row.acceptance === 'Accepted' ? 'emerald' : 'red')"
-                variant="subtle" />
-            </template>
+            <UTable
+              v-model="selected"
+              v-model:sort="sort"
+              :rows="filteredRows"
+              :columns="columns"
+              :loading="pending"
+              sort-asc-icon="i-heroicons-arrow-up"
+              sort-desc-icon="i-heroicons-arrow-down"
+              sort-mode="manual"
+              class="w-full"
+              :ui="{ td: { base: 'max-w-[0] text-pretty' }, default: { checkbox: { color: 'gray' } } }"
+              @select="select">
+          
             <template #actions-data="{ row }">
               <UDropdown :items="items(row)">
-                <UButton variant="ghost" icon="i-heroicons-ellipsis-vertical " />
+                <UButton variant="ghost" icon="i-heroicons-pencil-square" />
               </UDropdown>
             </template>
           </UTable>
@@ -152,28 +153,6 @@ const filteredRows = computed(() => {
 console.log('filteredRows', filteredRows)
 
 
-const tableData = [
-  {
-    date: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-02',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-04',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-01',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-]
 
 const grievances = ref([])
 const columns = [{
@@ -185,11 +164,11 @@ const columns = [{
   label: 'Settlement',
   sortable: true
 },
-{
-  key: 'status',
-  label: 'Status',
-  sortable: true
-},
+// {
+//   key: 'status',
+//   label: 'Status',
+//   sortable: true
+// },
 {
   key: 'complaint',
   label: 'Complaint',
@@ -208,11 +187,11 @@ const columns = [{
 
 // },
 
-{
-  key: 'completed',
-  label: 'Outcome',
+// {
+//   key: 'completed',
+//   label: 'Outcome',
 
-},
+// },
 
 // {
 //   key: 'expand',
@@ -495,6 +474,7 @@ const deleteGrv = async () => {
     console.log(response)
     if (response.data.success) {
       toast.add({ title: response.data.message, color: "primary" });
+      onChange(0)
     } else {
       toast.add({ title: response.data.message, color: "red" });
     }
@@ -572,7 +552,7 @@ const isOpen = ref(false)
 
 
 /////////////-----------
-const grv_details = ref()
+ 
 const getDetails = async (row) => {
    console.log('getDetails....', row.id)
   
@@ -592,7 +572,16 @@ const items = (row) => [
       getDetails(row)
     }
 
-  }]
+  },
+  {
+    label: 'Delete',
+    icon: 'i-heroicons-trash-20-solid',
+    click: () => {
+      deleteGrv()
+    }
+  },
+
+]
 ]
 
 const showDetailsModal = ref(false)

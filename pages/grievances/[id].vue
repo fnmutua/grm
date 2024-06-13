@@ -74,10 +74,11 @@
   import axios from 'axios';
   import { ref, computed, watch } from 'vue';
   import { useRouter } from 'vue-router'
+  const toast = useToast()
 
 const router = useRouter()
-  const route = useRoute()
-
+const route = useRoute()
+const showSubmit=ref(false)
  
 const form = reactive({
   id: '' 
@@ -94,6 +95,17 @@ onMounted(async () => {
   form.id =grm_id
   await handleSubmit()
 });
+
+
+const uploads =ref([])
+async function  handleFileChange(files){
+         let fileObj = files
+        console.log(fileObj[0])
+        uploads.value.push(fileObj[0]);
+  console.log('files.value',uploads.value[0])
+  showSubmit.value=true
+
+     }
 
 
 const goBack = async (row) => {
@@ -143,6 +155,63 @@ async function handleSubmit() {
 }
 
   
+async function uploadFile() {
+  
+  console.log("Submit.......")
+  loading.value=true
+  
+     const formData = new FormData()
+  
+  
+   
+   // Retrieve file from file input
+ 
+   if ( uploads.value.length>0 ) {
+     console.log("Has uplaods....",uploads.value[0]  )
+     formData.append('file', uploads.value[0]  )
+     formData.append('fileName',uploads.value[0].name)
+     console.log( 'grievance.code', grievance.value.code)
+     formData.append('grievanceCode', grievance.value.code)
+ 
+   }else {
+     showSubmit.value=false
+   }
+  
+  
+ 
+ 
+     // Log each entry in the FormData object
+     for (let [key, value] of formData.entries()) {
+     console.log(`${key}: ${value}`);
+   }
+  
+   const response = await axios.post('/api/grievances/documentation', formData, {
+     headers: {
+       'Content-Type': 'multipart/form-data'
+     } 
+   })
+   
+ 
+ if(response.data.success){
+   uploads.value=[]
+   showSubmit.value=false
+     toast.add({ title: 'Documentation uploaded successfully!' })
+    
+     loading.value=false
+ 
+ 
+  
+ 
+   } else {
+     toast.add({ title: response.data.message, color:"red" })
+     loading.value=false
+ 
+ 
+   }
+   
+ console.log(response)
+  
+ }   
   
   </script>
   

@@ -49,43 +49,7 @@
       
           </div>
         
-<!--           <UTable
-            v-model:sort="sort"
-            @select="select"
-            v-model="selected"
-            :rows="filteredRows"
-            :columns="columns"
-            :loading="pending"
-            class="w-full"
-            :ui="{ td: { base: 'max-w-[0] truncate' }, default: { checkbox: { color: 'gray' } } }"
-          
-          >
-          <template #actions-data="{ row }">
-            <UDropdown v-if="!ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
-                <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
-            </UDropdown>
-          </template>
-         
-          <template #completed-data="{ row }">
-          <UBadge
-            size="xs"
-            :label="row.acceptance === 'Pending' ? 'Pending' : (row.acceptance === 'Accepted' ? 'Accepted' : 'Rejected')"
-            :color="row.acceptance === 'Pending' ? 'orange' : (row.acceptance === 'Accepted' ? 'emerald' : 'red')"
-            variant="subtle"
-          />
-        </template>
-
-        <template #expand-data="{ row }">
-         
-          <UButton label="More..." color="gray">
-          <template #trailing>
-            <UIcon name="i-heroicons-arrow-right-20-solid" class="w-5 h-5" />
-          </template>
-        </UButton>
-
-        </template>
-  
-        </UTable> -->
+ 
 
         <div>
       
@@ -163,7 +127,7 @@
           <div style="width: 100%; margin-top:50px">
             <UTable v-model="selected" :rows="filteredRows" :columns="columns" :loading="pending"
             class="w-full"
-            :ui="{ td: { base: 'max-w-[0] truncate' }, default: { checkbox: { color: 'green' } } }" >
+            :ui="{ td: { base: 'max-w-[0] text-wrap' }, default: { checkbox: { color: 'green' } } }" >
               <template #name-data="{ row }">
                 <span :class="[selected.find(row => row.id === row.id) && 'text-primary-500 dark:text-primary-400']">{{ row.code }}</span>
               </template>
@@ -179,7 +143,7 @@
         
               <template #actions-data="{ row }">
                 <UDropdown :items="items(row)">
-                  <UButton  variant="ghost" icon="i-heroicons-ellipsis-vertical " />
+                  <UButton  variant="ghost" icon="i-heroicons-pencil-square" />
                 </UDropdown>
               </template>
             </UTable>
@@ -662,14 +626,24 @@ const items = (row) => [
   [{
     label: 'Details',
     icon: 'i-heroicons-pencil-square-20-solid',
- 
+
     click: () => {
       // markResolved()
       getDetails(row)
     }
 
-  } ]  
+  },
+  {
+    label: 'Delete',
+    icon: 'i-heroicons-trash-20-solid',
+    click: () => {
+      deleteGrv()
+    }
+  },
+
 ]
+]
+
 
 const showDetailsModal = ref(false)
  

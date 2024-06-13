@@ -128,7 +128,7 @@
             :loading="pending"
             class="w-full"
             :ui="{
-              td: { base: 'max-w-[0] truncate' },
+              td: { base: 'max-w-[0] text-wrap' },
               default: { checkbox: { color: 'green' } },
             }"
           >
@@ -166,7 +166,7 @@
               <UDropdown :items="items(row)">
                 <UButton
                   variant="ghost"
-                  icon="i-heroicons-ellipsis-vertical "
+                  icon="i-heroicons-pencil-square "
                 />
               </UDropdown>
             </template>

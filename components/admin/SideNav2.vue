@@ -46,14 +46,14 @@
               <UAccordion :items="items" multiple default-open>
               <template #item="{ item, index, open, close }">
                 <div>
-                  <div   class="accordion-content">
+                  <div >
                     <ul>
                       <li v-for="link in item.links" :key="link.url">
                         <ULink
                           :to="link.url" 
                           active-class="text-primary"
                           class="flex items-center p-1.5 pl-6"
-                          inactive-class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                          inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-900 dark:hover:text-gray-200"
                         >
                         {{ link.text }}
                         </ULink>
@@ -73,21 +73,18 @@
       <UCard class="flex flex-col flex-3" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
         <div :class="{ 'hidden': isCollapsed }">
           <div>
-            <UAccordion :items="items" multiple default-open>
+            <UAccordion :items="items" multiple default-open color="sky">
               <template #item="{ item, index, open, close }">
                 <div>
-                  <div   class="accordion-content">
+                  <div >
                     <ul>
                       <li v-for="link in item.links" :key="link.url">
-                        <!-- <NuxtLink :to="link.url" class="flex items-center space-x-4"> <i :class="link.icon"></i>
-                          <span>{{ link.text }}</span>
-                        </NuxtLink> -->
-
+                     
                         <ULink
                           :to="link.url" 
                           active-class="text-primary"
                           class="flex items-center p-1.5 pl-6"
-                          inactive-class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                          inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200"
                         >
                         {{ link.text }}
                         </ULink>

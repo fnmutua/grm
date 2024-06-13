@@ -75,7 +75,6 @@ async function handleSubmit() {
 const uploads =ref([])
 const showSubmit =ref(false)
 async function  handleFileChange(files:File[]){
-  uploads.value=[]
          let fileObj = await files
         console.log(fileObj[0])
         uploads.value.push(fileObj[0]);

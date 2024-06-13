@@ -118,7 +118,7 @@
           <div style="width: 100%; margin-top:50px">
             <UTable v-model="selected" :rows="filteredRows" :columns="columns" :loading="pending"
             class="w-full"
-            :ui="{ td: { base: 'max-w-[0] truncate' }, default: { checkbox: { color: 'green' } } }" >
+            :ui="{ td: { base: 'max-w-[0] text-pretty' }, default: { checkbox: { color: 'green' } } }" >
               <template #name-data="{ row }">
                 <span :class="[selected.find(row => row.id === row.id) && 'text-primary-500 dark:text-primary-400']">{{ row.code }}</span>
               </template>
@@ -134,7 +134,7 @@
         
               <template #actions-data="{ row }">
                 <UDropdown :items="items(row)">
-                  <UButton  variant="ghost" icon="i-heroicons-ellipsis-vertical " />
+                  <UButton  variant="ghost" icon="i-heroicons-pencil-square" />
                 </UDropdown>
               </template>
             </UTable>
@@ -224,11 +224,11 @@ const grievances =ref([])
  
 // },
 
-{
-  key: 'completed',
-  label: 'Outcome',
+// {
+//   key: 'completed',
+//   label: 'Outcome',
 
-},
+// },
 
 // {
 //   key: 'expand',
@@ -605,13 +605,22 @@ const items = (row) => [
   [{
     label: 'Details',
     icon: 'i-heroicons-pencil-square-20-solid',
- 
+
     click: () => {
       // markResolved()
       getDetails(row)
     }
 
-  } ]  
+  },
+  {
+    label: 'Delete',
+    icon: 'i-heroicons-trash-20-solid',
+    click: () => {
+      deleteGrv()
+    }
+  },
+
+]
 ]
 
 const showDetailsModal = ref(false)
