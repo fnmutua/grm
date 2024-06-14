@@ -1,5 +1,5 @@
 <template>
-  <div>
+ 
     <!-- Left Column -->
     <div>
       <UButton 
@@ -43,17 +43,18 @@
           <div class="lg:col-span-1" :class="{ 'hidden': !isCollapsed }">
             <div>
 
-              <UAccordion :items="items" multiple default-open>
+              <UAccordion :items="items" multiple default-open color="sky">
               <template #item="{ item, index, open, close }">
                 <div>
                   <div >
                     <ul>
                       <li v-for="link in item.links" :key="link.url">
+                     
                         <ULink
                           :to="link.url" 
                           active-class="text-primary"
                           class="flex items-center p-1.5 pl-6 border-l-2 "
-                          inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-900 dark:hover:text-gray-200"
+                          inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200"
                         >
                         {{ link.text }}
                         </ULink>
@@ -99,7 +100,7 @@
         </div>
       </UCard>
     </div>
-  </div>
+ 
 </template>
 
 <script setup lang="ts">
@@ -156,7 +157,7 @@ const toggleCollapse = () => {
   ] 
 
 },  {
-  label: 'Administrative Units',
+  label: 'Admin Units',
   icon: 'i-heroicons-rectangle-group',
    links: [
    { text: 'Counties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
