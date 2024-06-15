@@ -467,8 +467,7 @@ const items = (row) => [
 ]
 ]
 
-const showDetailsModal = ref(false)
-
+ 
 
 </script>
 
@@ -485,18 +484,37 @@ const showDetailsModal = ref(false)
     <!-- Main Content -->
     <div class="col-span-1 md:col-span-10 p-4">
       <UCard>
-
-        <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">
-          <UInput v-model="q" placeholder="Filter..." />
-          <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
-            label="Download" :trailing="false" @click="downloadXLSX" />
-          <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" label="Refresh"
-            :trailing="false" @click="onChange(0)" />
-          <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
-            <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
-          </UDropdown>
+        <div class="lg:hidden">
+            <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
+            <UInput v-model="q" placeholder="Filter..." />
+            <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
+            :trailing="false" @click="downloadXLSX" />
+            <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" 
+              :trailing="false" @click="onChange(0)" />
+            <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
+              <UButton color="white"  trailing-icon="i-heroicons-chevron-down-20-solid" />
+            </UDropdown>
+          </div>
 
         </div>
+
+        <div class="hidden md:block">
+          <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
+            <UInput v-model="q" placeholder="Filter..." />
+            <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
+              label="Download" :trailing="false" @click="downloadXLSX" />
+            <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" label="Refresh"
+              :trailing="false" @click="onChange(0)" />
+            <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
+              <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
+            </UDropdown>
+          </div>
+ 
+        </div>
+
+        
+
+
       <UTable
               v-model="selected"
               v-model:sort="sort"
@@ -510,7 +528,7 @@ const showDetailsModal = ref(false)
           
             <template #actions-data="{ row }">
               <UDropdown :items="items(row)">
-            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" />
               </UDropdown>
             </template>
 
