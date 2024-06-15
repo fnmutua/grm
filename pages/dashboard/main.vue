@@ -15,7 +15,7 @@
           </div>
 
           <UDivider label="**" class=" pt-4" />
-          <div class="w-full h-96   text-green9 font-medium text-sm">
+          <div class="w-full h-96 pt-4  text-green9 font-medium text-sm">
                       <SplitterGroup id="splitter-group-1" direction="horizontal">
                         <SplitterPanel id="splitter-group-1-panel-1" :min-size="20"
                           class="bg-white dark:bg-transparent border rounded-xl flex items-center justify-center">
