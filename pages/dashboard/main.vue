@@ -19,7 +19,11 @@
                       <SplitterGroup id="splitter-group-1" direction="horizontal">
                         <SplitterPanel id="splitter-group-1-panel-1" :min-size="20"
                           class="bg-white dark:bg-transparent border rounded-xl flex items-center justify-center">
-                          Panel A
+ 
+                          <client-only>
+                            <VChart  :option="option" />
+                          </client-only>
+
                         </SplitterPanel>
                         <SplitterResizeHandle id="splitter-group-1-resize-handle-1" class="w-2" />
                         <SplitterPanel id="splitter-group-1-panel-2" :min-size="20">
@@ -53,22 +57,64 @@ definePageMeta({
   layout: "landing",
 });
 
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { PieChart } from 'echarts/charts'
+import {
+  GridComponent,
+  LegendComponent,
+  TitleComponent,
+  TooltipComponent,
+} from 'echarts/components'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { ref } from 'vue'
+import VChart from 'vue-echarts'
+use([
+  CanvasRenderer,
+  PieChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+])
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
-const chartData = {
-  labels: ['January', 'February', 'March'],
-  datasets: [{ data: [40, 20, 12] }]
-}
-
-const chartOptions = {
-  responsive: true
-}
-
-
-
+const option = ref({
+  title: {
+    text: 'Traffic Sources',
+    left: 'center',
+  },
+  tooltip: {
+    trigger: 'item',
+    formatter: '{a} <br/>{b} : {c} ({d}%)',
+  },
+  legend: {
+    orient: 'horizontal',
+    left: 'bottom',
+    data: ['Direct', 'Email', 'Ad Networks', 'Video Ads', 'Search Engines'],
+  },
+  series: [
+    {
+      name: 'Traffic Sources',
+      type: 'pie',
+      radius: '55%',
+      center: ['50%', '60%'],
+      data: [
+        { value: 335, name: 'Direct' },
+        { value: 310, name: 'Email' },
+        { value: 234, name: 'Ad Networks' },
+        { value: 135, name: 'Video Ads' },
+        { value: 1548, name: 'Search Engines' },
+      ],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+        },
+      },
+    },
+  ],
+});
 
 const items = [{
   label: 'Maps',
@@ -89,5 +135,7 @@ const items = [{
 </script>
 
 <style scoped>
-/* Custom styles can be added here if needed */
+.chart {
+  height: 90vh;
+}
 </style>

@@ -49,9 +49,7 @@ export default defineNuxtConfig({
   mapbox: {
     accessToken: 'pk.eyJ1IjoiYWdzcGF0aWFsIiwiYSI6ImNsdm92dGhzNDBpYjIydmsxYXA1NXQxbWcifQ.dwBpfBMPaN_5gFkbyoerrg'
   },
-  vite: {
-    optimizeDeps: {
-      include: ["plotly.js-dist-min"],
-    },
+  build: {
+    transpile: ['echarts', 'zrender', 'tslib'],
   },
 });
