@@ -15,7 +15,20 @@
           </div>
 
           <UDivider label="**" class=" pt-4" />
-          <div class="w-full h-96   text-green9 font-medium text-sm">
+          <UTabs :items="items" class="w-full dark:bg-transparent pt-4">
+            <template #item="{ item }">
+              <UCard class="bg-white dark:bg-transparent border h-96">
+                <div>
+                  <div v-if="item.label === 'Maps'" class=" h-96">
+                    <MapboxMap style="position: absolute; top: 10px; bottom: 10px; left: 10px; right: 10px; width:98.5%"
+                      :options="{
+                        style: 'mapbox://styles/mapbox/light-v11',
+                        center: [37.137343, 1.137451],
+                        zoom: 5
+                      }" />
+                  </div>
+                  <div v-if="item.label === 'Tables'" class="flex flex-col h-full">
+                    <div class="w-full h-64 px-8 text-green9 font-medium text-sm">
                       <SplitterGroup id="splitter-group-1" direction="horizontal">
                         <SplitterPanel id="splitter-group-1-panel-1" :min-size="20"
                           class="bg-white dark:bg-transparent border rounded-xl flex items-center justify-center">
@@ -37,7 +50,16 @@
                         </SplitterPanel>
                       </SplitterGroup>
                     </div>
-            
+                  </div>
+                  <div v-if="item.label === 'Charts'">
+                    <Bar id="my-chart-id" :options="chartOptions" :data="chartData"
+                      style="position: absolute;  height:80.5%"
+                      class="bg-slate-50 text-pink-400 underline decoration-pink-500" />
+                  </div>
+                </div>
+              </UCard>
+            </template>
+          </UTabs>
 
 
 

@@ -23,6 +23,7 @@
     "nuxt": "^3.11.2",
     "nuxt-icon": "^0.6.8",
     "nuxt-mapbox": "^1.6.0",
+    "nuxt-plotly": "^1.0.14",
     "postcss": "^8.4.32",
     "shadcn-nuxt": "^0.10.4",
     "tailwindcss": "^3.4.0",
