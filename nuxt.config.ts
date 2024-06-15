@@ -13,7 +13,15 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'light'
   },
-  modules: ["nuxt-icon", "@nuxt/ui", "@sidebase/nuxt-auth",'@nuxtjs/color-mode','radix-vue/nuxt' ],
+  modules: [
+    "nuxt-icon",
+    "@nuxt/ui",
+    "@sidebase/nuxt-auth",
+    '@nuxtjs/color-mode',
+    'radix-vue/nuxt',
+    "@element-plus/nuxt",
+    'nuxt-mapbox'
+  ],
  
      auth: {
     baseURL: '/',
@@ -36,5 +44,8 @@ export default defineNuxtConfig({
       },
     },
   
+  }, 
+  mapbox: {
+    accessToken: 'pk.eyJ1IjoiYWdzcGF0aWFsIiwiYSI6ImNsdm92dGhzNDBpYjIydmsxYXA1NXQxbWcifQ.dwBpfBMPaN_5gFkbyoerrg'
   }
 });

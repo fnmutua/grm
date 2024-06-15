@@ -13,13 +13,16 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@element-plus/nuxt": "^1.0.9",
     "@nuxt/ui": "^2.16.0",
     "@nuxtjs/color-mode": "^3.4.1",
     "@sidebase/nuxt-auth": "^0.7.2",
     "@tailwindcss/typography": "^0.5.10",
     "autoprefixer": "^10.4.16",
+    "mapbox-gl": "^3.4.0",
     "nuxt": "^3.11.2",
     "nuxt-icon": "^0.6.8",
+    "nuxt-mapbox": "^1.6.0",
     "postcss": "^8.4.32",
     "shadcn-nuxt": "^0.10.4",
     "tailwindcss": "^3.4.0",
@@ -33,7 +36,9 @@
     "@pinia/nuxt": "^0.5.1",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
+    "chart.js": "^4.4.3",
     "cors": "^2.8.5",
+    "echarts": "^5.5.0",
     "export-from-json": "^1.7.4",
     "express": "^4.19.2",
     "fs": "^0.0.1-security",
@@ -43,6 +48,8 @@
     "path": "^0.12.7",
     "pinia": "^2.1.7",
     "radix-vue": "^1.8.3",
+    "vue-chartjs": "^5.3.1",
+    "vue-echarts": "^6.7.3",
     "yup": "^1.4.0"
   }
 }

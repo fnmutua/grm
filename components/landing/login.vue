@@ -112,7 +112,7 @@ const handleSubmit = async () => {
      const response =  await signIn(
         credentials,
         {
-          callbackUrl: redirectedFrom ? redirectedFrom.fullPath : '/dashboard/grv',
+          callbackUrl: redirectedFrom ? redirectedFrom.fullPath : '/dashboard/main',
         },
       );
       console.log(response)
