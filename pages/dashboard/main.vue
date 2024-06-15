@@ -32,11 +32,12 @@
           <div v-if="item.label === 'Tables'" class="flex flex-col h-full">
             <p>Tables Here</p>
           </div>
-          <div v-if="item.label === 'Charts'" class="h-94">
+          <div v-if="item.label === 'Charts'"  >
              <Bar
                 id="my-chart-id"
                 :options="chartOptions"
                 :data="chartData"
+                height="45hv"
                 style="position: absolute;  height:65.5%"
 
           
