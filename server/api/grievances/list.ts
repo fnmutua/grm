@@ -14,7 +14,7 @@ const grievanceSchema = new mongoose.Schema({
 //const Grievance = mongoose.model('Grievance', grievanceSchema);
 
 export default defineEventHandler(async (req) => {
-    const { status, page, pageCount } = await readBody(req);
+    const { status,gbv, page, pageCount } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
 
     try {
@@ -23,9 +23,19 @@ export default defineEventHandler(async (req) => {
 
         // Calculate skip value for pagination
         const skip = (page - 1) * pageCount;
+        let qry_obj = {}
+        if(gbv) {
+            qry_obj.status = status
+            qry_obj.gbv = gbv
+        }else {
+            qry_obj.status = status
+            qry_obj.gbv = { $ne: 'Yes' }
+
+        }
+        console.log(qry_obj)
 
         // Find grievances based on status and include pagination
-        const data = await Grievance.find({ status: status }).skip(skip).limit(pageCount);
+        const data = await Grievance.find(qry_obj).skip(skip).limit(pageCount);
  
         if (data.length === 0) {
             return {

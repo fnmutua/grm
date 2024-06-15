@@ -161,10 +161,10 @@ const toggleCollapse = () => {
   label: 'GBV',
   icon: 'i-heroicons-face-frown',
     links: [
-    { text: 'Open', url: '/grievances/open', icon: 'i-heroicons-outline-clipboard-list' },
-    { text: 'Investigate', url: '/grievances/investigate', icon: 'i-heroicons-outline-steps' },
-    { text: 'Resolved', url: '/grievances/resolved', icon: 'i-heroicons-outline-steps' },
-    { text: 'Escalated', url: '/grievances/escalated', icon: 'i-heroicons-outline-steps' },
+    { text: 'Open', url: '/gbv/open', icon: 'i-heroicons-outline-clipboard-list' },
+    { text: 'Investigate', url: '/gbv/investigate', icon: 'i-heroicons-outline-steps' },
+    { text: 'Resolved', url: '/gbv/resolved', icon: 'i-heroicons-outline-steps' },
+    { text: 'Escalated', url: '/gbv/escalated', icon: 'i-heroicons-outline-steps' },
   ] 
 }, 
 
