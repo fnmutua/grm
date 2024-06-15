@@ -146,7 +146,8 @@ const toggleCollapse = () => {
     { text: 'Overview', url: '/dashboard/main', icon: 'i-heroicons-information-circle' },
     { text: 'Quick Start', url: '/dashboard/grv', icon: 'i-heroicons-information-circle' }
   ]
-}, {
+}, 
+{
   label: 'Grievances',
   icon: 'i-heroicons-swatch',
     links: [
@@ -155,8 +156,20 @@ const toggleCollapse = () => {
     { text: 'Resolved', url: '/grievances/resolved', icon: 'i-heroicons-outline-steps' },
     { text: 'Escalated', url: '/grievances/escalated', icon: 'i-heroicons-outline-steps' },
   ] 
+}, 
+{
+  label: 'GBV',
+  icon: 'i-heroicons-face-frown',
+    links: [
+    { text: 'Open', url: '/grievances/open', icon: 'i-heroicons-outline-clipboard-list' },
+    { text: 'Investigate', url: '/grievances/investigate', icon: 'i-heroicons-outline-steps' },
+    { text: 'Resolved', url: '/grievances/resolved', icon: 'i-heroicons-outline-steps' },
+    { text: 'Escalated', url: '/grievances/escalated', icon: 'i-heroicons-outline-steps' },
+  ] 
+}, 
 
-},  {
+
+{
   label: 'Admin Units',
   icon: 'i-heroicons-rectangle-group',
    links: [
