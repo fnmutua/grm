@@ -492,7 +492,7 @@ const items = (row) => [
             <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" 
               :trailing="false" @click="onChange(0)" />
             <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
-              <UButton color="white"  trailing-icon="i-heroicons-chevron-down-20-solid" />
+              <UButton color="primary"  variant="outline"   size="sm"  trailing-icon="i-heroicons-chevron-down-20-solid" />
             </UDropdown>
           </div>
 

@@ -1,456 +1,4 @@
-<template>
-
-<div class="grid lg:grid-cols-12 place-items-left pt-5 pb-8 md:pt-8 ">
-      <!-- Left Column -->
-      <div class="lg:col-span-2">
-        <AdminSideNav2></AdminSideNav2>
-      </div> 
-  
-      <div class="lg:col-span-9 pt-16 pb-8 md:pt-8 pl-4 pr-5">
-    
-      <UCard
-        class="w-full"
-        :ui="{
-          base: '',
-          ring: '',
-          divide: 'divide-y divide-gray-200 dark:divide-gray-700',
-          header: { padding: 'px-4 py-5' },
-          body: {
-            padding: '',
-            base: 'divide-y divide-gray-200 dark:divide-gray-700',
-          },
-          footer: { padding: 'p-4' },
-        }"
-      >
-        <div
-          class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"
-        >
-          <UInput v-model="q" placeholder="Filter..." />
-          <UButton
-            v-if="total > 0"
-            icon="i-heroicons-cloud-arrow-down"
-            size="sm"
-            color="primary"
-            variant="link"
-            label="Download"
-            :trailing="false"
-            @click="downloadXLSX"
-          />
-          <UButton
-            v-if="total > 0"
-            icon="i-heroicons-arrow-path"
-            size="sm"
-            color="primary"
-            variant="link"
-            label="Refresh"
-            :trailing="false"
-            @click="onChange(0)"
-          />
-
-          <UDropdown
-            v-if="ShowMultipleActions"
-            :items="actions"
-            :popper="{ placement: 'bottom-start' }"
-          >
-            <UButton
-              color="white"
-              label="Actions"
-              trailing-icon="i-heroicons-chevron-down-20-solid"
-            />
-          </UDropdown>
-        </div>
-
-        <div></div>
-        <template #footer>
-          <div class="flex flex-wrap justify-between items-center">
-            <div class="flex items-center gap-1.5">
-              <span v-if="total > 0" class="text-sm leading-5"
-                >Rows per page:</span
-              >
-              <USelect
-                v-model="pageCount"
-                :options="[3, 5, 10, 20, 30, 40]"
-                @change="onPageCountChange"
-                @click="onPageChange"
-                class="me-2 w-20"
-                size="xs"
-                v-if="total > 0"
-              />
-            </div>
-
-            <div class="flex items-center gap-1.5">
-              <span class="text-sm leading-5" v-if="total > 0">
-                Showing
-                <span class="font-medium">{{ pageFrom }}</span>
-                to
-                <span class="font-medium">{{ pageTo }}</span>
-                of
-                <span class="font-medium">{{ total }}</span>
-                results
-              </span>
-
-              <UPagination
-                v-if="total > 0"
-                v-model="page"
-                :page-count="pageCount"
-                :total="total"
-                @click="onPageChange"
-                :prev-button="{
-                  icon: 'i-heroicons-arrow-small-left-20-solid',
-                  label: 'Prev',
-                  color: 'gray',
-                }"
-                :next-button="{
-                  icon: 'i-heroicons-arrow-small-right-20-solid',
-                  trailing: true,
-                  label: 'Next',
-                  color: 'gray',
-                }"
-                :ui="{
-                  wrapper: 'flex items-center gap-1',
-                  rounded: '!rounded-full min-w-[32px] justify-center',
-                  default: {
-                    activeButton: {
-                      variant: 'outline',
-                    },
-                  },
-                }"
-              />
-            </div>
-          </div>
-        </template>
-
-        <div style="width: 100%; margin-top: 50px">
-          <UTable
-            v-model="selected"
-            :rows="filteredRows"
-            :columns="columns"
-            :loading="pending"
-            class="w-full"
-            :ui="{
-              td: { base: 'max-w-[0] text-wrap' },
-              default: { checkbox: { color: 'green' } },
-            }"
-          >
-            <template #name-data="{ row }">
-              <span
-                :class="[
-                  selected.find((row) => row.id === row.id) &&
-                    'text-primary-500 dark:text-primary-400',
-                ]"
-                >{{ row.code }}</span
-              >
-            </template>
-            <template #completed-data="{ row }">
-              <UBadge
-                size="xs"
-                :label="
-                  row.acceptance === 'Pending'
-                    ? 'Pending'
-                    : row.acceptance === 'Accepted'
-                    ? 'Accepted'
-                    : 'Rejected'
-                "
-                :color="
-                  row.acceptance === 'Pending'
-                    ? 'orange'
-                    : row.acceptance === 'Accepted'
-                    ? 'emerald'
-                    : 'red'
-                "
-                variant="subtle"
-              />
-            </template>
-
-            <template #actions-data="{ row }">
-              <UDropdown :items="items(row)">
-                <UButton
-                  variant="ghost"
-                  icon="i-heroicons-pencil-square "
-                />
-              </UDropdown>
-            </template>
-          </UTable>
-        </div>
-
-        <UModal v-model="showDetailsModal">
-          <UCard
-            :ui="{
-              base: 'h-full flex flex-col',
-              rounded: '',
-              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-              body: {
-                base: 'grow',
-              },
-            }"
-          >
-            <template #header>
-              <div class="flex items-center justify-between">
-                <h3
-                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
-                >
-                  Rights Allocation
-                </h3>
-                <UButton
-                  color="gray"
-                  variant="ghost"
-                  icon="i-heroicons-x-mark-20-solid"
-                  class="-my-1"
-                  @click="showDetailsModal = false"
-                />
-              </div>
-            </template>
-            <div>
-              <p>
-                You are allocating
-                <span class="highlight">{{ user_details.jina }}</span> the
-                selected roles below:
-              </p>
-              <UDivider label="***" />
-            </div>
-            <div class="checkbox-container" style="margin-top: 20px">
-              <UCheckbox
-                v-for="(role, index) in roles"
-                :key="index"
-                v-model="checkedRoles"
-                :value="role.code"
-              >
-                <template #label>
-                  <span>{{ role.description }}</span>
-                </template>
-              </UCheckbox>
-            </div>
-
-            <template #footer>
-              <div class="flex justify-end items-center gap-2">
-                <UButton
-                  @click="showDetailsModal = false"
-                  variant="outline"
-                  color="gray"
-                  >Cancel</UButton
-                >
-                <UButton @click="EditRights" variant="outline" color="green"
-                  >Submit</UButton
-                >
-              </div>
-            </template>
-          </UCard>
-        </UModal>
-      </UCard>
-
-      <UModal v-model="isOpenRights">
-        <UCard
-          :ui="{
-            base: 'h-full flex flex-col',
-            rounded: '',
-            divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-            body: {
-              base: 'grow',
-            },
-          }"
-        >
-          <template #header>
-            <div class="flex items-center justify-between">
-              <h3
-                class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
-              >
-                Rights Allocation
-              </h3>
-              <UButton
-                color="gray"
-                variant="ghost"
-                icon="i-heroicons-x-mark-20-solid"
-                class="-my-1"
-                @click="isOpenRights = false"
-              />
-            </div>
-          </template>
-          <div>
-            <p>
-              You are allocating
-              <span class="highlight">{{ selected_users }}</span> the selected
-              roles below:
-            </p>
-            <UDivider label="***" />
-          </div>
-          <div class="checkbox-container" style="margin-top: 20px">
-            <UCheckbox
-              v-for="(role, index) in roles"
-              :key="index"
-              v-model="checkedRoles"
-              :value="role.code"
-            >
-              <template #label>
-                <span>{{ role.description }}</span>
-              </template>
-            </UCheckbox>
-          </div>
-
-          <template #footer>
-            <div class="flex justify-end items-center gap-2">
-              <UButton
-                @click="isOpenRights = false"
-                variant="outline"
-                color="gray"
-                >Cancel</UButton
-              >
-              <UButton @click="EditRights" variant="outline" color="green"
-                >Submit</UButton
-              >
-            </div>
-          </template>
-        </UCard>
-      </UModal>
-
-      <UModal v-model="isEditUser">
-        <UCard
-          :ui="{
-            base: 'h-full flex flex-col',
-            rounded: '',
-            divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-            body: {
-              base: 'grow',
-            },
-          }"
-        >
-          <template #header>
-            <div class="flex items-center justify-between">
-              <h3
-                class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
-              >
-                Edit User Details
-              </h3>
-              <UButton
-                color="gray"
-                variant="ghost"
-                icon="i-heroicons-x-mark-20-solid"
-                class="-my-1"
-                @click="isEditUser = false"
-              />
-            </div>
-          </template>
-
-          <UCard
-            :ui="{
-              body: {
-                base: 'grid grid-cols-1 sm:grid-cols-1',
-                justify: 'center',
-              },
-              style: { width: '10%' },
-              shadow: 'shadow',
-            }"
-          >
-            <!-- Form Section -->
-
-            <UForm
-              :validate="validate"
-              :state="form"
-              class="grid grid-cols-1 sm:grid-cols-2 gap-4"
-              @submit="onSubmit"
-            >
-              <div class="sm:col-span-1 space-y-4">
-                <UFormGroup label="Your Name " name="Name">
-                  <UInput
-                    v-model="user_details.name"
-                    placeholder="John Mpenda Pesa"
-                    variant="outline"
-                  />
-                </UFormGroup>
-
-                <UFormGroup label="Telephone" name="Telephone" required>
-                  <UInput
-                    v-model="user_details.phone"
-                    type="text"
-                    placeholder="0700 000 000"
-                    required
-                  />
-                </UFormGroup>
-
-                <UFormGroup label="Gender" name="Gender" required>
-                  <USelect
-                    v-model="user_details.gender"
-                    :options="Gender"
-                    placeholder="Select"
-                    required
-                  />
-                </UFormGroup>
-
-                <UFormGroup label="Email/Username" name="email">
-                  <UInput
-                    id="formattedInput"
-                    v-model="user_details.username"
-                    class="mr-2"
-                  />
-                </UFormGroup>
-               
-              </div>
-
-              <div class="sm:col-span-1 space-y-4">
-                <UFormGroup label="County" name="County" required>
-                  <USelect
-                    v-model="user_details.county"
-                    :options="counties"
-                    placeholder="Select"
-                    @change="getSubCounties"
-                    required
-                  >
-                  </USelect>
-                </UFormGroup>
-
-                <UFormGroup label="Subcounty" name="Subcounty" required>
-                  <USelect
-                    v-model="user_details.subcounty"
-                    :options="subcounties"
-                    placeholder="Select"
-                    @change="getWards"
-                    required
-                    :disabled="subcounty_disabled"
-                  />
-                </UFormGroup>
-
-                <UFormGroup label="Ward" name="Ward" required>
-                  <USelect
-                    v-model="user_details.ward"
-                    :options="wards"
-                    placeholder="Select"
-                    @change="getSettlements"
-                    required
-                    :disabled="ward_disabled"
-                  />
-                </UFormGroup>
-
-                <UFormGroup label="Settlement" name="Settlement" required>
-                  <USelect
-                    v-model="user_details.settlement"
-                    :options="settlements"
-                    placeholder="Select"
-                    required
-                    :disabled="settlements_disabled"
-                  />
-                </UFormGroup>
  
-              </div>
-            </UForm>
-          </UCard>
-          <template #footer>
-            <div class="flex justify-end items-center gap-2">
-              <UButton
-                @click="isEditUser = false"
-                variant="outline"
-                color="gray"
-                >Cancel</UButton
-              >
-              <UButton @click="UpdateUser" variant="outline" color="green"
-                >Submit</UButton
-              >
-            </div>
-          </template>
-        </UCard>
-      </UModal>
-    </div>
-  </div>
-</template>
-
 <script setup>
 definePageMeta({
   layout: "landing",
@@ -1032,3 +580,377 @@ async function getSettlements(parent) {
   margin-bottom: 20px;
 }
 </style>
+
+
+
+<template>
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-4 py-10">
+     
+
+    <!-- Side Navigation for medium and larger screens -->
+    <div  class="col-span-2 md:block">
+      <AdminSideNav2></AdminSideNav2>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-span-1 md:col-span-10 p-4">
+      <UCard>
+        <div class="lg:hidden">
+            <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
+            <UInput v-model="q" placeholder="Filter..." />
+            <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
+            :trailing="false" @click="downloadXLSX" />
+            <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" 
+              :trailing="false" @click="onChange(0)" />
+            <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
+              <UButton color="primary"  variant="outline"   size="sm"  trailing-icon="i-heroicons-chevron-down-20-solid" />
+            </UDropdown>
+          </div>
+
+        </div>
+
+        <div class="hidden md:block">
+          <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
+            <UInput v-model="q" placeholder="Filter..." />
+            <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
+              label="Download" :trailing="false" @click="downloadXLSX" />
+            <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" label="Refresh"
+              :trailing="false" @click="onChange(0)" />
+            <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
+              <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
+            </UDropdown>
+          </div>
+ 
+        </div>
+
+        
+
+
+      <UTable
+              v-model="selected"
+              v-model:sort="sort"
+              :rows="filteredRows"
+              :columns="columns"
+              :loading="pending"
+              sort-asc-icon="i-heroicons-arrow-up"
+              sort-desc-icon="i-heroicons-arrow-down"
+               :ui="{ td: { base: 'max-w-[0] truncate  text-transform: normal-case  ' }, default: { checkbox: { color: 'gray' } } }"
+              @select="select">
+          
+            <template #actions-data="{ row }">
+              <UDropdown :items="items(row)">
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" />
+              </UDropdown>
+            </template>
+
+            
+          </UTable>
+         
+ <template #footer>
+          <div class="flex flex-wrap justify-between items-center">
+            <div class="flex items-center gap-1.5">
+              <span v-if="total > 0" class="text-sm leading-5">Rows per page:</span>
+              <USelect v-model="pageCount" :options="[3, 5, 10, 20, 30, 40]" @change="onPageCountChange"
+                @click="onPageChange" class="me-2 w-20" size="xs" v-if="total > 0" />
+            </div>
+
+               
+              
+
+              <UPagination v-if="total > 0" v-model="page" :page-count="pageCount" :total="total" @click="onPageChange"
+                :prev-button="{ icon: 'i-heroicons-arrow-small-left-20-solid', color: 'gray' }"
+                :next-button="{ icon: 'i-heroicons-arrow-small-right-20-solid', trailing: true,  color: 'gray' }"
+                :ui="{
+                  wrapper: 'flex items-center gap-1',
+                  rounded: '!rounded-full min-w-[32px] justify-center',
+                  default: {
+                    activeButton: {
+                      variant: 'outline'
+                    }
+                  }
+                }" />
+           
+          </div>
+        </template>
+      </UCard>
+      
+            
+          
+    </div>
+  </div>
+
+  <UModal v-model="showDetailsModal">
+          <UCard
+            :ui="{
+              base: 'h-full flex flex-col',
+              rounded: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+              body: {
+                base: 'grow',
+              },
+            }"
+          >
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                >
+                  Rights Allocation
+                </h3>
+                <UButton
+                  color="gray"
+                  variant="ghost"
+                  icon="i-heroicons-x-mark-20-solid"
+                  class="-my-1"
+                  @click="showDetailsModal = false"
+                />
+              </div>
+            </template>
+            <div>
+              <p>
+                You are allocating
+                <span class="highlight">{{ user_details.jina }}</span> the
+                selected roles below:
+              </p>
+              <UDivider label="***" />
+            </div>
+            <div class="checkbox-container" style="margin-top: 20px">
+              <UCheckbox
+                v-for="(role, index) in roles"
+                :key="index"
+                v-model="checkedRoles"
+                :value="role.code"
+              >
+                <template #label>
+                  <span>{{ role.description }}</span>
+                </template>
+              </UCheckbox>
+            </div>
+
+            <template #footer>
+              <div class="flex justify-end items-center gap-2">
+                <UButton
+                  @click="showDetailsModal = false"
+                  variant="outline"
+                  color="gray"
+                  >Cancel</UButton
+                >
+                <UButton @click="EditRights" variant="outline" color="green"
+                  >Submit</UButton
+                >
+              </div>
+            </template>
+          </UCard>
+        </UModal>
+
+
+        <UModal v-model="isOpenRights">
+        <UCard
+          :ui="{
+            base: 'h-full flex flex-col',
+            rounded: '',
+            divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            body: {
+              base: 'grow',
+            },
+          }"
+        >
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+              >
+                Rights Allocation
+              </h3>
+              <UButton
+                color="gray"
+                variant="ghost"
+                icon="i-heroicons-x-mark-20-solid"
+                class="-my-1"
+                @click="isOpenRights = false"
+              />
+            </div>
+          </template>
+          <div>
+            <p>
+              You are allocating
+              <span class="highlight">{{ selected_users }}</span> the selected
+              roles below:
+            </p>
+            <UDivider label="***" />
+          </div>
+          <div class="checkbox-container" style="margin-top: 20px">
+            <UCheckbox
+              v-for="(role, index) in roles"
+              :key="index"
+              v-model="checkedRoles"
+              :value="role.code"
+            >
+              <template #label>
+                <span>{{ role.description }}</span>
+              </template>
+            </UCheckbox>
+          </div>
+
+          <template #footer>
+            <div class="flex justify-end items-center gap-2">
+              <UButton
+                @click="isOpenRights = false"
+                variant="outline"
+                color="gray"
+                >Cancel</UButton
+              >
+              <UButton @click="EditRights" variant="outline" color="green"
+                >Submit</UButton
+              >
+            </div>
+          </template>
+        </UCard>
+      </UModal>
+
+      <UModal v-model="isEditUser">
+        <UCard
+          :ui="{
+            base: 'h-full flex flex-col',
+            rounded: '',
+            divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            body: {
+              base: 'grow',
+            },
+          }"
+        >
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+              >
+                Edit User Details
+              </h3>
+              <UButton
+                color="gray"
+                variant="ghost"
+                icon="i-heroicons-x-mark-20-solid"
+                class="-my-1"
+                @click="isEditUser = false"
+              />
+            </div>
+          </template>
+
+          <UCard
+            :ui="{
+              body: {
+                base: 'grid grid-cols-1 sm:grid-cols-1',
+                justify: 'center',
+              },
+              style: { width: '10%' },
+              shadow: 'shadow',
+            }"
+          >
+            <!-- Form Section -->
+
+            <UForm
+              :validate="validate"
+              :state="form"
+              class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+              @submit="onSubmit"
+            >
+              <div class="sm:col-span-1 space-y-4">
+                <UFormGroup label="Your Name " name="Name">
+                  <UInput
+                    v-model="user_details.name"
+                    placeholder="John Mpenda Pesa"
+                    variant="outline"
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="Telephone" name="Telephone" required>
+                  <UInput
+                    v-model="user_details.phone"
+                    type="text"
+                    placeholder="0700 000 000"
+                    required
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="Gender" name="Gender" required>
+                  <USelect
+                    v-model="user_details.gender"
+                    :options="Gender"
+                    placeholder="Select"
+                    required
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="Email/Username" name="email">
+                  <UInput
+                    id="formattedInput"
+                    v-model="user_details.username"
+                    class="mr-2"
+                  />
+                </UFormGroup>
+               
+              </div>
+
+              <div class="sm:col-span-1 space-y-4">
+                <UFormGroup label="County" name="County" required>
+                  <USelect
+                    v-model="user_details.county"
+                    :options="counties"
+                    placeholder="Select"
+                    @change="getSubCounties"
+                    required
+                  >
+                  </USelect>
+                </UFormGroup>
+
+                <UFormGroup label="Subcounty" name="Subcounty" required>
+                  <USelect
+                    v-model="user_details.subcounty"
+                    :options="subcounties"
+                    placeholder="Select"
+                    @change="getWards"
+                    required
+                    :disabled="subcounty_disabled"
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="Ward" name="Ward" required>
+                  <USelect
+                    v-model="user_details.ward"
+                    :options="wards"
+                    placeholder="Select"
+                    @change="getSettlements"
+                    required
+                    :disabled="ward_disabled"
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="Settlement" name="Settlement" required>
+                  <USelect
+                    v-model="user_details.settlement"
+                    :options="settlements"
+                    placeholder="Select"
+                    required
+                    :disabled="settlements_disabled"
+                  />
+                </UFormGroup>
+ 
+              </div>
+            </UForm>
+          </UCard>
+          <template #footer>
+            <div class="flex justify-end items-center gap-2">
+              <UButton
+                @click="isEditUser = false"
+                variant="outline"
+                color="gray"
+                >Cancel</UButton
+              >
+              <UButton @click="UpdateUser" variant="outline" color="green"
+                >Submit</UButton
+              >
+            </div>
+          </template>
+        </UCard>
+      </UModal>
+</template>

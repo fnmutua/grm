@@ -1,192 +1,101 @@
+
 <template>
-<div class="grid lg:grid-cols-12 place-items-left pt-5 pb-8 md:pt-8 ">
-      <!-- Left Column -->
-      <div class="lg:col-span-2">
-        <AdminSideNav2></AdminSideNav2>
-      </div> 
-  
-      <div class="lg:col-span-9 pt-16 pb-8 md:pt-8 pl-4 pr-5">
- 
-      <!-- Right Column -->
-         <UCard
-            class="w-full"
-            :ui="{
-              base: '',
-              ring: '',
-              divide: 'divide-y divide-gray-200 dark:divide-gray-700',
-              header: { padding: 'px-4 py-5' },
-              body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
-              footer: { padding: 'p-4' }
-            }"
-          >
-          <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-4 py-10">
+     
+
+    <!-- Side Navigation for medium and larger screens -->
+    <div  class="col-span-2 md:block">
+      <AdminSideNav2></AdminSideNav2>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-span-1 md:col-span-10 p-4">
+      <UCard>
+        <div class="lg:hidden">
+            <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
             <UInput v-model="q" placeholder="Filter..." />
-            <UButton   v-if="total>0"
-              icon="i-heroicons-cloud-arrow-down"
-              size="sm"
-              color="primary"
-              variant="link"
-              label="Download"
-              :trailing="false"
-              @click="downloadXLSX"
-            />
-            <UButton   v-if="total>0"
-              icon="i-heroicons-arrow-path"
-              size="sm"
-              color="primary"
-              variant="link"
-              label="Refresh"
-              :trailing="false"
-              @click="onChange(0)"
-            />
+            <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
+            :trailing="false" @click="downloadXLSX" />
+            <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" 
+              :trailing="false" @click="onChange(0)" />
             <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
-                <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
+              <UButton color="primary"  variant="outline"   size="sm"  trailing-icon="i-heroicons-chevron-down-20-solid" />
             </UDropdown>
-      
           </div>
+
+        </div>
+
+        <div class="hidden md:block">
+          <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
+            <UInput v-model="q" placeholder="Filter..." />
+            <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
+              label="Download" :trailing="false" @click="downloadXLSX" />
+            <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" label="Refresh"
+              :trailing="false" @click="onChange(0)" />
+            <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
+              <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
+            </UDropdown>
+          </div>
+ 
+        </div>
+
         
-<!--           <UTable
-            v-model:sort="sort"
-            @select="select"
-            v-model="selected"
-            :rows="filteredRows"
-            :columns="columns"
-            :loading="pending"
-            class="w-full"
-            :ui="{ td: { base: 'max-w-[0] truncate' }, default: { checkbox: { color: 'gray' } } }"
+
+
+      <UTable
+              v-model="selected"
+              v-model:sort="sort"
+              :rows="filteredRows"
+              :columns="columns"
+              :loading="pending"
+              sort-asc-icon="i-heroicons-arrow-up"
+              sort-desc-icon="i-heroicons-arrow-down"
+               :ui="{ td: { base: 'max-w-[0] truncate  text-transform: normal-case  ' }, default: { checkbox: { color: 'gray' } } }"
+              @select="select">
           
-          >
-          <template #actions-data="{ row }">
-            <UDropdown v-if="!ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
-                <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
-            </UDropdown>
-          </template>
+            <template #actions-data="{ row }">
+              <UDropdown :items="items(row)">
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" />
+              </UDropdown>
+            </template>
+
+            
+          </UTable>
          
-          <template #completed-data="{ row }">
-          <UBadge
-            size="xs"
-            :label="row.acceptance === 'Pending' ? 'Pending' : (row.acceptance === 'Accepted' ? 'Accepted' : 'Rejected')"
-            :color="row.acceptance === 'Pending' ? 'orange' : (row.acceptance === 'Accepted' ? 'emerald' : 'red')"
-            variant="subtle"
-          />
-        </template>
-
-        <template #expand-data="{ row }">
-         
-          <UButton label="More..." color="gray">
-          <template #trailing>
-            <UIcon name="i-heroicons-arrow-right-20-solid" class="w-5 h-5" />
-          </template>
-        </UButton>
-
-        </template>
-  
-        </UTable> -->
-
-        <div>
-          <UModal v-model="isOpen">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-              <template #header>
-                <p>Feedback </p>
-              </template>
-              <div>
-              <UFormGroup label="Comments to complainant" required>
-                <UTextarea v-model="comments" color="primary" variant="outline" placeholder="Provide your detailed response to the complainant on how the grievance was resolved" />
-              </UFormGroup>
+ <template #footer>
+          <div class="flex flex-wrap justify-between items-center">
+            <div class="flex items-center gap-1.5">
+              <span v-if="total > 0" class="text-sm leading-5">Rows per page:</span>
+              <USelect v-model="pageCount" :options="[3, 5, 10, 20, 30, 40]" @change="onPageCountChange"
+                @click="onPageChange" class="me-2 w-20" size="xs" v-if="total > 0" />
             </div>
-              <template #footer>
-                <div class="flex justify-between">
-              <UButton label="Cancel"   @click="isOpen = false"  variant="outline" color="gray" />
-              <UButton label="Submit"  @click="markResolved"  />
-            </div>       
-          </template>
-            </UCard>
-          </UModal>
-        </div> 
-          <template #footer>
-            <div class="flex flex-wrap justify-between items-center">
-              <div class="flex items-center gap-1.5">
-                <span   v-if="total>0" class="text-sm leading-5">Rows per page:</span>
-                <USelect 
-                  v-model="pageCount"
-                  :options="[3, 5, 10, 20, 30, 40]"
-                  @change="onPageCountChange"
-                  @click="onPageChange"
-                  class="me-2 w-20"
-                  size="xs"
-                  v-if="total>0"
-                />
-              </div>
 
-              <div class="flex items-center gap-1.5">
-                <span class="text-sm leading-5" v-if="total>0">
-                    Showing
-                    <span class="font-medium">{{ pageFrom }}</span>
-                    to
-                    <span class="font-medium">{{ pageTo }}</span>
-                    of
-                    <span class="font-medium">{{ total }}</span>
-                    results
-                </span>
+               
+              
 
-                <UPagination  
-                  v-if="total>0"
-                  v-model="page"
-                  :page-count="pageCount"
-                  :total="total"
-                  @click="onPageChange"
-                  :prev-button="{ icon: 'i-heroicons-arrow-small-left-20-solid', label: 'Prev', color: 'gray' }"
-                  :next-button="{ icon: 'i-heroicons-arrow-small-right-20-solid', trailing: true, label: 'Next', color: 'gray' }"
-
-                  :ui="{
-                    wrapper: 'flex items-center gap-1',
-                    rounded: '!rounded-full min-w-[32px] justify-center',
-                    default: {
-                      activeButton: {
-                        variant: 'outline'
-                      }
+              <UPagination v-if="total > 0" v-model="page" :page-count="pageCount" :total="total" @click="onPageChange"
+                :prev-button="{ icon: 'i-heroicons-arrow-small-left-20-solid', color: 'gray' }"
+                :next-button="{ icon: 'i-heroicons-arrow-small-right-20-solid', trailing: true,  color: 'gray' }"
+                :ui="{
+                  wrapper: 'flex items-center gap-1',
+                  rounded: '!rounded-full min-w-[32px] justify-center',
+                  default: {
+                    activeButton: {
+                      variant: 'outline'
                     }
-                  }"
-                />
-              </div>
-            </div>
-          </template>
-
-
-          <div style="width: 100%; margin-top:50px">
-            <UTable v-model="selected" :rows="filteredRows" :columns="columns" :loading="pending"
-            class="w-full"
-            :ui="{ td: { base: 'max-w-[0] text-pretty' }, default: { checkbox: { color: 'green' } } }" >
-              <template #name-data="{ row }">
-                <span :class="[selected.find(row => row.id === row.id) && 'text-primary-500 dark:text-primary-400']">{{ row.code }}</span>
-              </template>
-              <template #completed-data="{ row }">
-          <UBadge
-            size="xs"
-            :label="row.acceptance === 'Pending' ? 'Pending' : (row.acceptance === 'Accepted' ? 'Accepted' : 'Rejected')"
-            :color="row.acceptance === 'Pending' ? 'orange' : (row.acceptance === 'Accepted' ? 'emerald' : 'red')"
-            variant="subtle"
-          />
-        </template>
-
-        
-              <template #actions-data="{ row }">
-                <UDropdown :items="items(row)">
-                  <UButton  variant="ghost" icon="i-heroicons-pencil-square " />
-                </UDropdown>
-              </template>
-            </UTable>
+                  }
+                }" />
+           
           </div>
-
-
-        </UCard>
+        </template>
+      </UCard>
       
-    
-      </div>
-
-    
+            
+          
+    </div>
   </div>
 </template>
+
 
 <script setup>
  
