@@ -21,7 +21,8 @@
                           class="bg-white dark:bg-transparent border rounded-xl flex items-center justify-center">
  
                           <client-only>
-                            <VChart  :option="option" />
+                            <VChart  :option="hor_option" />
+
                           </client-only>
 
                         </SplitterPanel>
@@ -30,12 +31,16 @@
                           <SplitterGroup id="splitter-group-2" direction="vertical">
                             <SplitterPanel id="splitter-group-2-panel-1" :min-size="20"
                               class="bg-white dark:bg-transparent border rounded-xl flex items-center justify-center">
-                              Panel B
+                              <client-only>
+                                <VChart  :option="chart2_option" />
+                              </client-only>
                             </SplitterPanel>
                             <SplitterResizeHandle id="splitter-group-2-resize-handle-1" class="h-2" />
-                            <SplitterPanel id="splitter-group-2-panel-2" :min-size="20"
+                            <SplitterPanel id="splitter-group-2-panel-2"  
                               class="bg-white dark:bg-transparent border rounded-xl flex items-center justify-center">
-                              Panel C
+                              <client-only>
+                                <VChart  :option="option3" />
+                              </client-only>
                             </SplitterPanel>
                           </SplitterGroup>
                         </SplitterPanel>
@@ -58,6 +63,8 @@ definePageMeta({
 });
 
 import { PieChart } from 'echarts/charts'
+import * as echarts from 'echarts';
+
 import {
   GridComponent,
   LegendComponent,
@@ -132,10 +139,263 @@ const items = [{
 }]
 
 
+const colors = ['#5470C6', '#EE6666'];
+const chart2_option = {
+  color: colors,
+  tooltip: {
+    trigger: 'none',
+    axisPointer: {
+      type: 'cross'
+    }
+  },
+  legend: {},
+  grid: {
+    top: 70,
+    bottom: 50
+  },
+  xAxis: [
+    {
+      type: 'category',
+      axisTick: {
+        alignWithLabel: true
+      },
+      axisLine: {
+        onZero: false,
+        lineStyle: {
+          color: colors[1]
+        }
+      },
+      axisPointer: {
+        label: {
+          formatter: function (params) {
+            return (
+              'Precipitation  ' +
+              params.value +
+              (params.seriesData.length ? '：' + params.seriesData[0].data : '')
+            );
+          }
+        }
+      },
+      // prettier-ignore
+      data: ['2016-1', '2016-2', '2016-3', '2016-4', '2016-5', '2016-6', '2016-7', '2016-8', '2016-9', '2016-10', '2016-11', '2016-12']
+    },
+    {
+      type: 'category',
+      axisTick: {
+        alignWithLabel: true
+      },
+      axisLine: {
+        onZero: false,
+        lineStyle: {
+          color: colors[0]
+        }
+      },
+      axisPointer: {
+        label: {
+          formatter: function (params) {
+            return (
+              'Precipitation  ' +
+              params.value +
+              (params.seriesData.length ? '：' + params.seriesData[0].data : '')
+            );
+          }
+        }
+      },
+      // prettier-ignore
+      data: ['2015-1', '2015-2', '2015-3', '2015-4', '2015-5', '2015-6', '2015-7', '2015-8', '2015-9', '2015-10', '2015-11', '2015-12']
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value'
+    }
+  ],
+  series: [
+    {
+      name: 'Precipitation(2015)',
+      type: 'line',
+      xAxisIndex: 1,
+      smooth: true,
+      emphasis: {
+        focus: 'series'
+      },
+      data: [
+        2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
+      ]
+    },
+    {
+      name: 'Precipitation(2016)',
+      type: 'line',
+      smooth: true,
+      emphasis: {
+        focus: 'series'
+      },
+      data: [
+        3.9, 5.9, 11.1, 18.7, 48.3, 69.2, 231.6, 46.6, 55.4, 18.4, 10.3, 0.7
+      ]
+    }
+  ]
+};
+
+const option3 = {
+  xAxis: {
+    type: 'category',
+    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      data: [120, 200, 150, 80, 70, 110, 130],
+      type: 'bar'
+    }
+  ]
+};
+
+const hor_option = {
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      // Use axis to trigger tooltip
+      type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+    }
+  },
+  legend: {},
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+  },
+  xAxis: {
+    type: 'value'
+  },
+  yAxis: {
+    type: 'category',
+    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+  series: [
+    {
+      name: 'Direct',
+      type: 'bar',
+      stack: 'total',
+      label: {
+        show: true
+      },
+      emphasis: {
+        focus: 'series'
+      },
+      data: [320, 302, 301, 334, 390, 330, 320]
+    },
+    {
+      name: 'Mail Ad',
+      type: 'bar',
+      stack: 'total',
+      label: {
+        show: true
+      },
+      emphasis: {
+        focus: 'series'
+      },
+      data: [120, 132, 101, 134, 90, 230, 210]
+    },
+    {
+      name: 'Affiliate Ad',
+      type: 'bar',
+      stack: 'total',
+      label: {
+        show: true
+      },
+      emphasis: {
+        focus: 'series'
+      },
+      data: [220, 182, 191, 234, 290, 330, 310]
+    },
+    {
+      name: 'Video Ad',
+      type: 'bar',
+      stack: 'total',
+      label: {
+        show: true
+      },
+      emphasis: {
+        focus: 'series'
+      },
+      data: [150, 212, 201, 154, 190, 330, 410]
+    },
+    {
+      name: 'Search Engine',
+      type: 'bar',
+      stack: 'total',
+      label: {
+        show: true
+      },
+      emphasis: {
+        focus: 'series'
+      },
+      data: [820, 832, 901, 934, 1290, 1330, 1320]
+    }
+  ]
+};
+
+
+const time_option = {
+  series: [
+    {
+      type: 'gauge',
+      progress: {
+        show: true,
+        width: 18
+      },
+      axisLine: {
+        lineStyle: {
+          width: 18
+        }
+      },
+      axisTick: {
+        show: false
+      },
+      splitLine: {
+        length: 15,
+        lineStyle: {
+          width: 2,
+          color: '#999'
+        }
+      },
+      axisLabel: {
+        distance: 25,
+        color: '#999',
+        fontSize: 20
+      },
+      anchor: {
+        show: true,
+        showAbove: true,
+        size: 25,
+        itemStyle: {
+          borderWidth: 10
+        }
+      },
+      title: {
+        show: false
+      },
+      detail: {
+        valueAnimation: true,
+        fontSize: 80,
+        offsetCenter: [0, '70%']
+      },
+      data: [
+        {
+          value: 70
+        }
+      ]
+    }
+  ]
+};
 </script>
 
 <style scoped>
 .chart {
-  height: 90vh;
+  height: 80vh;
 }
 </style>
