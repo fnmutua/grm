@@ -25,7 +25,7 @@
           <UDivider label="**" class=" pt-4" />
           <div>
  
-            <highchart :options="chartOpts3" more   :modules="['exporting']"/>
+            <highchart :options="chartOpts3" more   :modules="['exporting']" class="bg-white dark:bg-transparent border"/>
 
 
           </div>
@@ -246,7 +246,8 @@ const chartOpts2 = {
   
 const chartOpts3 = {
   chart: {
-      type: 'column'
+      type: 'column',
+      backgroundColor: '#202d3b'
   },
   title: {
       text: 'Grievances by gender',
