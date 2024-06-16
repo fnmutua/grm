@@ -180,6 +180,9 @@
 }
 const chartOpts2 = {
  
+  chart: {
+       backgroundColor: 'transparent'
+  },
   title: {
       text: 'Grievance Reporting Rates',
       align: 'left'
@@ -247,7 +250,7 @@ const chartOpts2 = {
 const chartOpts3 = {
   chart: {
       type: 'column',
-      backgroundColor: '#202d3b'
+      backgroundColor: 'transparent'
   },
   title: {
       text: 'Grievances by gender',
