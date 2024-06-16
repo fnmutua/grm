@@ -81,6 +81,16 @@ export default defineEventHandler(async (req) => {
         const percentageChange = previousTotal > 0 ? ((currentTotal - previousTotal) / previousTotal) * 100 : (currentTotal > 0 ? 100 : 0);
         percentageChanges[status] = percentageChange;
       });
+
+       // Calculate total amounts for current and previous months
+    const currentMonthTotal = Object.values(currentMonthTotals).reduce((sum, value) => sum + value, 0);
+    const previousMonthTotal = Object.values(previousMonthTotals).reduce((sum, value) => sum + value, 0);
+
+    // Calculate total percentage change
+    const totalPercentageChange = previousMonthTotal > 0 ? ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100 : (currentMonthTotal > 0 ? 100 : 0);
+
+    percentageChanges.Total = totalPercentageChange
+      
    console.log('percentageChanges',percentageChanges)
       return {
         message: "Percentage changes found",

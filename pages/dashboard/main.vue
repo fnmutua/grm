@@ -12,13 +12,13 @@
       <div class="flex-1 flex flex-col">
         <main>
           <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <StatCard title="Total" :value="total_grievances" :change="per_change.Open" icon="i-heroicons-megaphone"
+            <StatCard title="Total" :value="total_grievances" :change="per_change.Total" icon="i-heroicons-chat-bubble-left-right-20-solid"
               changeType="increase" class="bg-white dark:bg-transparent border" />
-            <StatCard title="Open" :value="open_grievances" icon="i-heroicons-hand-thumb-up" :change="per_change.Open"
+            <StatCard title="Open" :value="open_grievances" icon="i-heroicons-rectangle-stack-20-solid" :change="per_change.Open"
               changeType="increase" class="bg-white dark:bg-transparent border" />
-            <StatCard title="Resolved" :value="resolved_grievances" icon="i-heroicons-phone-arrow-down-left" :change="per_change.Resolved"
+            <StatCard title="Resolved" :value="resolved_grievances" icon="i-heroicons-clipboard-document-check-solid" :change="per_change.Resolved"
               changeType="decrease" class="bg-white dark:bg-transparent border" />
-            <StatCard title="Escalated" :value="escalated_grievances" icon="i-heroicons-hand-thumb-down"  :change="per_change.Escalated"
+            <StatCard title="Escalated" :value="escalated_grievances" icon="i-heroicons-paper-airplane-solid"  :change="per_change.Escalated"
               changeType="increase" class="bg-white dark:bg-transparent border" />
           </div>
 
@@ -83,7 +83,7 @@ const total_grievances =ref(0)
 const open_grievances =ref(0)
 const resolved_grievances =ref(0)
 const escalated_grievances =ref(0)
-const per_change =ref({Open:10, Escalated:10, Resolved:10, Investigate:10})
+const per_change =ref({Open:0, Escalated:0, Resolved:0, Investigate:0, Total:0})
 
 onMounted(async () => {
   open_grievances.value = await getSummary('Open')
