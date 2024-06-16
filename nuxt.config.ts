@@ -21,7 +21,8 @@ export default defineNuxtConfig({
     'radix-vue/nuxt',
     "@element-plus/nuxt",
     'nuxt-mapbox',
-    "nuxt-plotly"
+    "nuxt-plotly",
+    'nuxt-highcharts',
   ],
  
      auth: {
