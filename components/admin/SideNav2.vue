@@ -74,7 +74,7 @@
       <UCard class="flex flex-col flex-3" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
         <div :class="{ 'hidden': isCollapsed }">
           <div>
-            <UAccordion :items="items" multiple default-open color="sky">
+            <UAccordion :items="items" multiple   color="sky">
               <template #item="{ item, index, open, close }">
                 <div>
                   <div >
