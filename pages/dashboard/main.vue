@@ -12,13 +12,13 @@
       <div class="flex-1 flex flex-col">
         <main>
           <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <StatCard title="Total Grievances" value="89,935" change="10.2" icon="i-heroicons-megaphone"
+            <StatCard title="Total Grievances" :value="total_grievances" change="10.2" icon="i-heroicons-megaphone"
               changeType="increase" class="bg-white dark:bg-transparent border" />
-            <StatCard title="Open Grievances" value="23,283.5" icon="i-heroicons-hand-thumb-up" change="3.1"
+            <StatCard title="Open Grievances" :value="open_grievances" icon="i-heroicons-hand-thumb-up" change="3.1"
               changeType="increase" class="bg-white dark:bg-transparent border" />
-            <StatCard title="Resolved Grievances" value="46,827" icon="i-heroicons-phone-arrow-down-left" change="2.56"
+            <StatCard title="Resolved Grievances" :value="resolved_grievances" icon="i-heroicons-phone-arrow-down-left" change="2.56"
               changeType="decrease" class="bg-white dark:bg-transparent border" />
-            <StatCard title="Escalated Grievances" value="124,854" icon="i-heroicons-hand-thumb-down" change="7.2"
+            <StatCard title="Escalated Grievances" :value="escalated_grievances" icon="i-heroicons-hand-thumb-down" change="7.2"
               changeType="increase" class="bg-white dark:bg-transparent border" />
           </div>
 
@@ -74,6 +74,64 @@
 definePageMeta({
   layout: "landing",
 });
+import axios from 'axios';
+import { ref, computed, watch } from 'vue';
+
+
+/// KPIX
+const total_grievances =ref(0)
+const open_grievances =ref(0)
+const resolved_grievances =ref(0)
+const escalated_grievances =ref(0)
+
+onMounted(async () => {
+  open_grievances.value = await getSummary('Open')
+  resolved_grievances.value = await getSummary('Resolved')
+  escalated_grievances.value = await getSummary('Escalated')
+  total_grievances.value = await getTotalSummary()
+
+  console.log(open_grievances.value, escalated_grievances.value)
+});
+
+async function getTotalSummary() {
+  
+  try {
+    const response = await axios.post('/api/summary/total', {
+    
+     });
+
+    if (response.data.code === '0000') {
+      //count[status] = response.data.data.length;
+      console.log(response)
+      return response.data.data
+       
+    }  
+  } catch (error) {
+    console.error('Error during login:', error.message);
+    return null
+    // Handle error, maybe show an error message to the user
+  }
+}
+
+async function getSummary(status) {
+  
+  try {
+    const response = await axios.post('/api/summary/count', {
+      status: status,
+     });
+
+    if (response.data.code === '0000') {
+      //count[status] = response.data.data.length;
+      console.log(response)
+      return response.data.data
+       
+    }  
+  } catch (error) {
+    console.error('Error during login:', error.message);
+    return null
+    // Handle error, maybe show an error message to the user
+  }
+}
 
  
 const chartOpts2 = {
