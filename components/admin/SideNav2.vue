@@ -74,7 +74,7 @@
       <UCard class="flex flex-col flex-3" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
         <div :class="{ 'hidden': isCollapsed }">
           <div>
-            <UAccordion :items="items" multiple   color="sky" defaultOpen closeOthers="true">
+            <UAccordion :items="items" color="sky" multiple  defaultOpen >
               <template #item="{ item, index, open, close }">
                 <div>
                   <div >
@@ -141,7 +141,7 @@ const toggleCollapse = () => {
  const items = [{
   label: 'Dashboards',
   icon: 'i-heroicons-chart-bar',
-  defaultOpen: true,
+   
   links: [
     { text: 'Overview', url: '/dashboard/main', icon: 'i-heroicons-information-circle' },
     { text: 'Map', url: '/dashboard/grv', icon: 'i-heroicons-map' }
@@ -167,11 +167,11 @@ const toggleCollapse = () => {
     { text: 'Escalated', url: '/gbv/escalated', icon: 'i-heroicons-outline-steps' },
   ] 
 }, 
-
-
 {
   label: 'Admin Units',
   icon: 'i-heroicons-rectangle-group',
+
+
    links: [
    { text: 'Counties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
     { text: 'Subcounties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
@@ -181,6 +181,8 @@ const toggleCollapse = () => {
 }, {
   label: 'Admin',
   icon: 'i-heroicons-user-circle',
+
+
    links: [
     { text: 'Users', url: '/admin/users', icon: 'i-heroicons-person' },
     { text: 'GRCS', url: '/admin/users', icon: 'i-heroicons-outline-light-bulb' },
@@ -189,6 +191,8 @@ const toggleCollapse = () => {
 },{
   label: 'Settings',
   icon: 'i-heroicons-wrench-screwdriver',
+
+
    links: [
     { text: 'Buttons', url: '/components/buttons', icon: 'i-heroicons-outline-button' },
     { text: 'Cards', url: '/components/cards', icon: 'i-heroicons-outline-card' }

@@ -416,8 +416,8 @@ const actions = [
 watch(selected, (newValue, oldValue) => {
   // newValue contains the updated selected items array
   // oldValue contains the previous selected items array
-  console.log('Selected items changed:', newValue);
-
+  console.log('Selected items changed:', selected);
+ 
   if (newValue.length > 0) {
     ShowMultipleActions.value = true
     selected_ids.value = newValue.map(obj => obj.id);
@@ -517,8 +517,7 @@ const items = (row) => [
 
       <UTable
               v-model="selected"
-              v-model:sort="sort"
-              :rows="filteredRows"
+               :rows="filteredRows"
               :columns="columns"
               :loading="pending"
               sort-asc-icon="i-heroicons-arrow-up"
