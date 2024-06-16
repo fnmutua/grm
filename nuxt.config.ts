@@ -50,6 +50,6 @@ export default defineNuxtConfig({
     accessToken: 'pk.eyJ1IjoiYWdzcGF0aWFsIiwiYSI6ImNsdm92dGhzNDBpYjIydmsxYXA1NXQxbWcifQ.dwBpfBMPaN_5gFkbyoerrg'
   },
   build: {
-    transpile: ['echarts', 'zrender', 'tslib'],
+    transpile: ['echarts', 'zrender', 'tslib', 'resize-detector'],
   },
 });
