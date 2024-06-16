@@ -1,18 +1,23 @@
 <template>
-  <div class="stat-card p-4 rounded-lg shadow-md flex items-center justify-between bg-white " :class="class">
-    <div class="flex items-center ">
+  <div class="stat-card p-4 rounded-lg shadow-md flex items-center justify-between bg-white" :class="class">
+    <div class="flex items-center">
       <div class="stat-icon text-4xl text-blue-500 mr-4">
         <UIcon :name="icon" />
       </div>
       <div>
-        <h3  >{{ title }}</h3>
-        <p class="text-2xl font-bold">{{ value }}</p>
+        <h3>{{ title }}</h3>
+        <p class="text-2xl font-bold">{{ Number(value) }}</p>
       </div>
     </div>
-    <div :class="{'text-green-500': changeType === 'increase', 'text-red-500': changeType === 'decrease'}">
-      <span v-if="changeType === 'increase'">▲</span>
-      <span v-else>▼</span>
-      {{ change }}%
+    <div class="text-right">
+      <div :class="{'text-green-500': Number(change) > 0, 'text-red-500': Number(change) < 0}">
+        <span v-if="Number(change) > 0">▲</span>
+        <span v-else>▼</span>
+        {{ change }}%
+      </div>
+      <div :class="{'text-green-500': Number(change) > 0, 'text-red-500': Number(change) < 0}" class="text-xs text-gray-500">
+        <slot name="footnote">This month</slot>
+      </div>
     </div>
   </div>
 </template>

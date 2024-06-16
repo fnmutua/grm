@@ -64,6 +64,11 @@ const dataSchema = new Schema({
     enum: ['Accepted', 'Rejected', 'Pending'],
     required: false,
   },
+  date_reported: {
+    type: Date,
+     required: false,
+  },
+
 }, {
   timestamps: true,
 });

@@ -12,13 +12,13 @@
       <div class="flex-1 flex flex-col">
         <main>
           <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <StatCard title="Total Grievances" :value="total_grievances" change="10.2" icon="i-heroicons-megaphone"
+            <StatCard title="Total" :value="total_grievances" :change="per_change.Open" icon="i-heroicons-megaphone"
               changeType="increase" class="bg-white dark:bg-transparent border" />
-            <StatCard title="Open Grievances" :value="open_grievances" icon="i-heroicons-hand-thumb-up" change="3.1"
+            <StatCard title="Open" :value="open_grievances" icon="i-heroicons-hand-thumb-up" :change="per_change.Open"
               changeType="increase" class="bg-white dark:bg-transparent border" />
-            <StatCard title="Resolved Grievances" :value="resolved_grievances" icon="i-heroicons-phone-arrow-down-left" change="2.56"
+            <StatCard title="Resolved" :value="resolved_grievances" icon="i-heroicons-phone-arrow-down-left" :change="per_change.Resolved"
               changeType="decrease" class="bg-white dark:bg-transparent border" />
-            <StatCard title="Escalated Grievances" :value="escalated_grievances" icon="i-heroicons-hand-thumb-down" change="7.2"
+            <StatCard title="Escalated" :value="escalated_grievances" icon="i-heroicons-hand-thumb-down"  :change="per_change.Escalated"
               changeType="increase" class="bg-white dark:bg-transparent border" />
           </div>
 
@@ -29,21 +29,21 @@
               { label: 'Summary', slot: 'Summary', defaultOpen: true, },
               { label: 'Gender Based Violence Grievances', slot: 'GBV' },]">
 
-            <template #Summary>
+            <template #GBV>
               <div>
                 <highchart :options="chartOpts3" more :modules="['exporting']"
                   class="bg-white dark:bg-transparent border" />
               </div>
             </template>
 
-            <template #GBV>
+            <template #Summary>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 divide-x divide-dashed">
                 <div>
-                  <highchart :options="chartOpts2" more :modules="['exporting']" />
+                  <highchart :options="chartOpts3" more :modules="['exporting']" />
                 </div>
 
                 <div>
-                  <highchart :options="chartOpts3" more :modules="['exporting']" />
+                  <highchart :options="chartOpts2" more :modules="['exporting']" />
                 </div>
               </div>
             </template>
@@ -83,6 +83,7 @@ const total_grievances =ref(0)
 const open_grievances =ref(0)
 const resolved_grievances =ref(0)
 const escalated_grievances =ref(0)
+const per_change =ref({Open:10, Escalated:10, Resolved:10, Investigate:10})
 
 onMounted(async () => {
   open_grievances.value = await getSummary('Open')
@@ -91,6 +92,11 @@ onMounted(async () => {
   total_grievances.value = await getTotalSummary()
 
   console.log(open_grievances.value, escalated_grievances.value)
+   per_change.value= await getPercentageSummary()
+
+   console.log('per_change.value',per_change.value)
+
+
 });
 
 async function getTotalSummary() {
@@ -124,6 +130,35 @@ async function getSummary(status) {
       //count[status] = response.data.data.length;
       console.log(response)
       return response.data.data
+       
+    }  
+  } catch (error) {
+    console.error('Error during login:', error.message);
+    return null
+    // Handle error, maybe show an error message to the user
+  }
+}
+
+
+async function getPercentageSummary() {
+  
+  try {
+    const response = await axios.post('/api/summary/change', {
+
+     });
+
+    if (response.data.code === '0000') {
+      //count[status] = response.data.data.length;
+      console.log(response)
+      //return response.data.data
+      let res = response.data.data
+
+      const formattedData = {};
+  for (const [key, value] of Object.entries(res)) {
+    formattedData[key] = parseFloat(value.toFixed(0));
+  }
+
+  return formattedData;
        
     }  
   } catch (error) {
