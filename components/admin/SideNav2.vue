@@ -144,7 +144,7 @@ const toggleCollapse = () => {
   defaultOpen: true,
   links: [
     { text: 'Overview', url: '/dashboard/main', icon: 'i-heroicons-information-circle' },
-    { text: 'Quick Start', url: '/dashboard/grv', icon: 'i-heroicons-information-circle' }
+    { text: 'Map', url: '/dashboard/grv', icon: 'i-heroicons-map' }
   ]
 }, 
 {
