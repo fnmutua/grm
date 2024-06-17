@@ -8,6 +8,11 @@
           <span class="text-slate-500">GRM</span>
         </a>
         <div class="block lg:hidden">
+          <ColorMode></ColorMode>
+        </div>
+
+        <div class="block lg:hidden">
+
           <button @click="open = !open" class="text-white-800">
             <UIcon name="i-heroicons-bars-4" />
           </button>
@@ -44,21 +49,23 @@
           <div class="lg:hidden flex items-center mt-3 gap-4">
             <UTooltip v-if="!isAuthenticated" text="Sign In">
               <!-- <UButton icon='i-heroicons-lock-open' color="gray" variant="ghost" aria-label="Theme" @click="logoff" /> -->
-              <ColorMode></ColorMode>
-              <UButton  color="gray" variant='outline'  aria-label="Theme" @click="logoff"> Login</UButton>
+               <UButton  color="gray" variant='outline'  aria-label="Theme" @click="logoff"> Login</UButton>
 
             </UTooltip>
 
             <UTooltip v-if="isAuthenticated" text="Logout">
-              <ColorMode></ColorMode>
-              <UButton  color="gray" variant='outline' aria-label="Theme" @click="logoff"> Logout</UButton>
+               <UButton  color="gray" variant='outline' aria-label="Theme" @click="logoff"> Logout</UButton>
             </UTooltip>
+
           </div>
+          <ColorMode> </ColorMode>
+
+          
        </nav>
+        
 
       <div class="hidden lg:flex items-center gap-4 navbar-end">
-      <ColorMode></ColorMode>
-
+ 
         <UTooltip v-if="!isAuthenticated" text="Sign In">
           <UButton icon='i-heroicons-lock-open' color="gray" variant="ghost" aria-label="Theme" @click="logoff" />
         </UTooltip>
@@ -105,36 +112,7 @@ const dropdownOpenState = ref({});
   { title: 'Status', path: '/grievances/status' },
   { title: 'About', path: '/about' },
   { title: 'Contact', path: '/contact' },
-  { 
-    title: 'Grievances', 
-    path: '/grievances/status',
-    children: [
-      { title: 'Open', path: '/grievances/open' },
-      { title: 'Under Investigation', path: '/grievances/investigate' },
-      { title: 'Resolved', path: '/grievances/resolved' },
-      { title: 'Escalated', path: '/grievances/escalated' }
-    ],
-    roles: ['isAdmin', 'isGBV', 'isSettGRC', 'isCountyGRC', 'isNationalGRC']
-  },
-  { 
-    title: 'Dashboard', 
-    path: '/dashboard/grv',
-    children: [
-      { title: 'Main Dashboard', path: '/dashboard/main' },
-      { title: 'Secondary Dashboard', path: '/dashboard/secondary' }
-    ],
-    roles: ['isAdmin', 'isGBV', 'isSettGRC', 'isCountyGRC', 'isNationalGRC']
-  },
-
-  { 
-    title: 'Admin', 
-    path: '/admin/users',
-    children: [
-      { title: 'Users', path: '/admin/users' }
-    ],
-    roles: ['isAdmin']
-  }
-]; 
+ ]; 
 
 // Get auth details 
 const { data } = useAuth();  // user data from session 

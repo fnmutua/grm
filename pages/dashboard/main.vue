@@ -89,7 +89,7 @@ definePageMeta({
 });
 import axios from 'axios';
 import { ref, computed, watch } from 'vue';
-
+ 
 
 /// KPIX
 const total_grievances =ref(0)
@@ -335,7 +335,9 @@ async function getMonthlySummaryBySettlement() {
 
 const lineMonthlyChart = ref({
         chart: {
-            type: 'spline'
+            type: 'spline',
+            backgroundColor: 'transparent',
+
         },
         title: {
             text: 'Monthly Average Cases Reported',
@@ -369,7 +371,9 @@ const lineMonthlyChart = ref({
 
  const lineMonthlyGBVChart = ref({
         chart: {
-            type: 'spline'
+            type: 'spline',
+            backgroundColor: 'transparent',
+
         },
         title: {
             text: 'Monthly GBV Cases Reported',
@@ -404,7 +408,9 @@ const lineMonthlyChart = ref({
  
   const lineMonthlyGBVChartByGender = ref({
     chart: {
-        type: 'column'
+        type: 'column',
+        backgroundColor: 'transparent',
+
     },
     title: {
         text: 'Monthly GBV Cases Reported by Gender',
@@ -436,7 +442,9 @@ const lineMonthlyChart = ref({
 
 const MonthlyChartByGender = ref({
     chart: {
-        type: 'column'
+        type: 'column',
+        backgroundColor: 'transparent',
+
     },
     title: {
         text: 'GRV Cases Reported by Gender',
@@ -469,6 +477,7 @@ const MonthlyChartByGender = ref({
 const MonthlyChartBySettlement = ref({
     chart: {
         type: 'column',
+        backgroundColor: 'transparent',
         zooming: {
             type: 'x',
             singleTouch: true

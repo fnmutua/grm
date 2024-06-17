@@ -43,7 +43,7 @@
           <div class="lg:col-span-1" :class="{ 'hidden': !isCollapsed }">
             <div>
 
-              <UAccordion :items="items" multiple default-open color="sky">
+              <UAccordion :items="filteredLinks" multiple default-open color="sky">
               <template #item="{ item, index, open, close }">
                 <div>
                   <div >
@@ -74,7 +74,7 @@
       <UCard class="flex flex-col flex-3" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
         <div :class="{ 'hidden': isCollapsed }">
           <div>
-            <UAccordion :items="items" color="sky" multiple  defaultOpen >
+            <UAccordion :items="filteredLinks" color="sky" multiple  defaultOpen >
               <template #item="{ item, index, open, close }">
                 <div>
                   <div >
@@ -141,7 +141,7 @@ const toggleCollapse = () => {
  const items = [{
   label: 'Dashboards',
   icon: 'i-heroicons-chart-bar',
-   
+  roles: ['isAdmin', 'isGBV', 'isSettGRC', 'isCountyGRC', 'isNationalGRC'],
   links: [
     { text: 'Overview', url: '/dashboard/main', icon: 'i-heroicons-information-circle' },
     { text: 'Map', url: '/dashboard/grv', icon: 'i-heroicons-map' }
@@ -149,6 +149,7 @@ const toggleCollapse = () => {
 }, 
 {
   label: 'Grievances',
+  roles: ['isAdmin', 'isGBV', 'isSettGRC', 'isCountyGRC', 'isNationalGRC'],
   icon: 'i-heroicons-swatch',
     links: [
     { text: 'Open', url: '/grievances/open', icon: 'i-heroicons-outline-clipboard-list' },
@@ -160,6 +161,7 @@ const toggleCollapse = () => {
 {
   label: 'GBV',
   icon: 'i-heroicons-face-frown',
+  roles: ['isAdmin', 'isGBV'],
     links: [
     { text: 'Open', url: '/gbv/open', icon: 'i-heroicons-outline-clipboard-list' },
     { text: 'Investigate', url: '/gbv/investigate', icon: 'i-heroicons-outline-steps' },
@@ -170,8 +172,7 @@ const toggleCollapse = () => {
 {
   label: 'Admin Units',
   icon: 'i-heroicons-rectangle-group',
-
-
+  roles: ['isAdmin' ],
    links: [
    { text: 'Counties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
     { text: 'Subcounties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
@@ -181,8 +182,7 @@ const toggleCollapse = () => {
 }, {
   label: 'Admin',
   icon: 'i-heroicons-user-circle',
-
-
+  roles: ['isAdmin'],
    links: [
     { text: 'Users', url: '/admin/users', icon: 'i-heroicons-person' },
     { text: 'GRCS', url: '/admin/users', icon: 'i-heroicons-outline-light-bulb' },
@@ -191,13 +191,42 @@ const toggleCollapse = () => {
 },{
   label: 'Settings',
   icon: 'i-heroicons-wrench-screwdriver',
-
-
+  roles: ['isAdmin'],
    links: [
     { text: 'Buttons', url: '/components/buttons', icon: 'i-heroicons-outline-button' },
     { text: 'Cards', url: '/components/cards', icon: 'i-heroicons-outline-card' }
   ]
 }, ]
+
+const { data } = useAuth();  // user data from session 
+
+const filteredLinks = computed(() => {
+  // Check if data.value is null or empty
+  if (!data.value) {
+    // If data.value is null, show only links without roles
+    return items.filter(item => !item.roles);
+  }
+
+  return items
+    .map(item => {
+      if (!item.roles) {
+        // For items without roles, include them and their children by default
+        const filteredChildren = item.children ? item.children.filter(child => !child.roles || child.roles.some(role => data.value[role])) : [];
+        return filteredChildren.length > 0 ? { ...item, children: filteredChildren } : { ...item, children: undefined };
+      } else {
+        // For items with roles, filter based on the user's roles
+        const hasRequiredRoles = item.roles.some(role => data.value[role]);
+        if (hasRequiredRoles) {
+          const filteredChildren = item.children ? item.children.filter(child => !child.roles || child.roles.some(role => data.value[role])) : [];
+          return filteredChildren.length > 0 ? { ...item, children: filteredChildren } : { ...item, children: undefined };
+        }
+        return null;
+      }
+    })
+    .filter(item => item !== null); // Remove items that don't have required roles
+});
+
+console.log('Filtreed by Roles',filteredLinks.value)
 
 
 </script>

@@ -93,7 +93,7 @@ export default defineEventHandler(async (req) => {
         };
     } finally {
         // Close the MongoDB connection
-        await mongoose.disconnect();
+      //  await mongoose.disconnect();
         console.log('Database disconnected...');
     }
 });
