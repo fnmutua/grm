@@ -234,7 +234,39 @@ async function fetchSummaries() {
     }
 }
 
+async function clearCharts() {
+    try {
+        console.log('Clear all data')
+
+        open_grievances.value = null;
+        resolved_grievances.value = null;
+        escalated_grievances.value = null;
+        total_grievances.value = null;
+        per_change.value = {Open:0, Escalated:0, Resolved:0, Investigate:0, Total:0};
+        
+
+        lineMonthlyChart.value.xAxis.categories =  [];
+        lineMonthlyChart.value.series = [];
+
+        MonthlyChartByGender.value.xAxis.categories = [];
+        MonthlyChartByGender.value.series = [];
+
+        MonthlyChartBySettlement.value.xAxis.categories =  [];
+        MonthlyChartBySettlement.value.series = [];
+
+        lineMonthlyGBVChart.value.xAxis.categories =  [];
+        lineMonthlyGBVChart.value.series =  [];
+
+        lineMonthlyGBVChartByGender.value.xAxis.categories =  [];
+        lineMonthlyGBVChartByGender.value.series =  [];
+
+    } catch (error) {
+        console.error('Error nulllimng summaries:', error);
+    }
+}
+
 onMounted(async () => {
+
     await fetchSummaries();
  
       let county_data = await getAdminUnits('county')
@@ -251,6 +283,9 @@ onMounted(async () => {
 
 
 async function onSelectCounty() {
+
+  await clearCharts()
+
   console.log('selected_county',selected_county.value)
   filter_fields.value=['county']
   filter_values.value=[selected_county.value.toString()]
