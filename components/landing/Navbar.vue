@@ -112,6 +112,8 @@ const dropdownOpenState = ref({});
   { title: 'Status', path: '/grievances/status' },
   { title: 'About', path: '/about' },
   { title: 'Contact', path: '/contact' },
+  {
+  title: 'Dashboards',   path: '/dashboard/main' , roles: ['isAdmin', 'isGBV', 'isSettGRC', 'isCountyGRC', 'isNationalGRC'],},
  ]; 
 
 // Get auth details 
