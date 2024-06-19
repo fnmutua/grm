@@ -2,17 +2,27 @@ import mongoose from 'mongoose';
 import Grievance from "../../models/grievance";
 
 export default defineEventHandler(async (req) => {
-    const { gbv, page, pageCount } = await readBody(req);
+    const { gbv, page, pageCount, filter_fields, filter_values } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
 
     try {
         await mongoose.connect(mongoString, { dbName: 'grm' });
         console.log('Database connected. Summary..');
 
-        // Aggregating grievances by month and by status where gbv is "Yes"
+        // Construct the filter query dynamically
+        let filterQuery: Record<string, any> = { gbv: "Yes" };
+        if (Array.isArray(filter_fields) && Array.isArray(filter_values) && filter_fields.length === filter_values.length) {
+            filter_fields.forEach((field, index) => {
+                if (filter_values[index] !== null && filter_values[index] !== undefined) {
+                    filterQuery[field] = filter_values[index];
+                }
+            });
+        }
+
+        // Aggregating grievances by month and by status with filters
         const summary = await Grievance.aggregate([
             {
-                $match: { gbv: "Yes" }
+                $match: filterQuery
             },
             {
                 $group: {
@@ -62,9 +72,7 @@ export default defineEventHandler(async (req) => {
         // Populate the counts for existing data points
         summary.forEach(item => {
             const { year, month, status } = item._id;
-           const date = new Date(year, month - 1).toISOString().split('T')[0]; // Format date as YYYY-MM-DD
-           // const date = `${new Intl.DateTimeFormat('en-US', { month: 'short' }).format(new Date(year, month - 1))}-${year}`;
-
+            const date = new Date(year, month - 1).toISOString().split('T')[0]; // Format date as YYYY-MM-DD
 
             const index = allDates.indexOf(date);
             if (index !== -1) {
@@ -94,7 +102,7 @@ export default defineEventHandler(async (req) => {
         };
     } finally {
         // Close the MongoDB connection
-       // await mongoose.disconnect();
+        // await mongoose.disconnect();
         console.log('Database disconnected...');
     }
 });

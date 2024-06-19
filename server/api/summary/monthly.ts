@@ -2,19 +2,30 @@ import mongoose from 'mongoose';
 import Grievance from "../../models/grievance";
 
 export default defineEventHandler(async (req) => {
-    const { gbv, page, pageCount } = await readBody(req);
+    const { gbv, page, pageCount, filter_fields, filter_values } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
 
     try {
         await mongoose.connect(mongoString, { dbName: 'grm' });
         console.log('Database connected. Summary..');
 
-        // Aggregating grievances by month and by status
+        // Construct the filter query dynamically
+        let filterQuery: Record<string, any> = {};
+        if (Array.isArray(filter_fields) && Array.isArray(filter_values) && filter_fields.length === filter_values.length) {
+            filter_fields.forEach((field, index) => {
+                if (filter_values[index] !== null && filter_values[index] !== undefined) {
+                    filterQuery[field] = filter_values[index];
+                }
+            });
+        }
+
+        // Always ensure date_reported is a date
+        filterQuery.date_reported = { $type: "date" };
+
+        // Aggregating grievances by month and by status with filters
         const summary = await Grievance.aggregate([
             {
-                $match: {
-                    date_reported: { $type: "date" } // Filter out documents where date_reported is not a date
-                }
+                $match: filterQuery
             },
             {
                 $group: {
@@ -93,7 +104,7 @@ export default defineEventHandler(async (req) => {
         };
     } finally {
         // Close the MongoDB connection
-      //  await mongoose.disconnect();
+        // await mongoose.disconnect();
         console.log('Database disconnected...');
     }
 });

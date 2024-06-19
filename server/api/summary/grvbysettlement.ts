@@ -2,15 +2,33 @@ import mongoose from 'mongoose';
 import Grievance from "../../models/grievance";
 
 export default defineEventHandler(async (req) => {
-    const { gbv, page, pageCount } = await readBody(req);
+    const { gbv, page, pageCount, filter_fields, filter_values } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
 
     try {
         await mongoose.connect(mongoString, { dbName: 'grm' });
         console.log('Database connected. Summary..');
 
-        // Aggregating grievances by month and by settlement
+        // Construct the filter query dynamically
+        let filterQuery = {};
+        if (Array.isArray(filter_fields) && Array.isArray(filter_values) && filter_fields.length === filter_values.length) {
+            filter_fields.forEach((field, index) => {
+                if (filter_values[index]) {
+                    filterQuery[field] = filter_values[index];
+                }
+            });
+        }
+
+        // Always include the gbv filter if provided
+        if (gbv) {
+            filterQuery.gbv = gbv;
+        }
+
+        // Aggregating grievances by month and by settlement with filters
         const summary = await Grievance.aggregate([
+            {
+                $match: filterQuery
+            },
             {
                 $group: {
                     _id: {
@@ -89,7 +107,7 @@ export default defineEventHandler(async (req) => {
         };
     } finally {
         // Close the MongoDB connection
-       // await mongoose.disconnect();
+        // await mongoose.disconnect();
         console.log('Database disconnected...');
     }
 });

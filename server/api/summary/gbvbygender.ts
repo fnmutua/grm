@@ -2,17 +2,32 @@ import mongoose from 'mongoose';
 import Grievance from "../../models/grievance";
 
 export default defineEventHandler(async (req) => {
-    const { gbv, page, pageCount } = await readBody(req);
+    const { gbv, page, pageCount, filter_fields, filter_values } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
 
     try {
         await mongoose.connect(mongoString, { dbName: 'grm' });
-        console.log('Database connected. Summary..');
+        console.log('/api/summary/grvbygender..');
 
-        // Aggregating grievances by month and by gender where gbv is "Yes"
+        // Construct the filter query dynamically
+        let filterQuery: Record<string, any> = {};
+        if (Array.isArray(filter_fields) && Array.isArray(filter_values) && filter_fields.length === filter_values.length) {
+            filter_fields.forEach((field, index) => {
+                if (filter_values[index] !== null && filter_values[index] !== undefined) {
+                    filterQuery[field] = filter_values[index];
+                }
+            });
+        }
+
+        // Always include the gbv filter if provided
+        if (gbv) {
+            filterQuery.gbv = gbv;
+        }
+
+        // Aggregating grievances by month and by gender with filters
         const summary = await Grievance.aggregate([
             {
-                $match: { gbv: "Yes" }
+                $match: filterQuery
             },
             {
                 $group: {
