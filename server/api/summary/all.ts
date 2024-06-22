@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import Grievance from "../../models/grievance";
 
 export default defineEventHandler(async (req) => {
-    const { gbv, page, pageCount, filter_fields, filter_values } = await readBody(req);
+    const { gbv,  filter_fields, filter_values } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
 
     try {
@@ -253,6 +253,41 @@ export default defineEventHandler(async (req) => {
             // Optionally sort by month if needed
             { $sort: { "_id.month": 1 } }
         ]);
+
+        const proportionStatus = await Grievance.aggregate([
+            { $match: filterQuery }, // Match documents based on the filter query
+        
+            // Group by status and count occurrences
+            {
+                $group: {
+                    _id: "$status", // Group by status field
+                    count: { $sum: 1 } // Count documents for each status
+                }
+            },
+        
+            // Project to calculate percentage
+            {
+                $project: {
+                    _id: 0, // Exclude _id field
+                    status: "$_id", // Rename _id to status
+                    percentage: {
+                        $round: [
+                            { $multiply: [
+                                { $divide: ["$count", count] }, // Calculate proportion
+                                100 // Convert to percentage
+                            ] },
+                            2 // Round to 2 decimal places
+                        ]
+                    }
+                }
+            }
+        ]);
+        
+        // Output the result for verification
+        console.log(proportionStatus);
+        
+
+
          
         let result={}
          result.byGenderStatus =byGenderStatus
@@ -264,6 +299,8 @@ export default defineEventHandler(async (req) => {
          result.byGenderOnly =  byGenderOnly
          result.byMonth =  byMonth
          result.byMonthStatus =  byMonthStatus
+         result.proportionStatus =  proportionStatus
+         
 
          
          result.total =count

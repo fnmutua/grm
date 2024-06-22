@@ -64,6 +64,11 @@
                   <highchart :options="lineMonthlyByType" more :modules="['exporting']" />
                 </div>
             
+
+                <div>
+                  <highchart :options="resolutionRateGauge" more :modules="['exporting']" />
+                </div>
+            
                 
               
                 
@@ -478,196 +483,100 @@ async function getAllSummary() {
 }
 
 
-async function getTotalSummary() {
-  
-  try {
-    const response = await axios.post('/api/summary/total', {
-      filter_fields:filter_fields.value,filter_values:filter_values.value
-     });
+ 
+ 
 
-    if (response.data.code === '0000') {
-      //count[status] = response.data.data.length;
-      console.log(response)
-      return response.data.data
-       
-    }  
-  } catch (error) {
-    console.error('Error during login:', error.message);
-    return null
-    // Handle error, maybe show an error message to the user
-  }
-}
-
-async function getSummary(status) {
-  
-  try {
-    const response = await axios.post('/api/summary/count', {
-      status: status,filter_fields:filter_fields.value,filter_values:filter_values.value
-     });
-
-    if (response.data.code === '0000') {
-      //count[status] = response.data.data.length;
-      console.log(response)
-      return response.data.data
-       
-    }  
-  } catch (error) {
-    console.error('Error during login:', error.message);
-    return null
-    // Handle error, maybe show an error message to the user
-  }
-}
-
-
-async function getPercentageSummary() {
-  
-  try {
-    const response = await axios.post('/api/summary/change', {
-      filter_fields:filter_fields.value,filter_values:filter_values.value
-     });
-
-    if (response.data.code === '0000') {
-      //count[status] = response.data.data.length;
-      console.log(response)
-      //return response.data.data
-      let res = response.data.data
-
-      const formattedData = {};
-  for (const [key, value] of Object.entries(res)) {
-    formattedData[key] = parseFloat(value.toFixed(0));
-  }
-
-  return formattedData;
-       
-    }  
-  } catch (error) {
-    console.error('Error during login:', error.message);
-    return null
-    // Handle error, maybe show an error message to the user
-  }
-}
-
-
-async function getMonthlySummary() {
-  
-  try {
-    const response = await axios.post('/api/summary/monthly', {
-      filter_fields:filter_fields.value,filter_values:filter_values.value
-     });
-
-    if (response.data.code === '0000') {
-      //count[status] = response.data.data.length;
-      console.log(response)
-      //return response.data.data
-      let res = response.data
-      console.log('res',res)
-      return res
-       
-    }  
-  } catch (error) {
-    console.error('Error during login:', error.message);
-    return null
-    // Handle error, maybe show an error message to the user
-  }
-}
-
-async function getMonthlyGBVSummary() {
-  
-  try {
-    const response = await axios.post('/api/summary/gbv', {
-      filter_fields:filter_fields.value,filter_values:filter_values.value
-     });
-
-    if (response.data.code === '0000') {
-      //count[status] = response.data.data.length;
-      console.log(response)
-      //return response.data.data
-      let res = response.data
-      console.log('res',res)
-      return res
-       
-    }  
-  } catch (error) {
-    console.error('Error during login:', error.message);
-    return null
-    // Handle error, maybe show an error message to the user
-  }
-}
-
-async function getMonthlyGBVSummaryByGender() {
-  
-  try {
-    const response = await axios.post('/api/summary/gbvbygender', {
-      filter_fields:filter_fields.value,filter_values:filter_values.value
-     });
-
-    if (response.data.code === '0000') {
-      //count[status] = response.data.data.length;
-      console.log(response)
-      //return response.data.data
-      let res = response.data
-      console.log('res',res)
-      return res
-       
-    }  
-  } catch (error) {
-    console.error('Error during login:', error.message);
-    return null
-    // Handle error, maybe show an error message to the user
-  }
-}
-
-async function getMonthlySummaryByGender() {
-  
-  try {
-    const response = await axios.post('/api/summary/grvbygender', {
-      filter_fields:filter_fields.value,filter_values:filter_values.value
-     });
-
-    if (response.data.code === '0000') {
-      //count[status] = response.data.data.length;
-      console.log(response)
-      //return response.data.data
-      let res = response.data
-      console.log('res',res)
-      return res
-       
-    }  
-  } catch (error) {
-    console.error('Error during login:', error.message);
-    return null
-    // Handle error, maybe show an error message to the user
-  }
-}
-
-
-async function getMonthlySummaryBySettlement() {
-  
-  try {
-    const response = await axios.post('/api/summary/grvbysettlement', {
-      filter_fields:filter_fields.value,filter_values:filter_values.value,
-      admin_level:'county',
-     });
-
-    if (response.data.code === '0000') {
-      //count[status] = response.data.data.length;
-      console.log(response)
-      //return response.data.data
-      let res = response.data
-      console.log('admin_level : county',res)
-      return res
-       
-    }  
-  } catch (error) {
-    console.error('Error during login:', error.message);
-    return null
-    // Handle error, maybe show an error message to the user
-  }
-}
 
  
  
- 
+const resolutionRateGauge = ref({
+        chart: {
+            type: 'gauge',
+             plotBackgroundColor: null,
+            plotBackgroundImage: null,
+            plotBorderWidth: 0,
+            plotShadow: false,
+            height: '80%'
+
+        },
+        title: {
+            text: 'Resolution Rate',
+            
+        },
+        
+        pane: {
+        startAngle: -90,
+        endAngle: 89.9,
+        background: null,
+        center: ['50%', '75%'],
+        size: '110%'
+    },
+
+    // the value axis
+    yAxis: {
+        min: 0,
+        max: 100,
+        tickPixelInterval: 72,
+        tickPosition: 'inside',
+        tickColor:   '#FFFFFF',
+        tickLength: 20,
+        tickWidth: 2,
+        minorTickInterval: null,
+        labels: {
+            distance: 20,
+            style: {
+                fontSize: '14px'
+            }
+        },
+        lineWidth: 0,
+        plotBands: [{
+            from: 75,
+            to: 100,
+            color: '#55BF3B', // green
+            thickness: 20,
+            borderRadius: '50%'
+        }, {
+            from: 0,
+            to: 25,
+            color: '#DF5353', // red
+            thickness: 20,
+            borderRadius: '50%'
+        }, {
+            from: 25,
+            to: 75,
+            color: '#DDDF0D', // yellow
+            thickness: 20
+        }]
+    },
+
+    series: [{
+        name: 'Rate',
+        data: [80],
+        tooltip: {
+            valueSuffix: '%'
+        },
+        dataLabels: {
+            format: '{y} %',
+            borderWidth: 0,
+            color:   '#333333',
+            style: {
+                fontSize: '16px'
+            }
+        },
+        dial: {
+            radius: '80%',
+            backgroundColor: 'gray',
+            baseWidth: 12,
+            baseLength: '0%',
+            rearLength: '0%'
+        },
+        pivot: {
+            backgroundColor: 'gray',
+            radius: 6
+        }
+
+    }]
+    });
 
  const lineMonthlyByType = ref({
         chart: {
