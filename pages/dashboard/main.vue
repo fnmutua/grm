@@ -359,11 +359,12 @@ async function fetchSummaries() {
         //8. resolution_rate
         let resolved_data = AllSummary.proportionStatus.find(item => item.status === "Resolved")
        
-        console.log('resolved_data',resolved_data.percentage)
-        resolution_rate.value= resolved_data.percentage;
-        resolutionRateGauge.value.series[0].data=[resolution_rate.value]
+        // console.log('resolved_data',resolved_data.percentage)
+        // resolution_rate.value= resolved_data.percentage;
+        console.log(resolutionRateGauge.value)
+        resolutionRateGauge.value.series[0].data=[resolved_data.percentage]
 
-        console.log(resolutionRateGauge)
+      
         
 
     } catch (error) {
@@ -395,6 +396,9 @@ async function clearCharts() {
         lineMonthlyByStatus.value.xAxis.categories =  [];
         lineMonthlyByStatus.value.series =  [];
 
+         resolutionRateGauge.value.series[0].data =  [0];
+
+
     } catch (error) {
         console.error('Error nulllimng summaries:', error);
     }
@@ -425,9 +429,7 @@ async function onSelectCounty() {
   filter_fields.value=['county']
   filter_values.value=[selected_county.value.toString()]
 
-  // run the querry with filter 
-  //total_grievances.value = await getTotalSummary()
-  //per_change.value= await getPercentageSummary()
+  
 
   await fetchSummaries();
 
@@ -521,15 +523,10 @@ async function getAllSummary() {
 
 
  
- 
-
-
- 
- 
 const resolutionRateGauge = ref({
         chart: {
             type: 'gauge',
-             plotBackgroundColor: null,
+            backgroundColor: 'transparent',
             plotBackgroundImage: null,
             plotBorderWidth: 0,
             plotShadow: false,
@@ -588,7 +585,7 @@ const resolutionRateGauge = ref({
 
     series: [{
         name: 'Rate',
-        data: [resolution_rate.value],
+        data: [0],
         tooltip: {
             valueSuffix: '%'
         },
