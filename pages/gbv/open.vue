@@ -143,15 +143,79 @@ async function onChange(index) {
   }
 }
 
+const keyword=ref()
+
+async function onSearchClear() {
+  keyword.value=null
+  await onChange()
+  page.value=1
+
+}
+
+async function onSearch() {
+  console.log('keyword',keyword)
+  let status = 'Open';
+  pending.value = true
+
+  try {
+    const response = await axios.post('/api/grievances/search', {
+      keyword:keyword.value,
+      status: status,
+      gbv:'Yes',
+      page: page.value,  // Add page parameter
+      pageCount: pageCount.value  // Add pageCount parameter
+    });
+
+    if (response.data.code === '0000') {
+      //count[status] = response.data.data.length;
+      total.value = response.data.total; // Update total value
+      grievances.value = response.data.data;
+     
+      console.log('Search Count', response.data)
+      const extractedGrievances = response.data.data.map(grievance => ({
+        id: grievance._id,
+        code: grievance.code,
+        county: grievance.county,
+        settlement: grievance.settlement,
+        status: grievance.status,
+        complaint: grievance.complaint,
+        acceptance: grievance.acceptance,
+        resolution: grievance.resolution,
+      }));
+      pending.value = false
+      grievances.value = extractedGrievances;
+    } else {
+      console.log(response.data.message);
+      toast.add({ title: response.data.message, color: "red" });
+    }
+  } catch (error) {
+    console.error('Error during login:', error.message);
+   }
+}
+
+
 const onPageCountChange = async () => {
   // Call onChange function to fetch grievances with updated page count
-  await onChange(selectedTab.value);
+  //await onChange(selectedTab.value);
+
+  if(keyword){
+    await onSearch(selectedTab.value);
+  }else {
+    await onChange(selectedTab.value);
+
+  }
+
 };
 
 
 const onPageChange = async () => {
   // Call onChange function to fetch grievances with updated page count
-  await onChange(selectedTab.value);
+   if(keyword){
+    await onSearch(selectedTab.value);
+  }else {
+    await onChange(selectedTab.value);
+
+  }
 };
 
 
@@ -217,6 +281,7 @@ const onInvestigate = async () => {
   try {
     const response = await axios.post('/api/grievances/update', {
       ids: selected_ids.value,
+      gbv:'Yes',
       field: 'status',  // Add page parameter
       field_value: 'Investigate', // Add pageCount parameter
       resolution: null
@@ -417,8 +482,8 @@ const actions = [
 watch(selected, (newValue, oldValue) => {
   // newValue contains the updated selected items array
   // oldValue contains the previous selected items array
-  console.log('Selected items changed:', newValue);
-
+  console.log('Selected items changed:', selected);
+ 
   if (newValue.length > 0) {
     ShowMultipleActions.value = true
     selected_ids.value = newValue.map(obj => obj.id);
@@ -430,6 +495,20 @@ watch(selected, (newValue, oldValue) => {
 
   }
 });
+
+
+
+watch(keyword, (newValue, oldValue) => {
+ 
+  console.log('keyword changed:', newValue);
+    if(!newValue ) {
+      //onChange()
+      console.log('Keyword null')
+      onChange()
+    }
+ 
+});
+
 
 // Open Modal 
 const isOpen = ref(false)
@@ -487,7 +566,39 @@ const items = (row) => [
       <UCard>
         <div class="lg:hidden">
             <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
-            <UInput v-model="q" placeholder="Filter..." />
+ 
+            <UInput
+              v-model="keyword"
+              name="q"
+              placeholder="Search..."
+               autocomplete="off"
+               @keyup.enter="onSearch" 
+              :ui="{ icon: { trailing: { pointer: '' } } }"
+               
+            >
+              <template #trailing>
+                <UButton
+                  v-show="keyword"
+                  color="green"
+                  variant="link"
+                  icon="i-heroicons-magnifying-glass-20-solid"
+                  :padded="false"
+                  @click="onSearch()"
+                />
+
+                <UButton
+              icon="i-heroicons-x-mark"
+              size="sm"
+              color="red"
+              v-show="keyword"
+              variant="link"
+              @click="onSearchClear()"
+            /> 
+              </template>
+            </UInput>
+            
+
+
             <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
             :trailing="false" @click="downloadXLSX" />
             <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" 
@@ -501,7 +612,39 @@ const items = (row) => [
 
         <div class="hidden md:block">
           <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
-            <UInput v-model="q" placeholder="Filter..." />
+ 
+            <UInput
+              v-model="keyword"
+              name="q"
+              placeholder="Search..."
+               autocomplete="off"
+               @keyup.enter="onSearch" 
+              :ui="{ icon: { trailing: { pointer: '' } } }"
+            >
+              <template #trailing>
+                <UButton
+                  v-show="keyword"
+                  color="green"
+                  variant="link"
+                  icon="i-heroicons-magnifying-glass-20-solid"
+                  :padded="false"
+                  @click="onSearch()"
+                />
+
+                <UButton
+              icon="i-heroicons-x-mark"
+              size="sm"
+              color="red"
+              v-show="keyword"
+              variant="link"
+              @click="onSearchClear()"
+            /> 
+              </template>
+            </UInput>
+            
+          
+
+
             <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
               label="Download" :trailing="false" @click="downloadXLSX" />
             <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" label="Refresh"
@@ -518,8 +661,7 @@ const items = (row) => [
 
       <UTable
               v-model="selected"
-              v-model:sort="sort"
-              :rows="filteredRows"
+               :rows="filteredRows"
               :columns="columns"
               :loading="pending"
               sort-asc-icon="i-heroicons-arrow-up"

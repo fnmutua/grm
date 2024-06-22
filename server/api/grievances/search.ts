@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import Grievance from "./../../models/grievance";
 
 // Get grievance status by keyword with pagination
-async function getGrievanceStatusByKeyword(keyword, status, page, pageCount) {
+async function getGrievanceStatusByKeyword(keyword, status, page, pageCount,gbv) {
   try {
     // Create a regular expression for the keyword, case insensitive
     const regex = new RegExp(keyword, 'i');
@@ -10,8 +10,8 @@ async function getGrievanceStatusByKeyword(keyword, status, page, pageCount) {
     // Calculate skip value for pagination
     const skip = (page - 1) * pageCount;
 
-    // Find the grievances by searching multiple fields for the keyword and matching the status
-    const grievances = await Grievance.find({
+     // Build the query object
+     let query = {
       $and: [
         { status: status },
         { $or: [
@@ -28,27 +28,20 @@ async function getGrievanceStatusByKeyword(keyword, status, page, pageCount) {
           ]
         }
       ]
-    }).skip(skip).limit(pageCount).exec();
+    };
 
-    // Fetch total count of grievances that match the query
-    const totalCount = await Grievance.countDocuments({
-      $and: [
-        { status: status },
-        { $or: [
-            { code: regex },
-            { complaint: regex },
-            { resolution: regex },
-            { county: regex },
-            { subcounty: regex },
-            { name: regex },
-            { gender: regex },
-            { phone: regex },
-            { acceptance: regex },
-            { settlement: regex }
-          ]
-        }
-      ]
-    });
+     // Add the gbv filter conditionally
+     if (gbv === "Yes") {
+      query.$and.push({ gbv: "Yes" });
+    } else {
+      query.$and.push({ gbv: { $ne: "Yes" } });
+    }
+
+    console.log('query---------------->',query)
+    const grievances = await Grievance.find(query).skip(skip).limit(pageCount).exec();
+    const totalCount = await Grievance.countDocuments(query);
+
+  
 
     if (!grievances.length) {
       return { grievances: 'Not found', totalCount: 0 };
@@ -65,13 +58,13 @@ async function getGrievanceStatusByKeyword(keyword, status, page, pageCount) {
 }
 
 export default defineEventHandler(async (req) => {
-  const { keyword, status, page , pageCount } = await readBody(req);
+  const { keyword, status, page , gbv, pageCount } = await readBody(req);
   const mongoString = process.env.MONGODB_URI;
   await mongoose.connect(mongoString, { dbName: 'grm' });
-  console.log('getGrievanceStatusByKeyword ------------>', keyword, status,page , pageCount );
+  console.log('getGrievanceStatusByKeyword ------------>', keyword, status,page , pageCount ,gbv);
 
   try {
-    const { grievances, totalCount } = await getGrievanceStatusByKeyword(keyword, status, page, pageCount);
+    const { grievances, totalCount } = await getGrievanceStatusByKeyword(keyword, status, page, pageCount,gbv);
     console.log('found', grievances.length);
 
     if (grievances !== 'Not found' && grievances !== 'Error retrieving status') {
