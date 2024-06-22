@@ -11,8 +11,6 @@
     <div class="col-span-1 md:col-span-10 p-4">
       <div class="flex-1 flex flex-col">
         <main>
-          <UProgress v-show="loading" animation="carousel" class="pb-6" />
-
           <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <StatCard title="Total" :value="total_grievances" :change="per_change.Total" icon="i-heroicons-chat-bubble-left-right-20-solid"
               changeType="increase" class="bg-white dark:bg-transparent border" />
@@ -44,7 +42,7 @@
 
             <template #GBV>
               <div>
-                <highchart :options="lineMonthlyByStatus" more :modules="['exporting']"
+                <highchart :options="lineMonthlyGBVChartByGender" more :modules="['exporting']"
                   class="bg-white dark:bg-transparent border" />
               </div>
             </template>
@@ -61,9 +59,12 @@
 
 
                 <div>
-                  <highchart :options="lineMonthlyByType" more :modules="['exporting']" />
+                  <highchart :options="lineMonthlyGBVChart" more :modules="['exporting']" />
                 </div>
-            
+                
+                <div>
+                  <highchart :options="lineMonthlyChart" more :modules="['exporting']" />
+                </div>
                 
               
                 
@@ -115,241 +116,59 @@ const selected_county =ref()
 
 const filter_fields =ref([])
 const filter_values =ref([])
-const loading =ref(false)
-// process count data 
-function transformCountData(data) {
-    return data.reduce((acc, item) => {
-        const status = item._id.status;
-        acc[status] = {
-            totalCount: item.totalCount,
-            totalGBV: item.totalGBV
-        };
-        return acc;
-    }, {});
-} 
+
+const all_summary=ref()
 
  
-// process gedner data 
-function extractGenderData(data) {
-    const categories = [];
-    const totalCountSeries = [];
-    const totalGBVSeries = [];
-    const totalNonGBVSeries = [];
-
-    data.forEach(item => {
-        categories.push(item._id.gender);
-        totalCountSeries.push(item.totalCount);
-        totalGBVSeries.push(item.totalGBV);
-        totalNonGBVSeries.push(item.totalNonGBV);
-    });
-
-    return {
-        categories,
-        totalCountSeries,
-        totalGBVSeries,
-        totalNonGBVSeries
-    };
-}
-
-// County data 
-
- 
-function processCountyData(data) {
-    // Initialize containers for the categories and series data
-    const categories = [];
-    const seriesData = {
-        Open: [],
-        Resolved: [],
-        Escalated: [],
-        Investigate: []
-    };
-
-    // Loop through the data to populate categories and series
-    data.forEach(item => {
-        const county = item._id.county;
-        const status = item._id.status;
-        const totalCount = item.totalCount;
-
-        // Add county to categories if it's not already there
-        if (!categories.includes(county)) {
-            categories.push(county);
-            // Initialize new entries in series arrays for the new county
-            Object.keys(seriesData).forEach(statusKey => {
-                seriesData[statusKey].push(0);
-            });
-        }
-
-        // Find the index of the county in categories
-        const index = categories.indexOf(county);
-
-        // Assign the totalCount to the respective series at the county index
-        seriesData[status][index] = totalCount;
-    });
-
-    // Convert seriesData to the desired format
-    const series = Object.keys(seriesData).map(status => {
-        return {
-            name: status,
-            data: seriesData[status]
-        };
-    });
-
-    return { categories, series };
-}
-
-// Month GBV nonGBv 
-function processMonthlySeries(data) {
-    // Initialize arrays for categories (year-month pairs) and series (totalCount, totalGBV, totalNonGBV)
-    let categories = [];
-  
-  // Initialize new series objects for totalCount, totalGBV, and totalNonGBV
-  let totalCountData = {
-                name: 'Total Count',
-                data: []
-            };
-   let totalGBVData = {
-                name: 'Total GBV',
-                data: []
-            };
-    let totalNonGBVData = {
-                name: 'Total Non-GBV',
-                data: []
-            };
-
-    // Iterate over each result object in the 'data' array
-    data.forEach(result => {
-        // Extract year, month, and status from _id
-        let year = result._id.year;
-        let month = result._id.month;
- 
-        // Create a formatted date string for the category
-        let category = `${year}-${month}`;
-
-        // Check if the category already exists in categories array
-        let categoryIndex = categories.findIndex(item => item === category);
-        if (categoryIndex === -1) {
-            // If category does not exist, add it to categories array
-            categories.push(category);
-
-          
-            // Push the series objects into respective series arrays
-            totalCountData.data.push(result.totalCount);
-            totalGBVData.data.push(result.totalGBV);
-            totalNonGBVData.data.push(result.totalNonGBV);
-
-            // Update categoryIndex to the newly added category's index
-            categoryIndex = categories.length - 1;
-        }
-
-        
-    });
-
-    // Return an object containing categories and series arrays
-    return {
-        categories: categories,
-        series: [totalCountData, totalGBVData, totalNonGBVData]
-    };
-}
- 
- // Month GBV nonGBv 
- function processMonthlyStatus(data) {
-    // Initialize arrays for categories (year-month pairs) and series (status with totalCount data)
-    let categories = [];
-    let series = {};
-
-    // Iterate over each result object in the 'data' array
-    data.forEach(result => {
-        // Extract year, month, and status from _id
-        let year = result._id.year;
-        let month = result._id.month;
-        let status = result._id.status;
-
-        // Create a formatted date string for the category
-        let category = `${year}-${month}`;
-
-        // Check if the category already exists in categories array
-        if (!categories.includes(category)) {
-            // If category does not exist, add it to categories array
-            categories.push(category);
-        }
-
-        // Initialize series data object for the status if not already initialized
-        if (!series[status]) {
-            series[status] = {
-                name: status,
-                data: []
-            };
-        }
-
-        // Push totalCount value to the series data array for the corresponding category
-        series[status].data.push( result.totalCount);
-    });
-
-    // Return an object containing categories and series arrays
-    return {
-        categories: categories,
-        series: Object.values(series)
-    };
-}
- 
-
-
 async function fetchSummaries() {
     try {
         const [
+            openGrievances,
             AllSummary,
+            resolvedGrievances,
+            escalatedGrievances,
+            totalSummary,
             percentageSummary,
+            monthlySummary,
+            monthlySummaryByGender,
+            monthlySummaryBySettlement,
+            monthlyGBVSummary,
+            monthlyGBVSummaryByGender
         ] = await Promise.all([
              getAllSummary(),
-             getPercentageSummary(),
-             
+            getSummary('Open'),
+            getSummary('Resolved'),
+            getSummary('Escalated'),
+            getTotalSummary(),
+            getPercentageSummary(),
+            getMonthlySummary(),
+            getMonthlySummaryByGender(),
+            getMonthlySummaryBySettlement(),
+            getMonthlyGBVSummary(),
+            getMonthlyGBVSummaryByGender(),
             
         ]);
-          // 1. get the total 
-        total_grievances.value=AllSummary.total
+        all_summary.value=AllSummary
+        open_grievances.value = openGrievances;
+        resolved_grievances.value = resolvedGrievances;
+        escalated_grievances.value = escalatedGrievances;
+        total_grievances.value = totalSummary;
+        per_change.value = percentageSummary;
 
-        // 2. Process Count data 
-        let status_data = transformCountData(AllSummary.byStatusOnly)
-          open_grievances.value = status_data['Open'] ? status_data['Open'].totalCount || 0 : 0;
-          resolved_grievances.value = status_data['Resolved'] ? status_data['Resolved'].totalCount || 0 : 0;
-          escalated_grievances.value = status_data['Escalated'] ? status_data['Escalated'].totalCount || 0 : 0;
+        lineMonthlyChart.value.xAxis.categories = monthlySummary.dates? monthlySummary.dates:[];
+        lineMonthlyChart.value.series = monthlySummary.series;
 
+        MonthlyChartByGender.value.xAxis.categories = monthlySummaryByGender.dates? monthlySummaryByGender.dates:[];
+        MonthlyChartByGender.value.series = monthlySummaryByGender.series;
 
-        // 3. Monthly Changes in the Totals  
-        per_change.value = percentageSummary?percentageSummary:[]
+        MonthlyChartBySettlement.value.xAxis.categories = monthlySummaryBySettlement.dates? monthlySummaryBySettlement.dates: [];
+        MonthlyChartBySettlement.value.series = monthlySummaryBySettlement.series;
 
+        lineMonthlyGBVChart.value.xAxis.categories = monthlyGBVSummary.dates? monthlyGBVSummary.dates:[];
+        lineMonthlyGBVChart.value.series = monthlyGBVSummary.series;
 
-        //4. Gedner 
-        let gender_data=  extractGenderData(AllSummary.byGenderOnly)  
-
-        MonthlyChartByGender.value.xAxis.categories = gender_data.categories;
-        MonthlyChartByGender.value.series =  [{name:'All', data:gender_data.totalCountSeries}, {name:'GBV', data:gender_data.totalGBVSeries},{name:'Non-GBV', data:gender_data.totalNonGBVSeries}];
-
-        //5. Process county data 
-        let county_data =  processCountyData(AllSummary.byCountyStatus)
-        console.log('county_data',county_data)
-
-        MonthlyChartBySettlement.value.xAxis.categories = county_data.categories
-        MonthlyChartBySettlement.value.series = county_data.series;
-
-
-        //6. Timeseries by type
-        let timeseries_data =  processMonthlySeries(AllSummary.byMonth)
-        console.log('timeseries_data',timeseries_data)
-        
-        lineMonthlyByType.value.xAxis.categories = timeseries_data.categories;
-        lineMonthlyByType.value.series = timeseries_data.series;
-
-
-        //7. Timeseries by status 
-       
-        let timeseries_status =  processMonthlyStatus(AllSummary.byMonthStatus)
-        console.log('timeseries_status',timeseries_status)
-
-        lineMonthlyByStatus.value.xAxis.categories = timeseries_status.categories;
-        lineMonthlyByStatus.value.series = timeseries_status.series;
-
-
+        lineMonthlyGBVChartByGender.value.xAxis.categories = monthlyGBVSummaryByGender.dates?monthlyGBVSummaryByGender.dates:[];
+        lineMonthlyGBVChartByGender.value.series = monthlyGBVSummaryByGender.series;
 
     } catch (error) {
         console.error('Error fetching summaries:', error);
@@ -366,7 +185,9 @@ async function clearCharts() {
         total_grievances.value = null;
         per_change.value = {Open:0, Escalated:0, Resolved:0, Investigate:0, Total:0};
         
- 
+
+        lineMonthlyChart.value.xAxis.categories =  [];
+        lineMonthlyChart.value.series = [];
 
         MonthlyChartByGender.value.xAxis.categories = [];
         MonthlyChartByGender.value.series = [];
@@ -374,11 +195,11 @@ async function clearCharts() {
         MonthlyChartBySettlement.value.xAxis.categories =  [];
         MonthlyChartBySettlement.value.series = [];
 
-        lineMonthlyByType.value.xAxis.categories =  [];
-        lineMonthlyByType.value.series =  [];
+        lineMonthlyGBVChart.value.xAxis.categories =  [];
+        lineMonthlyGBVChart.value.series =  [];
 
-        lineMonthlyByStatus.value.xAxis.categories =  [];
-        lineMonthlyByStatus.value.series =  [];
+        lineMonthlyGBVChartByGender.value.xAxis.categories =  [];
+        lineMonthlyGBVChartByGender.value.series =  [];
 
     } catch (error) {
         console.error('Error nulllimng summaries:', error);
@@ -395,7 +216,7 @@ onMounted(async () => {
       county_data.forEach((county) => {
             counties.value.push({
                 label: county.name +'('+county.code+')',
-                value: county.name
+                value: county.code
             });
         });
 
@@ -430,7 +251,8 @@ async function onClearFilters() {
 }
 
 
- 
+
+
 
 
 async function getAdminUnits(model) {
@@ -457,17 +279,15 @@ async function getAdminUnits(model) {
 async function getAllSummary() {
   
   try {
-    loading.value=true
     const response = await axios.post('/api/summary/all', {
       filter_fields:filter_fields.value,filter_values:filter_values.value
      });
 
- 
+     console.log('All Summary',response)
+
     if (response.data.code === '0000') {
       //count[status] = response.data.data.length;
-      console.log('Master Summary', response.data.result)
-      loading.value=false
-      return response.data.result
+      return response.data.data
        
     }  
   } catch (error) {
@@ -667,16 +487,51 @@ async function getMonthlySummaryBySettlement() {
 
  
  
- 
 
- const lineMonthlyByType = ref({
+const lineMonthlyChart = ref({
         chart: {
             type: 'spline',
             backgroundColor: 'transparent',
 
         },
         title: {
-            text: 'Monthly Grievances Cases Reported',
+            text: 'Monthly Average Cases Reported',
+            align: 'left'
+        },
+        subtitle: {
+            text: 'Source: ' +
+                '<a href="https://kesmis.go.ke" target="_blank">kesmis.go.ke</a>'
+        },
+        xAxis: {
+            categories:  []
+        },
+        yAxis: {
+            title: {
+                text: 'Number of Cases'
+            },
+            animation: {
+                defer: 1000
+            }
+        },
+        plotOptions: {
+            spline: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: true
+            }
+        },
+        series: []
+    });
+
+ const lineMonthlyGBVChart = ref({
+        chart: {
+            type: 'spline',
+            backgroundColor: 'transparent',
+
+        },
+        title: {
+            text: 'Monthly GBV Cases Reported',
             align: 'left'
         },
         subtitle: {
@@ -706,14 +561,14 @@ async function getMonthlySummaryBySettlement() {
     });
 
  
-  const lineMonthlyByStatus = ref({
+  const lineMonthlyGBVChartByGender = ref({
     chart: {
         type: 'column',
         backgroundColor: 'transparent',
 
     },
     title: {
-        text: 'Monthly  Cases Reported by Status',
+        text: 'Monthly GBV Cases Reported by Gender',
         align: 'left'
     },
     subtitle: {
