@@ -112,7 +112,7 @@ const open_grievances =ref(0)
 const resolved_grievances =ref(0)
 const escalated_grievances =ref(0)
 const per_change =ref({Open:0, Escalated:0, Resolved:0, Investigate:0, Total:0})
-
+const resolution_rate=ref(0)
 const counties =ref([])
 const selected_county =ref()
 
@@ -122,6 +122,7 @@ const filter_fields =ref([])
 const filter_values =ref([])
 const loading =ref(false)
 // process count data 
+
 function transformCountData(data) {
     return data.reduce((acc, item) => {
         const status = item._id.status;
@@ -355,6 +356,15 @@ async function fetchSummaries() {
         lineMonthlyByStatus.value.series = timeseries_status.series;
 
 
+        //8. resolution_rate
+        let resolved_data = AllSummary.proportionStatus.find(item => item.status === "Resolved")
+       
+        console.log('resolved_data',resolved_data.percentage)
+        resolution_rate.value= resolved_data.percentage;
+        resolutionRateGauge.value.series[0].data=[resolution_rate.value]
+
+        console.log(resolutionRateGauge)
+        
 
     } catch (error) {
         console.error('Error fetching summaries:', error);
@@ -434,6 +444,33 @@ async function onClearFilters() {
 
 }
 
+async function getPercentageSummary() {
+  
+  try {
+    const response = await axios.post('/api/summary/change', {
+      filter_fields:filter_fields.value,filter_values:filter_values.value
+     });
+
+    if (response.data.code === '0000') {
+      //count[status] = response.data.data.length;
+      console.log(response)
+      //return response.data.data
+      let res = response.data.data
+
+      const formattedData = {};
+  for (const [key, value] of Object.entries(res)) {
+    formattedData[key] = parseFloat(value.toFixed(0));
+  }
+
+  return formattedData;
+       
+    }  
+  } catch (error) {
+    console.error('Error during login:', error.message);
+    return null
+    // Handle error, maybe show an error message to the user
+  }
+}
 
  
 
@@ -551,7 +588,7 @@ const resolutionRateGauge = ref({
 
     series: [{
         name: 'Rate',
-        data: [80],
+        data: [resolution_rate.value],
         tooltip: {
             valueSuffix: '%'
         },
