@@ -645,7 +645,17 @@ const resolutionRateGauge = ref({
                 enableMouseTracking: true
             }
         },
-        series: []
+        series: [],
+        lang: {
+        noData: 'No Data'
+    },
+    noData: {
+        style: {
+            fontWeight: 'bold',
+            fontSize: '15px',
+            color: '#303030'
+        }
+    }
     });
 
  
@@ -679,7 +689,17 @@ const resolutionRateGauge = ref({
             }
         }
     },
-    series: []
+    series: [],
+    lang: {
+        noData: 'No Data'
+    },
+    noData: {
+        style: {
+            fontWeight: 'bold',
+            fontSize: '15px',
+            color: '#303030'
+        }
+    }
 });
 
 
@@ -713,7 +733,17 @@ const MonthlyChartByGender = ref({
             }
         }
     },
-    series: []
+    series: [],
+    lang: {
+        noData: 'No Data'
+    },
+    noData: {
+        style: {
+            fontWeight: 'bold',
+            fontSize: '15px',
+            color: '#303030'
+        }
+    }
 });
 
 
@@ -750,7 +780,17 @@ const MonthlyChartBySettlement = ref({
             }
         }
     },
-    series: []
+    series: [],
+    lang: {
+        noData: 'No Data'
+    },
+    noData: {
+        style: {
+            fontWeight: 'bold',
+            fontSize: '15px',
+            color: '#303030'
+        }
+    }
 });
 
 
