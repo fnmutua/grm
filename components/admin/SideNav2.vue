@@ -106,6 +106,29 @@
 <script setup lang="ts">
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'radix-vue';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { watch } from 'vue'
+import { useRouter } from 'nuxt/app'
+
+const { status   } = useAuth()
+let sessionCheckInterval
+
+const checkSession = () => {
+  if (status.value === 'unauthenticated') {
+    console.log("Autologout the user......")
+
+    navigateTo('/login', { external: true })
+  }
+}
+
+// Set up the interval to check the session every 60 seconds
+onMounted(() => {
+  sessionCheckInterval = setInterval(checkSession, 6000)
+})
+
+
+
+
+
 
 const scrollbarHeight = ref(890); // Initial height based on current window size
 

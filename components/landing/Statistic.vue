@@ -8,7 +8,7 @@
           <span class="stat-value">955</span>
         </div>
         <div class="stat-item">
-          <span class="stat-title">Resolved</span>
+          <span class="stat-title">Resolved</span> 
           <span class="stat-value">400</span>
         </div>
         <div class="stat-item">

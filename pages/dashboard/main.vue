@@ -101,7 +101,10 @@
 <script setup>
 definePageMeta({
   layout: "landing",
+  middleware: 'auth',
+
 });
+
 import axios from 'axios';
 import { ref, computed, watch } from 'vue';
  

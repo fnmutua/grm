@@ -155,7 +155,9 @@ console.log('filtered', filteredLinks.value);
  
  async function logoff() {
   console.log("Logging off")
-   await signOut({ callbackUrl: '/login' })
+  //  signOut({ callbackUrl: '/login' })
+ //  signOut({ callbackUrl: 'http://localhost/login' })
+    navigateTo('/login', { external: true })
 } 
 
   
