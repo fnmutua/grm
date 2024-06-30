@@ -367,8 +367,8 @@ async function fetchSummaries() {
         console.log(resolutionRateGauge.value)
         resolutionRateGauge.value.series[0].data=[resolved_data.percentage]
 
-      
-        
+        //9. get Word Cloud
+        console.log('AllSummary.grievances',AllSummary.grievances)       
 
     } catch (error) {
         console.error('Error fetching summaries:', error);

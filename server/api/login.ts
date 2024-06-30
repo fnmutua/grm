@@ -49,8 +49,8 @@ export default defineEventHandler(async (req) => {
             };
 
         } else {
-           // const access_token = jwt.sign(jwt_obj, secret, { expiresIn: '1h' });
-            const access_token = jwt.sign(jwt_obj, secret, { expiresIn: '1m' }); // Set expiration to 1 minute
+            const access_token = jwt.sign(jwt_obj, secret, { expiresIn: '1h' });
+           // const access_token = jwt.sign(jwt_obj, secret, { expiresIn: '1m' }); // Set expiration to 1 minute
 
             console.log('access_token', access_token);
 

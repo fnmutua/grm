@@ -287,8 +287,13 @@ export default defineEventHandler(async (req) => {
         console.log(proportionStatus);
         
 
+        const grievances = await Grievance.find({}).select('complaint');
+        let grvs = grievances.map(grievance => grievance.complaint) 
+          
+       
 
-         
+
+
         let result={}
          result.byGenderStatus =byGenderStatus
          result.bySubSettlementStatus =bySubSettlementStatus
@@ -300,8 +305,8 @@ export default defineEventHandler(async (req) => {
          result.byMonth =  byMonth
          result.byMonthStatus =  byMonthStatus
          result.proportionStatus =  proportionStatus
-         
-
+         result.grievances =  grvs
+ 
          
          result.total =count
 
