@@ -34,7 +34,7 @@ export default defineEventHandler(async (req) => {
   
         try {
      
-          const  grievance = await Grievance.findById(id).select('code complaint status resolution county subcounty ward settlement createdAt ').exec();
+          const  grievance = await Grievance.findById(id).select('code complaint status resolution county subcounty ward settlement history createdAt ').exec();
        
            // If grievance found, return success
            if (grievance ) {

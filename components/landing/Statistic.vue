@@ -10,17 +10,24 @@
         <span class="stat-title">Resolved</span>
         <span class="stat-value">{{ Resolved }}</span>
       </div>
-       
 
-       <div class="mb-1 text-base font-medium text-green-700 dark:text-green-500">Resolution Rate</div>
-<div class="w-full bg-gray-200 rounded-full h-6  mb-4 dark:bg-gray-700" >
-  <div class="bg-green-600 text-xl font-medium text-blue-100 text-center h-6  leading-none rounded-full"
+
+      <div class="mb-1 text-base font-medium text-green-700 dark:text-green-500">Grievance Resolution Rate</div>
+      <div class="w-full bg-gray-200 rounded-full h-6  mb-4 dark:bg-gray-700">
+        <div class="bg-green-600 text-xl font-medium text-blue-100 text-center h-6  leading-none rounded-full"
           :style="{ width: `${ResolutionRate}%` }">
           {{ ResolutionRate }}%
         </div>
       </div>
- 
- 
+
+      <div class="mb-1 text-base font-medium text-red-700 dark:text-red-500">Average Resolution Period</div>
+      <div class="w-full bg-gray-200 rounded-full h-6  mb-4 dark:bg-gray-700">
+        <div class="bg-red-600 text-xl font-medium text-blue-100 text-center h-6  leading-none rounded-full"
+          :style="{ width: `${ResolutionRate}%` }">
+          {{ ResolutionRate }} Days
+        </div>
+      </div>
+
 
 
       <span class="stat-footer">Last Update: {{ lastUpdate }}</span>

@@ -158,6 +158,7 @@ async function generateGrievanceReferenceNumber() {
         status: fields.status ? fields.status : 'Open',
         resolution: fields.resolution ? fields.resolution : 'Pending',
         acceptance: fields.acceptance, // default
+        history: fields.history, // default
       });
  
       const code = await generateGrievanceReferenceNumber();

@@ -177,7 +177,7 @@ async function getSettlements(parent) {
 }
 
 
- const Gender = ['Male', 'Female' ]
+const Gender = ['Male', 'Female' ]
 const YesNo = ['Yes', 'No' ]
 
  
@@ -255,7 +255,23 @@ async function onSubmit() {
   formData.append('acceptance', 'Pending')
   
   
+  // create the initialization object 
+  let initObject = {
+    date: new Date(),
+    action: "Initial report received",
+    mode: 'Web',
+    actor: 'Complainant'
+  };
+
+ // Serialize the array containing the object
+let historyArray = [initObject];
+let historyJson = JSON.stringify(historyArray);
+
+// Append serialized JSON string to FormData
+formData.append('history', historyJson);
+
   // Retrieve file from file input
+
  
   if (form.file  ) {
     console.log("Has uplaods....",form.file  )

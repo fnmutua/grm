@@ -68,6 +68,12 @@ const dataSchema = new Schema({
     type: Date,
      required: false,
   },
+  
+  history: {
+    type: [String], // Simple array of strings
+    required: false,
+    default: []
+  }
 
 }, {
   timestamps: true,
