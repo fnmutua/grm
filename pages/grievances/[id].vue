@@ -239,8 +239,9 @@ async function handleSubmit() {
 
           // Check if the obj already exists in grievance_details
           let isDuplicate = grievance_details.some(detail =>
-            detail.status === obj.status &&
-            detail.code === obj.code
+          detail.status === obj.status &&
+          detail.remarks === obj.remarks &&
+          detail.code === obj.code
 
           );
 

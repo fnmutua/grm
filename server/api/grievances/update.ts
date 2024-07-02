@@ -7,7 +7,7 @@ import Grievance from "../../models/grievance";
 
   
 export default defineEventHandler(async (req) => {
-  const { ids, field, field_value,resolution,remarks } = await readBody(req);
+  const { ids, field, field_value,resolution,remarks,action } = await readBody(req);
   const mongoString = process.env.MONGODB_URI;
   await mongoose.connect(mongoString, { dbName: 'grm' });
   console.log('Database update connected...');
@@ -29,6 +29,7 @@ export default defineEventHandler(async (req) => {
       let timeline_event = JSON.stringify({
         date: new Date(),  // Use the current date and time
         actor: 'System',
+        action: action,
         remarks: remarks,
         [field]: field_value,
         mode: 'System'

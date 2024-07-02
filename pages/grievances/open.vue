@@ -101,11 +101,11 @@ onMounted(async () => {
   await onChange(0)
 });
 
+const status ='Open'
 
 async function onChange(index) {
   q.value = ''
-  let status = 'Open';
-  pending.value = true
+   pending.value = true
 
   try {
     const response = await axios.post('/api/grievances/list', {
@@ -153,8 +153,7 @@ async function onSearchClear() {
 
 async function onSearch() {
   console.log('keyword',keyword)
-  let status = 'Open';
-  pending.value = true
+   pending.value = true
 
   try {
     const response = await axios.post('/api/grievances/search', {
@@ -310,7 +309,7 @@ const onInvestigate = async () => {
 
 }
 
-const askForDocuments = async () => {
+const xaskForDocuments = async () => {
   //downloadLoading.value = true
   console.log('askForDocuments....', selected_rows.value)
 
@@ -331,7 +330,7 @@ const askForDocuments = async () => {
 
 }
 
-const markResolved = async () => {
+const askForDocuments = async () => {
   //downloadLoading.value = true
   console.log('markResolved....', comments.value)
 
@@ -340,9 +339,10 @@ const markResolved = async () => {
     const response = await axios.post('/api/grievances/update', {
       ids: selected_ids.value,
       field: 'status',  // Add page parameter
-      field_value: 'Resolved', // Add pageCount parameter,
-      resolution: comments.value,
-      
+      field_value: 'Investigate', // Add pageCount parameter
+      action: 'Investigate', // Add pageCount parameter
+      remarks: 'Complainant requested to provide documentation.'
+
     });
 
     console.log(response.data.data[0].code)
@@ -350,14 +350,14 @@ const markResolved = async () => {
     for (let i = 0; i < selected_rows.value.length; i++) {
       // func(array[i]);
       console.log(selected_rows.value[i])
-      let msg = 'your grievance ' + selected_rows.value[i] + ' is now resolved.'
+      let msg = 'please provide supporting documentation for grievance ' + selected_rows.value[i] + '.'
       sendNotification(msg)
     }
 
     if (response.data.success) {
-      toast.add({ title: 'Resolution is successfull', color: "primary" });
+      toast.add({ title: 'Request successfully sent', color: "primary" });
     } else {
-      toast.add({ title: 'Resolution failed', color: "red" });
+      toast.add({ title: 'Request failed', color: "red" });
 
     }
     isOpen.value = false
