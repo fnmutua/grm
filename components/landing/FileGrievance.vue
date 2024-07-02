@@ -258,7 +258,7 @@ async function onSubmit() {
   // create the initialization object 
   let initObject = {
     date: new Date(),
-    action: "Initial report received",
+    action: "Created",
     mode: 'Web',
     actor: 'Complainant'
   };
@@ -268,7 +268,7 @@ let historyArray = [initObject];
 let historyJson = JSON.stringify(historyArray);
 
 // Append serialized JSON string to FormData
-formData.append('history', historyJson);
+formData.append('timeline', historyJson);
 
   // Retrieve file from file input
 

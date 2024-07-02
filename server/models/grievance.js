@@ -68,8 +68,7 @@ const dataSchema = new Schema({
     type: Date,
      required: false,
   },
-  
-  history: {
+  timeline: {
     type: [String], // Simple array of strings
     required: false,
     default: []

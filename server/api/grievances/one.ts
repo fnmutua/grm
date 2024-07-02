@@ -34,10 +34,12 @@ export default defineEventHandler(async (req) => {
   
         try {
      
-          const  grievance = await Grievance.findById(id).select('code complaint status resolution county subcounty ward settlement history createdAt ').exec();
+          //const  grievance = await Grievance.findById(id).select('code complaint status resolution county subcounty ward settlement createdAt ').exec();
+          const  grievance = await Grievance.findById(id).exec();
        
            // If grievance found, return success
            if (grievance ) {
+            console.log('grievance----------------->',grievance)
             // return res.status(200).json({ success: true, message: "Grievance retrieved", data: grievance });
              return {
               success: true,

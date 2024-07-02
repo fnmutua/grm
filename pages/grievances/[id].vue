@@ -11,10 +11,10 @@
         <template #header>
           <UButton icon="i-heroicons-chevron-double-left" size="sm" color="primary" variant="ghost" label="Back"
             @click="goBack" style="margin-right: 14;" :trailing="true" />
-           Grievance Details: {{ grievance.code }} | {{ grievance.settlement }} 
+          Grievance Details: {{ grievance.code }} | {{ grievance.settlement }}
         </template>
 
-        
+
         <div v-show="loading">
           <p> Loading...</p>
         </div>
@@ -22,52 +22,41 @@
         <div v-show="!showGrievance && !loading">
           <p> No grievances match the provided information</p>
         </div>
-        
-
-
 
 
 
         <ol v-show="showGrievance" class="relative border-s border-gray-200 dark:border-gray-700">
-          <li class="mb-10 ms-6">
+          <li v-for="(grievance, index) in grievance_details" :key="index" class="mb-10 ms-6">
             <span
               class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-              <UIcon name="i-heroicons-clipboard-document-check" />
+              <UIcon v-if="grievance.status === 'Accepted'" name="i-heroicons-clipboard-document-check" />
+              <UIcon v-else-if="grievance.status === 'Escalated'" name="i-heroicons-arrow-up-right" />
+              <UIcon v-else-if="grievance.status === 'Resolved'" name="i-heroicons-check-badge" />
+              <UIcon v-else name="i-heroicons-bell-alert" />
             </span>
-            <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white"> Grievance Resolution Accepted by complainant <span
+            <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">
+              Grievance {{ grievance.action }}
+              <span v-if="grievance.latest"
                 class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 ms-3">Latest</span>
             </h3>
-            <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">June 25th 2024</time>
-            <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400"> {{ grievance.resolution }}</p>
+            <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+              {{ grievance.date }}
+            </time>
+            <p v-if="grievance.resolution" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+              {{ grievance.resolution }}
+            </p>
+            <p v-if="grievance.description" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+              {{ grievance.description }}
+            </p>
+            <p v-if="grievance.complaint" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+              {{ grievance.complaint }}
+            </p>
             <a href="#"
               class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
               <UIcon class="px-4" name="i-heroicons-cloud-arrow-down" />
-              GRC committee Minutes</a>
-          </li>
-          <li class="mb-10 ms-6">
-            <span
-              class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-              
-              <UIcon name="i-heroicons-arrow-up-right" />
-
-            </span>
-            <h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Grievance Escalated to the County GRC committee</h3>
-            <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">25th March 2025</time>
-            <p class="text-base font-normal text-gray-500 dark:text-gray-400"> Complainant not satisfied by SEC GRC. Escalated issue</p>
-          </li>
-          <li class="ms-6">
-            <span
-              class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-              <UIcon name="i-heroicons-bell-alert" />
-
-            </span>
-            <h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Grievance Received</h3>
-            <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ formatDate(parsedHistory[0].date) }}</time>
-            <p class="mb-4  text-base font-normal text-gray-500 dark:text-gray-400">{{ grievance.complaint }}</p>
-            <a href="#"
-              class="inline-flex items-center px-4 py-2 mb-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
-              <UIcon class="px-4" name="i-heroicons-cloud-arrow-down" />
-              Documentation</a>
+              <span v-if="grievance.status === 'Accepted'">GRC committee Minutes</span>
+              <span v-else>Documentation</span>
+            </a>
           </li>
         </ol>
 
@@ -118,16 +107,29 @@ const loading = ref(true)
 const showGrievance = ref(false)
 const showAcceptButton = ref(false)
 const grievance = ref({});
-const parsedHistory =ref([]) ;
+const parsedHistory = ref([]);
 
 
 function formatDate(dateString) {
+  // Create a Date object from the dateString
   const date = new Date(dateString);
 
-  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  console.log('date', dateString)
+  // Define the options for formatting the date
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZoneName: 'short'
+  };
 
+  // Format the date to the specified locale and options
   return date.toLocaleString('en-US', options);
 }
+
 
 
 onMounted(async () => {
@@ -174,8 +176,32 @@ function maskPhoneNumber(number) {
   }
 }
 
-async function handleSubmit() {
+const grievances = [
+  {
+    status: "Accepted",
+    date: "June 25th 2024",
+    resolution: "Resolution text here",
+    type: "Grievance Resolution Accepted by complainant",
+    latest: true,
+  },
+  {
+    status: "Escalated",
+    date: "March 25th 2025",
+    description: "Complainant not satisfied by SEC GRC. Escalated issue",
+    type: "Grievance Escalated to the County GRC committee",
+  },
+  {
+    status: "Created",
+    date: "March 25th 2025",
+    complaint: "Complaint text here",
+    type: "Grievance Received",
+  },
+]
 
+let grievance_details = []
+
+async function handleSubmit() {
+  grievance_details = []
   try {
     const response = await axios.post('/api/grievances/one', form);
     const responseData = response.data.data;
@@ -184,24 +210,50 @@ async function handleSubmit() {
     if (responseData) {
       loading.value = false;
       showGrievance.value = true;
-      grievance.value = responseData
       // mask phone number 
-      grievance.value.phone = (grievance.value.phone)
 
-        if (responseData.history && responseData.history.length > 0) {
-          console.log(responseData.history,responseData.history.length)
+      if (responseData.timeline && responseData.timeline.length > 0) {
+        console.log(responseData.timeline, responseData.timeline.length);
 
-          responseData.history.forEach(historyItem => {
-            const parsedItems = JSON.parse(historyItem);
-            parsedHistory.value = parsedHistory.value.concat(parsedItems);
-          });
+        responseData.timeline.forEach(historyItem => {
+          let event = JSON.parse(historyItem);
+          console.log('---', event);
+          let obj = {
+            date: formatDate(event.date),
+            old_date:event.date,
+            complaint: responseData.complaint,
+            resolution: responseData.resolution,
+            remarks: responseData.status,
+            status: event.status,
+            code: responseData.code,
+            action: event.action,
+            actor: event.actor,
+            mode: event.mode
+          };
+          console.log('obj-->', obj);
+
+          // Check if the obj already exists in grievance_details
+          let isDuplicate = grievance_details.some(detail =>
+            detail.status === obj.status &&
+            detail.code === obj.code
+
+          );
+
+          if (!isDuplicate) {
+            grievance_details.push(obj);
+          }
+        });
+        grievance_details.sort((a, b) => new Date(b.old_date) - new Date(a.old_date));
 
 
-        }
+        console.log('event', grievance_details);
+      }
 
-        // Sort the parsed history items by date
-       // parsedHistory.sort((a, b) => new Date(a.date) - new Date(b.date));
-       console.log('parsedHistory.value',parsedHistory.value);
+
+      // Sort the parsed history items by date
+      // parsedHistory.sort((a, b) => new Date(a.date) - new Date(b.date));
+      console.log('parsedHistory.value', parsedHistory.value);
+      
 
 
 
