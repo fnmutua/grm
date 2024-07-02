@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { now } from 'mongoose';
 import Grievance from "../../models/grievance";
  
 
@@ -7,10 +7,10 @@ import Grievance from "../../models/grievance";
 
   
 export default defineEventHandler(async (req) => {
-  const { ids, field, field_value,resolution } = await readBody(req);
+  const { ids, field, field_value,resolution,remarks } = await readBody(req);
   const mongoString = process.env.MONGODB_URI;
   await mongoose.connect(mongoString, { dbName: 'grm' });
-  console.log('Database verify connected...');
+  console.log('Database update connected...');
 
   try {
     // Check if ids is an array
@@ -18,19 +18,29 @@ export default defineEventHandler(async (req) => {
       throw new Error('ids should be an array');
     }
 
-    console.log('ids',ids)
-    console.log('resolution',resolution)
+    // console.log('ids',ids)
+    // console.log('resolution',resolution)
 
     const updatedGrievances = [];
 
     // Loop through each ID and update the corresponding grievance
     for (const id of ids) {
 
+      let timeline_event = JSON.stringify({
+        date: new Date(),  // Use the current date and time
+        actor: 'System',
+        remarks: remarks,
+        [field]: field_value,
+        mode: 'System'
+      });
       const updateData = {
         [field]: field_value,
-        resolution: resolution ? resolution : 'Pending'
+        resolution: resolution ? resolution : 'Pending',
+        $push: { timeline: timeline_event }
+
       };
 
+      
             
       const grievance = await Grievance.findByIdAndUpdate(
         id,
@@ -40,6 +50,8 @@ export default defineEventHandler(async (req) => {
 
       if (grievance) {
         updatedGrievances.push(grievance);
+        console.log('grievance>>>>>>>>>>>>>>>>>>',grievance)
+
       } else {
         console.log(`Grievance not found for ID: ${id}`);
       }

@@ -281,12 +281,11 @@ const onInvestigate = async () => {
       ids: selected_ids.value,
       field: 'status',  // Add page parameter
       field_value: 'Investigate', // Add pageCount parameter
-      resolution: null
+      resolution: null,
+      remarks: 'Investigation of the grievance initiated'
     });
 
-    // console.log(response.data.data[0].code)
-    // let msg = 'your grievance '+response.data.data[0].code+ ' is currently under review.'
-
+   
     for (let i = 0; i < selected_rows.value.length; i++) {
       // func(array[i]);
       console.log(selected_rows.value[i])
@@ -343,6 +342,7 @@ const markResolved = async () => {
       field: 'status',  // Add page parameter
       field_value: 'Resolved', // Add pageCount parameter,
       resolution: comments.value,
+      
     });
 
     console.log(response.data.data[0].code)
@@ -380,7 +380,9 @@ const escalate = async () => {
     const response = await axios.post('/api/grievances/update', {
       ids: selected_ids.value,
       field: 'status',  // Add page parameter
-      field_value: 'Escalated' // Add pageCount parameter
+      field_value: 'Escalated', // Add pageCount parameter,
+      remarks: 'The grievance was escalated to the next level for resolution.'
+
     });
 
     for (let i = 0; i < selected_rows.value.length; i++) {

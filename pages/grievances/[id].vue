@@ -11,8 +11,9 @@
         <template #header>
           <UButton icon="i-heroicons-chevron-double-left" size="sm" color="primary" variant="ghost" label="Back"
             @click="goBack" style="margin-right: 14;" :trailing="true" />
-          Grievance Details: {{ grievance.code }} | {{ grievance.settlement }}
-        </template>
+            Grievance Details 
+            <!-- Grievance Details: {{ grievance_details[0].code }} | {{ grievance_details[0].county }} -->
+          </template>
 
 
         <div v-show="loading">
@@ -32,23 +33,27 @@
               <UIcon v-if="grievance.status === 'Accepted'" name="i-heroicons-clipboard-document-check" />
               <UIcon v-else-if="grievance.status === 'Escalated'" name="i-heroicons-arrow-up-right" />
               <UIcon v-else-if="grievance.status === 'Resolved'" name="i-heroicons-check-badge" />
+              <UIcon v-else-if="grievance.status === 'Investigate'" name="i-heroicons-magnifying-glass" />
               <UIcon v-else name="i-heroicons-bell-alert" />
             </span>
             <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">
               Grievance {{ grievance.action }}
-              <span v-if="grievance.latest"
-                class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 ms-3">Latest</span>
+              <span v-if="index==0"
+                class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300 ms-3">Latest</span>
             </h3>
             <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
               {{ grievance.date }}
             </time>
-            <p v-if="grievance.resolution" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+            <p v-if="grievance.status=='Resolved'" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
               {{ grievance.resolution }}
             </p>
+            <p v-if="grievance.status=='Investigate'" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+              {{ grievance.remarks }}
+            </p>  
             <p v-if="grievance.description" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
               {{ grievance.description }}
             </p>
-            <p v-if="grievance.complaint" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+            <p v-if="grievance.status=='Open'" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
               {{ grievance.complaint }}
             </p>
             <a href="#"
@@ -223,7 +228,7 @@ async function handleSubmit() {
             old_date:event.date,
             complaint: responseData.complaint,
             resolution: responseData.resolution,
-            remarks: responseData.status,
+            remarks: event.remarks?event.remarks:event.status,
             status: event.status,
             code: responseData.code,
             action: event.action,
