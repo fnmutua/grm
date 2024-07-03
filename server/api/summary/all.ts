@@ -26,7 +26,7 @@ export default defineEventHandler(async (req) => {
 
       
     
-
+        console.log('filterQuery>>>><<<<',filterQuery)
 
         const count = await Grievance.countDocuments(filterQuery);
 
@@ -287,8 +287,8 @@ export default defineEventHandler(async (req) => {
         console.log(proportionStatus);
         
 
-        const grievances = await Grievance.find({}).select('complaint');
-        let grvs = grievances.map(grievance => grievance.complaint) 
+        // const grievances = await Grievance.find({}).select('complaint');
+        // let grvs = grievances.map(grievance => grievance.complaint) 
           
        
 
@@ -305,7 +305,7 @@ export default defineEventHandler(async (req) => {
          result.byMonth =  byMonth
          result.byMonthStatus =  byMonthStatus
          result.proportionStatus =  proportionStatus
-         result.grievances =  grvs
+        //  result.grievances =  grvs
  
          
          result.total =count

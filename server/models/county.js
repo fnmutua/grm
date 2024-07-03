@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const countySchema = new mongoose.Schema({
     name: String,
-    code: Number
+    code: String
 });
 
 const County = mongoose.model('County', countySchema);

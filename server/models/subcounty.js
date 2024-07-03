@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const subcountySchema = new mongoose.Schema({
     name: String,
+    county:String,
     code: Number
 });
 

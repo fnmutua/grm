@@ -1,7 +1,5 @@
 <template>
   <div class="grid grid-cols-1 md:grid-cols-12 gap-4 py-10">
-
-
     <!-- Side Navigation for medium and larger screens -->
     <div class="col-span-2 md:block">
       <AdminSideNav2></AdminSideNav2>
@@ -26,7 +24,8 @@
 
           <div class="grid grid-cols-1 md:grid-cols-8 gap-6 pt-4">
           <USelect v-model="selected_county"  :options="counties" placeholder="Filter by county"  @change="onSelectCounty" />
-        
+          <USelect v-if="selected_county" v-model="selected_subcounty"  :options="subcounties" placeholder="Filter by subcounty"  @change="onSelectSUbCounty" />
+          <USelect v-if="selected_subcounty" v-model="selected_ward"  :options="wards" placeholder="Filter by ward"  @change="onSelectWards" />
           <UButton label="Clear Filters" color="red" variant="outline" @click="onClearFilters">
             <template #trailing>
               <UIcon name="i-heroicons-x-circle" class="w-5 h-5" />
@@ -53,14 +52,14 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 divide-x divide-y divide-dashed">
                 <div>
                   <highchart :options="MonthlyChartByGender" more :modules="['exporting']" />
-                </div>
+                </div>  
 
                 <div>
-                  <highchart :options="MonthlyChartBySettlement" more :modules="['exporting']" />
+                  <highchart :options="MonthlyChartByLocation" more :modules="['exporting']" />
                 </div>
 
 
-                <div>
+               <div>
                   <highchart :options="lineMonthlyByType" more :modules="['exporting']" />
                 </div>
             
@@ -68,7 +67,7 @@
                 <div>
                   <highchart :options="resolutionRateGauge" more :modules="['exporting']" />
                 </div>
-            
+         
                 
               
                 
@@ -118,6 +117,9 @@ const per_change =ref({Open:0, Escalated:0, Resolved:0, Investigate:0, Total:0})
 const resolution_rate=ref(0)
 const counties =ref([])
 const selected_county =ref()
+const selected_subcounty =ref()
+const selected_ward =ref()
+
 
 // Flters 
 
@@ -144,6 +146,7 @@ function extractGenderData(data) {
     const totalCountSeries = [];
     const totalGBVSeries = [];
     const totalNonGBVSeries = [];
+    console.log('extractGenderData')
 
     data.forEach(item => {
         categories.push(item._id.gender);
@@ -160,24 +163,25 @@ function extractGenderData(data) {
     };
 }
 
-// County data 
+// Process County data 
 
- 
-function processCountyData(data) {
+ async function processCountyData(data) {
     // Initialize containers for the categories and series data
-    const categories = [];
-    const seriesData = {
+    let categories = [];
+    let seriesData = {
         Open: [],
         Resolved: [],
         Escalated: [],
         Investigate: []
     };
-
+ 
     // Loop through the data to populate categories and series
     data.forEach(item => {
         const county = item._id.county;
         const status = item._id.status;
         const totalCount = item.totalCount;
+      //  console.log('categories', categories);
+        console.log('county', county);
 
         // Add county to categories if it's not already there
         if (!categories.includes(county)) {
@@ -191,9 +195,17 @@ function processCountyData(data) {
         // Find the index of the county in categories
         const index = categories.indexOf(county);
 
+        // Ensure that status exists in seriesData before assigning the value
+        if (!seriesData.hasOwnProperty(status)) {
+            seriesData[status] = new Array(categories.length).fill(0);
+        }
+
         // Assign the totalCount to the respective series at the county index
         seriesData[status][index] = totalCount;
+      //  console.log(`seriesData[${status}][${index}]`, seriesData[status]);
     });
+
+   // console.log('Loop has completed successfully.');
 
     // Convert seriesData to the desired format
     const series = Object.keys(seriesData).map(status => {
@@ -205,6 +217,164 @@ function processCountyData(data) {
 
     return { categories, series };
 }
+
+// Process County data 
+async function procesSubCountyData(data) {
+    // Initialize containers for the categories and series data
+    let categories = [];
+    let seriesData = {
+        Open: [],
+        Resolved: [],
+        Escalated: [],
+        Investigate: []
+    };
+ 
+    // Loop through the data to populate categories and series
+    data.forEach(item => {
+        const subcounty = item._id.subcounty;
+        const status = item._id.status;
+        const totalCount = item.totalCount;
+        console.log('subcounty',subcounty)
+    
+        // Add subcounty to categories if it's not already there
+        if (!categories.includes(subcounty)) {
+            categories.push(subcounty);
+            // Initialize new entries in series arrays for the new county
+            Object.keys(seriesData).forEach(statusKey => {
+                seriesData[statusKey].push(0);
+            });
+        }
+
+        // Find the index of the county in categories
+        const index = categories.indexOf(subcounty);
+
+        // Ensure that status exists in seriesData before assigning the value
+        if (!seriesData.hasOwnProperty(status)) {
+            seriesData[status] = new Array(categories.length).fill(0);
+        }
+
+        // Assign the totalCount to the respective series at the county index
+        seriesData[status][index] = totalCount;
+      //  console.log(`seriesData[${status}][${index}]`, seriesData[status]);
+    });
+
+     console.log('Loop has completed successfully.');
+
+    // Convert seriesData to the desired format
+    const series = Object.keys(seriesData).map(status => {
+        return {
+            name: status,
+            data: seriesData[status]
+        };
+    });
+
+    return { categories, series };
+}
+
+async function procesWardData(data) {
+    // Initialize containers for the categories and series data
+    let categories = [];
+    let seriesData = {
+        Open: [],
+        Resolved: [],
+        Escalated: [],
+        Investigate: []
+    };
+ 
+    // Loop through the data to populate categories and series
+    data.forEach(item => {
+        const ward = item._id.ward;
+        const status = item._id.status;
+        const totalCount = item.totalCount;
+        console.log('ward',ward)
+    
+        // Add ward to categories if it's not already there
+        if (!categories.includes(ward)) {
+            categories.push(ward);
+            // Initialize new entries in series arrays for the new county
+            Object.keys(seriesData).forEach(statusKey => {
+                seriesData[statusKey].push(0);
+            });
+        }
+
+        // Find the index of the county in categories
+        const index = categories.indexOf(ward);
+
+        // Ensure that status exists in seriesData before assigning the value
+        if (!seriesData.hasOwnProperty(status)) {
+            seriesData[status] = new Array(categories.length).fill(0);
+        }
+
+        // Assign the totalCount to the respective series at the county index
+        seriesData[status][index] = totalCount;
+      //  console.log(`seriesData[${status}][${index}]`, seriesData[status]);
+    });
+
+     console.log('Loop has completed successfully.');
+
+    // Convert seriesData to the desired format
+    const series = Object.keys(seriesData).map(status => {
+        return {
+            name: status,
+            data: seriesData[status]
+        };
+    });
+
+    return { categories, series };
+}
+async function procesSettlementData(data) {
+    // Initialize containers for the categories and series data
+    let categories = [];
+    let seriesData = {
+        Open: [],
+        Resolved: [],
+        Escalated: [],
+        Investigate: []
+    };
+ 
+    // Loop through the data to populate categories and series
+    data.forEach(item => {
+        const settlement = item._id.settlement;
+        const status = item._id.status;
+        const totalCount = item.totalCount;
+        console.log('settlement',settlement)
+    
+        // Add ward to categories if it's not already there
+        if (!categories.includes(settlement)) {
+            categories.push(settlement);
+            // Initialize new entries in series arrays for the new county
+            Object.keys(seriesData).forEach(statusKey => {
+                seriesData[statusKey].push(0);
+            });
+        }
+
+        // Find the index of the county in categories
+        const index = categories.indexOf(settlement);
+
+        // Ensure that status exists in seriesData before assigning the value
+        if (!seriesData.hasOwnProperty(status)) {
+            seriesData[status] = new Array(categories.length).fill(0);
+        }
+
+        // Assign the totalCount to the respective series at the county index
+        seriesData[status][index] = totalCount;
+      //  console.log(`seriesData[${status}][${index}]`, seriesData[status]);
+    });
+
+     console.log('Loop has completed successfully.');
+
+    // Convert seriesData to the desired format
+    const series = Object.keys(seriesData).map(status => {
+        return {
+            name: status,
+            data: seriesData[status]
+        };
+    });
+
+    return { categories, series };
+}
+
+
 
 // Month GBV nonGBv 
 function processMonthlySeries(data) {
@@ -304,13 +474,14 @@ function processMonthlySeries(data) {
 
 
 async function fetchSummaries() {
+  //  console.log('fetchSummaries>>>>>')
     try {
         const [
             AllSummary,
             percentageSummary,
         ] = await Promise.all([
-             getAllSummary(),
-             getPercentageSummary(),
+              getAllSummary(),
+              getPercentageSummary(),
              
             
         ]);
@@ -318,7 +489,7 @@ async function fetchSummaries() {
         total_grievances.value=AllSummary.total
 
         // 2. Process Count data 
-        let status_data = transformCountData(AllSummary.byStatusOnly)
+          let status_data = await transformCountData(AllSummary.byStatusOnly)
           open_grievances.value = status_data['Open'] ? status_data['Open'].totalCount || 0 : 0;
           resolved_grievances.value = status_data['Resolved'] ? status_data['Resolved'].totalCount || 0 : 0;
           escalated_grievances.value = status_data['Escalated'] ? status_data['Escalated'].totalCount || 0 : 0;
@@ -329,23 +500,48 @@ async function fetchSummaries() {
 
 
         //4. Gedner 
-        let gender_data=  extractGenderData(AllSummary.byGenderOnly)  
+        let gender_data=   extractGenderData(AllSummary.byGenderOnly)  
 
         MonthlyChartByGender.value.xAxis.categories = gender_data.categories;
         MonthlyChartByGender.value.series =  [{name:'All', data:gender_data.totalCountSeries}, {name:'GBV', data:gender_data.totalGBVSeries},{name:'Non-GBV', data:gender_data.totalNonGBVSeries}];
 
         //5. Process county data 
-        let county_data =  processCountyData(AllSummary.byCountyStatus)
-        console.log('county_data',county_data)
+        console.log('selected_level.value', selected_level.value)
+        if( selected_level.value ==='county') {
+            console.log('Get subcountychrts')
+            let county_data = await procesSubCountyData(AllSummary.bySubCountyStatus)
+            MonthlyChartByLocation.value.xAxis.categories = county_data.categories
+             MonthlyChartByLocation.value.series = county_data.series;
+        }
+        else if(selected_level.value==='subcounty') {
+            console.log('Get ward charts')
 
-        MonthlyChartBySettlement.value.xAxis.categories = county_data.categories
-        MonthlyChartBySettlement.value.series = county_data.series;
+            let sett_data = await procesWardData(AllSummary.bySubWardStatus)
+            MonthlyChartByLocation.value.xAxis.categories = sett_data.categories
+             MonthlyChartByLocation.value.series = sett_data.series;
+        }
+        else if(selected_level.value==='ward') {
+            console.log('Get settl charts')
+
+            let ward_data = await procesSettlementData(AllSummary.bySubSettlementStatus)
+            MonthlyChartByLocation.value.xAxis.categories = ward_data.categories
+             MonthlyChartByLocation.value.series = ward_data.series;
+        }
+        else {
+            console.log('Get National charts')
+
+            let county_data = await processCountyData(AllSummary.byCountyStatus)
+            MonthlyChartByLocation.value.xAxis.categories = county_data.categories
+             MonthlyChartByLocation.value.series = county_data.series;
+        }
+      
 
 
+
+        
         //6. Timeseries by type
         let timeseries_data =  processMonthlySeries(AllSummary.byMonth)
-        console.log('timeseries_data',timeseries_data)
-        
+         
         lineMonthlyByType.value.xAxis.categories = timeseries_data.categories;
         lineMonthlyByType.value.series = timeseries_data.series;
 
@@ -353,7 +549,7 @@ async function fetchSummaries() {
         //7. Timeseries by status 
        
         let timeseries_status =  processMonthlyStatus(AllSummary.byMonthStatus)
-        console.log('timeseries_status',timeseries_status)
+      //  console.log('timeseries_status',timeseries_status)
 
         lineMonthlyByStatus.value.xAxis.categories = timeseries_status.categories;
         lineMonthlyByStatus.value.series = timeseries_status.series;
@@ -368,7 +564,7 @@ async function fetchSummaries() {
         resolutionRateGauge.value.series[0].data=[resolved_data.percentage]
 
         //9. get Word Cloud
-        console.log('AllSummary.grievances',AllSummary.grievances)       
+        //console.log('AllSummary.grievances',AllSummary.grievances)       
 
     } catch (error) {
         console.error('Error fetching summaries:', error);
@@ -378,6 +574,9 @@ async function fetchSummaries() {
 async function clearCharts() {
     try {
         console.log('Clear all data')
+        selected_county=null
+        selected_subcounty=null
+        selected_ward=null
 
         open_grievances.value = null;
         resolved_grievances.value = null;
@@ -390,8 +589,8 @@ async function clearCharts() {
         MonthlyChartByGender.value.xAxis.categories = [];
         MonthlyChartByGender.value.series = [];
 
-        MonthlyChartBySettlement.value.xAxis.categories =  [];
-        MonthlyChartBySettlement.value.series = [];
+        MonthlyChartByLocation.value.xAxis.categories =  [];
+        MonthlyChartByLocation.value.series = [];
 
         lineMonthlyByType.value.xAxis.categories =  [];
         lineMonthlyByType.value.series =  [];
@@ -409,7 +608,7 @@ async function clearCharts() {
 
 onMounted(async () => {
 
-    await fetchSummaries();
+   
  
       let county_data = await getAdminUnits('county')
 
@@ -420,29 +619,101 @@ onMounted(async () => {
                 value: county.name
             });
         });
-
+        await fetchSummaries();
 });
 
+
+const subcounties =ref([])
+const wards =ref([])
+const selected_level=ref()
 
 async function onSelectCounty() {
 
   await clearCharts()
-
-  console.log('selected_county',selected_county.value)
+  selected_level.value='county'
   filter_fields.value=['county']
   filter_values.value=[selected_county.value.toString()]
 
-  
+  // Get the subcounties 
+  // Get subcouties 
+  subcounties.value=[]
+  let subcounty_data = await getFilterAdminUnits('subcounty', ['county'],[selected_county.value])
+
+  // empty the subcounties 
+  //
+   // Function to create an array of user objects
+   subcounty_data.forEach((subcounty) => {
+            subcounties.value.push({
+                label: subcounty.name,
+                value: subcounty.name
+            });
+        });
+
+    console.log('subcounty_data',subcounty_data)
 
   await fetchSummaries();
 
+  
+
 }
+
+async function onSelectSUbCounty() {
+
+await clearCharts()
+selected_level.value='subcounty'
+ 
+filter_fields.value=['subcounty']
+filter_values.value=[selected_subcounty.value.toString()]
+
+// Get the subcounties 
+// Get subcouties 
+wards.value=[]
+let ward_data = await getFilterAdminUnits('ward', ['subcounty'],[selected_subcounty.value])
+
+// empty the subcounties 
+//
+ // Function to create an array of user objects
+ ward_data.forEach((ward) => {
+          wards.value.push({
+              label: ward.name,
+              value: ward.name
+          });
+      });
+
+  console.log('ward_data',ward_data)
+
+await fetchSummaries();
+
+
+
+}
+
+async function onSelectWards() {
+
+await clearCharts()
+selected_level.value='ward'
+
+filter_fields.value=['ward']
+filter_values.value=[selected_ward.value.toString()]
+ 
+
+await fetchSummaries();
+
+
+
+}
+
+
 
 async function onClearFilters() {
 
   // Clear Filters 
   console.log("Clear Filters")
-  selected_county.value =null
+    selected_county.value =null
+    selected_subcounty.value=null
+    selected_ward.value=null
+    selected_level.value=null
+
   filter_fields.value=[]
   filter_values.value=[]
   await fetchSummaries();
@@ -499,7 +770,29 @@ async function getAdminUnits(model) {
     // Handle error, maybe show an error message to the user
   }
 }
+async function getFilterAdminUnits(model,filterKeys,filterValues) {
+  
+  try {
+    const response = await axios.post('/api/admin/units/filter', {
+      model:model,
+      filterKeys:filterKeys, 
+      filterValues:filterValues
+     });
 
+     console.log('getFilterAdminUnits',response)
+
+    if (response.data.code === '0000') {
+      //count[status] = response.data.data.length;
+      console.log(response)
+      return response.data.data
+       
+    }  
+  } catch (error) {
+    console.error('Error during login:', error.message);
+    return null
+    // Handle error, maybe show an error message to the user
+  }
+}
 
 async function getAllSummary() {
   
@@ -750,7 +1043,7 @@ const MonthlyChartByGender = ref({
 });
 
 
-const MonthlyChartBySettlement = ref({
+const MonthlyChartByLocation = ref({
     chart: {
         type: 'column',
         backgroundColor: 'transparent',
@@ -760,7 +1053,7 @@ const MonthlyChartBySettlement = ref({
         }
     },
     title: {
-        text: 'GRV Cases Reported by Settlement',
+        text: 'GRV Cases Reported by Location',
         align: 'left'
     },
     subtitle: {
