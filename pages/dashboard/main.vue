@@ -53,14 +53,23 @@
 
             <template #Summary>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-                <div>
+              
                              
-                    <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                            <div class="font-normal text-gray-700 dark:text-gray-400"> 
-                                <highchart :options="MonthlyChartByGender" more :modules="['exporting']" />
-                            </div>
-                    </div> 
-                </div>   
+                <div class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                <div class="flex">
+                    <div class="w-1/2 p-4 font-normal text-gray-700 dark:text-gray-400">
+                    <highchart :options="resolutionRateGauge" :modules="['exporting']" />
+                    </div>
+                    <div class="w-1/2 p-4 font-normal text-gray-700 dark:text-gray-400">
+                    <highchart :options="escalationRateGauge" :modules="['exporting']" />
+                    </div>
+                </div>
+                        <div class="flex flex-col items-center justify-center">
+                            <dt class="mb-2 text-3xl font-extrabold">{{averageResolutionPeriod}} Days </dt>
+                            <dd class="text-gray-500 dark:text-gray-400">Average period to resolve a grievance</dd>
+                        </div>
+                </div>
+               
 
                 <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <div class="font-normal text-gray-700 dark:text-gray-400"> 
@@ -77,30 +86,18 @@
                     </div>
                 </div>
 
- 
+                <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                            <div class="font-normal text-gray-700 dark:text-gray-400"> 
+                                <highchart :options="MonthlyChartByGender" more :modules="['exporting']" />
+                            </div>
+                    </div> 
 
-                <div class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <div class="flex">
-                    <div class="w-1/2 p-4 font-normal text-gray-700 dark:text-gray-400">
-                    <highchart :options="resolutionRateGauge" :modules="['exporting']" />
-                    </div>
-                    <div class="w-1/2 p-4 font-normal text-gray-700 dark:text-gray-400">
-                    <highchart :options="escalationRateGauge" :modules="['exporting']" />
-                    </div>
-
-                    
-                </div>
-                <div class="flex flex-col items-center justify-center">
-                    <dt class="mb-2 text-3xl font-extrabold">{{averageResolutionPeriod}} Days</dt>
-                    <dd class="text-gray-500 dark:text-gray-400">Average Resolution period</dd>
-                </div>
-                </div>
-
-                
               
-                
-                
+ 
               </div>
+
+
+
             </template>
 
           </UAccordion>
@@ -978,7 +975,7 @@ const resolutionRateGauge = ref({
      enabled: false
 },
         title: {
-            text: 'Escalation',  
+            text: 'Escalation Rate',  
         },
         subtitle: {
             text: 'Proportion of grievances escalated',
