@@ -61,10 +61,10 @@
 
             <div class=" grid grid-cols-2 gap-4    bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <div class="font-normal text-gray-700 dark:text-gray-400"> 
-                        <highchart :options="resolutionRateGauge" :modules="['exporting']" />
+                        <highchart :options="resolutionRateGauge"  />
                     </div>
                     <div class="font-normal text-gray-700 dark:text-gray-400"> 
-                        <highchart :options="escalationRateGauge" :modules="['exporting']" />
+                        <highchart :options="escalationRateGauge"  />
                     </div>
 
                     <div class="flex flex-col items-center justify-center">
@@ -615,6 +615,7 @@ async function fetchSummaries() {
        averageResolutionPeriod.value=AllSummary.averageResolutionPeriod.toFixed(0)
 
 
+
         //9. get Word Cloud
         //console.log('AllSummary.grievances',AllSummary.grievances)       
 
@@ -652,6 +653,12 @@ async function clearCharts() {
 
         resolutionRateGauge.value.series[0].data =  [0];
         escalationRateGauge.value.series[0].data =  [0];
+
+        resolutionRateGauge.value.title.text='0%'
+        escalationRateGauge.value.title.text='0%'
+
+        console.log('averageResolutionPeriod.toFixed(0)',averageResolutionPeriod.toFixed(0))
+
 
          
     } catch (error) {
@@ -881,7 +888,8 @@ const resolutionRateGauge = ref({
         zooming: {
             type: 'x',
             singleTouch: true
-        }
+        },
+        height: '90%',
     },
     credits: {
             enabled: false
@@ -936,6 +944,8 @@ const escalationRateGauge = ref({
     chart: {
         type: 'pie',
         backgroundColor: 'transparent',
+        height: '90%',
+
         zooming: {
             type: 'x',
             singleTouch: true

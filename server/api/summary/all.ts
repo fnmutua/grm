@@ -279,14 +279,18 @@ export default defineEventHandler(async (req) => {
             }
         ]);
         
+        filterQuery.status = 'Resolved';
+
      
         const  averagePeriod = await Grievance.aggregate([
             // Match documents where status is 'Resolved'
-            {
-              $match: {
-                status: "Resolved"
-              }
-            },
+            { $match: filterQuery }, // Match documents based on the filter query
+
+            // {
+            //   $match: {
+            //     status: "Resolved"
+            //   }
+            // },
             // Unwind the timeline array
             { $unwind: "$timeline" },
             // Project to parse and use the content of timeline
@@ -382,22 +386,7 @@ export default defineEventHandler(async (req) => {
         // Output the result for verification
         //console.log(proportionStatus);
         
- 
-        ///-----------------------------------------------------------------------------//
-        ///// ---------------Get GBV Summaries -------------------------------------- 
-        ///-----------------------------------------------------------------------------//
-
-
-            filterQuery.gbv = 'Yes';
-      
-
-        //Aggregate by Admin Unit
-      
-
-        ///-----------------------------------------------------------------------------//
-        ///// --------------- Merge All Summaries  -------------------------------------- 
-        ///-----------------------------------------------------------------------------//
-
+  
 
 
         let result={}
@@ -411,7 +400,7 @@ export default defineEventHandler(async (req) => {
          result.byMonth =  byMonth
          result.byMonthStatus =  byMonthStatus
          result.proportionStatus =  proportionStatus
-         result.averageResolutionPeriod =  averagePeriod[0].averagePeriod
+         result.averageResolutionPeriod = averagePeriod?.[0]?.averagePeriod ?? 0;
          result.total =count
         //  result.grievances =  grvs
         // Append for GBVs
