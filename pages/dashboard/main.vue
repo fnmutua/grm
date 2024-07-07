@@ -55,22 +55,33 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
               
                              
-                <div class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <div class="flex">
-                    <div class="w-1/2 p-4 font-normal text-gray-700 dark:text-gray-400">
-                    <highchart :options="resolutionRateGauge" :modules="['exporting']" />
+               
+
+                
+
+            <div class=" grid grid-cols-2 gap-4    bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <div class="font-normal text-gray-700 dark:text-gray-400"> 
+                        <highchart :options="resolutionRateGauge" :modules="['exporting']" />
                     </div>
-                    <div class="w-1/2 p-4 font-normal text-gray-700 dark:text-gray-400">
-                    <highchart :options="escalationRateGauge" :modules="['exporting']" />
+                    <div class="font-normal text-gray-700 dark:text-gray-400"> 
+                        <highchart :options="escalationRateGauge" :modules="['exporting']" />
                     </div>
-                </div>
-                        <div class="flex flex-col items-center justify-center">
+
+                    <div class="flex flex-col items-center justify-center">
                             <dt class="mb-2 text-3xl font-extrabold">{{averageResolutionPeriod}} Days </dt>
                             <dd class="text-gray-500 dark:text-gray-400">Average period to resolve a grievance</dd>
                         </div>
+
+                        <div class="flex flex-col items-center justify-center">
+                            <dt class="mb-2 text-3xl font-extrabold">{{averageResolutionPeriod}}</dt>
+                            <dd class="text-gray-500 dark:text-gray-400">GRC Committees</dd>
+                        </div>
                 </div>
+
+
                
 
+                
                 <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <div class="font-normal text-gray-700 dark:text-gray-400"> 
                         <highchart :options="MonthlyChartByLocation" more :modules="['exporting']" />
@@ -587,7 +598,8 @@ async function fetchSummaries() {
         // console.log('resolved_data',resolved_data.percentage)
         // resolution_rate.value= resolved_data.percentage;
         console.log(resolutionRateGauge.value)
-        resolutionRateGauge.value.series[0].data=[resolved_data.percentage]
+        resolutionRateGauge.value.series[0].data=[resolved_data.percentage,100-resolved_data.percentage]
+        resolutionRateGauge.value.title.text= resolved_data.percentage+'%'
 
         //9. Escalation Rate
           let escalated_data = AllSummary.proportionStatus.find(item => item.status === "Escalated")
@@ -595,7 +607,8 @@ async function fetchSummaries() {
        // console.log('resolved_data',resolved_data.percentage)
        // resolution_rate.value= resolved_data.percentage;
        console.log(escalationRateGauge.value)
-       escalationRateGauge.value.series[0].data=[escalated_data.percentage]
+       escalationRateGauge.value.series[0].data=[escalated_data.percentage,100-escalated_data.percentage]
+       escalationRateGauge.value.title.text= escalated_data.percentage+'%'
 
 
 
@@ -859,208 +872,125 @@ async function getAllSummary() {
 
 
  
-const resolutionRateGauge = ref({
-        chart: {
-            type: 'gauge',
-            backgroundColor: 'transparent',
-            plotBackgroundImage: null,
-            plotBorderWidth: 0,
-            plotShadow: false,
-            height: '80%'
+ 
 
-        },
-        title: {
-            text: 'Resolution Rate',
-        },
-        subtitle: {
-            text: 'Proportion of grievances marked as resolved',
-        },
-        credits: {
+const resolutionRateGauge = ref({
+    chart: {
+        type: 'pie',
+        backgroundColor: 'transparent',
+        zooming: {
+            type: 'x',
+            singleTouch: true
+        }
+    },
+    credits: {
             enabled: false
         },
-        pane: {
-        startAngle: -90,
-        endAngle: 89.9,
-        background: null,
-        center: ['50%', '75%'],
-        size: '110%'
-    },
-
-    // the value axis
-    yAxis: {
-        min: 0,
-        max: 100,
-        tickPixelInterval: 72,
-        tickPosition: 'inside',
-        tickColor:   '#FFFFFF',
-        tickLength: 25,
-        tickWidth: 2,
-        minorTickInterval: null,
-        labels: {
-            distance: 25,
-            style: {
-                fontSize: '14px'
-            }
-        },
-        lineWidth: 0,
-        plotBands: [{
-            from: 75,
-            to: 100,
-            color: '#55BF3B', // green
-            thickness: 20,
-            borderRadius: '50%'
-        }, 
-        {
-            from: 50,
-            to: 75,
-            color: 'orange', // orange
-            thickness: 20
-        },
-        {
-            from: 25,
-            to: 50,
-            color: '#DDDF0D', // yellow
-            thickness: 20
-        },
-        {
-            from: 0,
-            to: 25,
-            color: '#DF5353', // red
-            thickness: 20,
-            borderRadius: '50%'
-        }, ]
-    },
-
-    series: [{
-        name: 'Rate',
-        data: [0],
-        tooltip: {
-            valueSuffix: '%'
-        },
-        dataLabels: {
-            format: '{y} %',
-            borderWidth: 0,
-            color:   '#333333',
-            style: {
-                fontSize: '16px'
-            }
-        },
-        dial: {
-            radius: '80%',
-            backgroundColor: 'gray',
-            baseWidth: 12,
-            baseLength: '0%',
-            rearLength: '0%'
-        },
-        pivot: {
-            backgroundColor: 'gray',
-            radius: 6
-        }
-
-    }]
-    });
-
-
-  const escalationRateGauge = ref({
-        chart: {
-            type: 'gauge',
-            backgroundColor: 'transparent',
-            plotBackgroundImage: null,
-            plotBorderWidth: 0,
-            plotShadow: false,
-            height: '80%'
-
-        },
-        credits: {
-     enabled: false
-},
         title: {
-            text: 'Escalation Rate',  
-        },
-        subtitle: {
-            text: 'Proportion of grievances escalated',
-        },
-        pane: {
-        startAngle: -90,
-        endAngle: 89.9,
-        background: null,
-        center: ['50%', '75%'],
-        size: '110%'
+                verticalAlign: 'middle',
+                floating: true,
+                text: '98%'
+            },
+    subtitle: {
+        text:  'Resolution Rate'
     },
-
-    // the value axis
+    xAxis: {
+        categories: []
+    },
     yAxis: {
-        min: 0,
-        max: 100,
-        tickPixelInterval: 72,
-        tickPosition: 'inside',
-        tickColor:   '#FFFFFF',
-        tickLength: 25,
-        tickWidth: 2,
-        minorTickInterval: null,
-        labels: {
-            distance: 25,
-            style: {
-                fontSize: '14px'
-            }
-        },
-        lineWidth: 0,
-        plotBands: [{
-            from: 75,
-            to: 100,
-            color: '#55BF3B', // green
-            thickness: 20,
-            borderRadius: '50%'
-        }, 
-        {
-            from: 50,
-            to: 75,
-            color: 'orange', // orange
-            thickness: 20
-        },
-        {
-            from: 25,
-            to: 50,
-            color: '#DDDF0D', // yellow
-            thickness: 20
-        },
-        {
-            from: 0,
-            to: 25,
-            color: '#DF5353', // red
-            thickness: 20,
-            borderRadius: '50%'
-        }, ]
-    },
-
-    series: [{
-        name: 'Rate',
-        data: [0],
-        tooltip: {
-            valueSuffix: '%'
-        },
-        dataLabels: {
-            format: '{y} %',
-            borderWidth: 0,
-            color:   '#333333',
-            style: {
-                fontSize: '16px'
-            }
-        },
-        dial: {
-            radius: '80%',
-            backgroundColor: 'gray',
-            baseWidth: 12,
-            baseLength: '0%',
-            rearLength: '0%'
-        },
-        pivot: {
-            backgroundColor: 'gray',
-            radius: 6
+        title: {
+            text: 'Number of Cases'
         }
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal', // Enable stacking
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    series: [{
+                type: 'pie',
+                enableMouseTracking: false,
+                data: [58, 42],
+                size: '100%',
+                innerSize: '75%',
+                dataLabels: {
+                    enabled: false
+                }
+            }],
+    lang: {
+        noData: 'No Data'
+    },
+    noData: {
+        style: {
+            fontWeight: 'bold',
+            fontSize: '15px',
+            color: '#303030'
+        }
+    }
+});
 
-    }]
-    });
+const escalationRateGauge = ref({
+    chart: {
+        type: 'pie',
+        backgroundColor: 'transparent',
+        zooming: {
+            type: 'x',
+            singleTouch: true
+        }
+    },
+    credits: {
+            enabled: false
+        },
+        title: {
+                verticalAlign: 'middle',
+                floating: true,
+                text: '98%'
+            },
+    subtitle: {
+        text:  'Escalation Rate'
+    },
+    // colors:['red','green'],
+    xAxis: {
+        categories: []
+    },
+    yAxis: {
+        title: {
+            text: 'Number of Cases'
+        }
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal', // Enable stacking
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    series: [{
+                type: 'pie',
+                enableMouseTracking: false,
+                data: [58, 42],
+                size: '100%',
+                innerSize: '75%',
+                dataLabels: {
+                    enabled: false
+                }
+            }],
+    lang: {
+        noData: 'No Data'
+    },
+    noData: {
+        style: {
+            fontWeight: 'bold',
+            fontSize: '15px',
+            color: '#303030'
+        }
+    }
+});
+ 
 
  const lineMonthlyByType = ref({
         chart: {
@@ -1254,6 +1184,9 @@ const MonthlyChartByLocation = ref({
         }
     }
 });
+
+
+
 
 
 </script>
