@@ -54,10 +54,7 @@
             <template #Summary>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
               
-                             
-               
 
-                
 
             <div class=" grid grid-cols-2 gap-4    bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <div class="font-normal text-gray-700 dark:text-gray-400"> 
@@ -867,6 +864,8 @@ async function getAllSummary() {
       //count[status] = response.data.data.length;
       console.log('Master Summary', response.data.result)
       loading.value=false
+      averageResolutionPeriod.value=response.data.result.averageResolutionPeriod.toFixed(0)
+
       return response.data.result
        
     }  
@@ -1056,7 +1055,7 @@ const escalationRateGauge = ref({
     chart: {
         type: 'column',
         backgroundColor: 'transparent',
-
+ 
     },
     credits: {
             enabled: false
