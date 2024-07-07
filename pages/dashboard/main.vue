@@ -22,17 +22,20 @@
               changeType="increase" class="bg-white dark:bg-transparent border" />
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-8 gap-6 pt-4">
-          <USelect v-model="selected_county"  :options="counties" placeholder="Filter by county"  @change="onSelectCounty" />
-          <USelect v-if="selected_county" v-model="selected_subcounty"  :options="subcounties" placeholder="Filter by subcounty"  @change="onSelectSUbCounty" />
-          <USelect v-if="selected_subcounty" v-model="selected_ward"  :options="wards" placeholder="Filter by ward"  @change="onSelectWards" />
-          <UButton label="Clear Filters" color="red" variant="outline" @click="onClearFilters">
-            <template #trailing>
-              <UIcon name="i-heroicons-x-circle" class="w-5 h-5" />
-            </template>
-          </UButton>
-          
-        </div>
+          <div class="flex justify-between items-center pt-4">
+            <div class="flex space-x-4">
+                <USelect v-model="selected_county" :options="counties" placeholder="Filter by county" @change="onSelectCounty" />
+                <USelect v-if="selected_county" v-model="selected_subcounty" :options="subcounties" placeholder="Filter by subcounty" @change="onSelectSUbCounty" />
+                <USelect v-if="selected_subcounty" v-model="selected_ward" :options="wards" placeholder="Filter by ward" @change="onSelectWards" />
+                <UButton label="Clear Filters" color="red" variant="outline" @click="onClearFilters">
+                <template #trailing>
+                    <UIcon name="i-heroicons-x-circle" class="w-5 h-5" />
+                </template>
+                </UButton>
+            </div>
+            <ColorMode />
+            </div>
+
 
           <UDivider label="**" class=" pt-2" />
 
@@ -49,28 +52,39 @@
             </template>
 
             <template #Summary>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 divide-x divide-y divide-dashed">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                 <div>
-                <Ucard>
-                    <highchart :options="MonthlyChartByGender" more :modules="['exporting']" />
+                             
+                    <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                            <div class="font-normal text-gray-700 dark:text-gray-400"> 
+                                <highchart :options="MonthlyChartByGender" more :modules="['exporting']" />
+                            </div>
+                    </div> 
+                </div>   
 
-                </UCard>
-                </div>  
-
-                <div>
-                  <highchart :options="MonthlyChartByLocation" more :modules="['exporting']" />
+                <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <div class="font-normal text-gray-700 dark:text-gray-400"> 
+                        <highchart :options="MonthlyChartByLocation" more :modules="['exporting']" />
+                    </div>
                 </div>
 
+ 
 
-               <div>
-                  <highchart :options="lineMonthlyByType" more :modules="['exporting']" />
+                   
+                <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <div class="font-normal text-gray-700 dark:text-gray-400"> 
+                        <highchart :options="lineMonthlyByType" more :modules="['exporting']" />
+                    </div>
                 </div>
-            
 
-                <div>
-                  <highchart :options="resolutionRateGauge" more :modules="['exporting']" />
+ 
+
+                   
+                <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <div class="font-normal text-gray-700 dark:text-gray-400"> 
+                        <highchart :options="resolutionRateGauge" more :modules="['exporting']" />
+                    </div>
                 </div>
-         
                 
               
                 
