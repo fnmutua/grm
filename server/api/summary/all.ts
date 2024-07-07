@@ -4,7 +4,6 @@ import Grievance from "../../models/grievance";
 export default defineEventHandler(async (req) => {
     const { gbv,  filter_fields, filter_values } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
-
     try {
         await mongoose.connect(mongoString, { dbName: 'grm' });
         console.log('/api/summary/all..',filter_fields,filter_values);
@@ -24,8 +23,9 @@ export default defineEventHandler(async (req) => {
             filterQuery.gbv = gbv;
         }
 
-      
-    
+        ///-----------------------------------------------------------------------------//
+        ///// ---------------Get Summaries for ALL-------------------------------------- 
+        ///-----------------------------------------------------------------------------//
         console.log('filterQuery>>>><<<<',filterQuery)
 
         const count = await Grievance.countDocuments(filterQuery);
@@ -161,10 +161,7 @@ export default defineEventHandler(async (req) => {
             },
         ]);
 
-      
-          // Convert date_reported string to Date type
-  
-        
+       
         const byMonth = await Grievance.aggregate([
             { $match: filterQuery }, // Match documents based on the filter query
         
@@ -209,8 +206,7 @@ export default defineEventHandler(async (req) => {
             { $sort: { "_id.month": 1 } }
         ]);
         
-       
-           
+                  
         const byMonthStatus = await Grievance.aggregate([
             { $match: filterQuery }, // Match documents based on the filter query
         
@@ -283,14 +279,124 @@ export default defineEventHandler(async (req) => {
             }
         ]);
         
-        // Output the result for verification
-        console.log(proportionStatus);
-        
+     
+        const  averagePeriod = await Grievance.aggregate([
+            // Match documents where status is 'Resolved'
+            {
+              $match: {
+                status: "Resolved"
+              }
+            },
+            // Unwind the timeline array
+            { $unwind: "$timeline" },
+            // Project to parse and use the content of timeline
+            {
+              $addFields: {
+                timelineObject: {
+                  $function: {
+                    body: function(item) {
+                      try {
+                        return JSON.parse(item);
+                      } catch (e) {
+                        return null; // Return null if parsing fails
+                      }
+                    },
+                    args: ["$timeline"],
+                    lang: "js"
+                  }
+                }
+              }
+            },
+            // Match timelineObject entries with status 'Open' or 'Resolved'
+            {
+              $match: {
+                $or: [
+                  { "timelineObject.status": "Open" },
+                  { "timelineObject.status": "Resolved" }
+                ]
+              }
+            },
+            // Group by _id (or any suitable grouping identifier) to calculate differences
+            {
+              $group: {
+                _id: "$_id", // Group by some identifier, e.g., document _id
+                openDate: {
+                  $max: {
+                    $cond: {
+                      if: { $eq: ["$timelineObject.status", "Open"] },
+                      then:{ $toDate:"$timelineObject.date"} , // Assuming date is a field in timelineObject
+                      else: null
+                    }
+                  }
+                },
+                resolvedDate: {
+                  $max: {
+                    $cond: {
+                      if: { $eq: ["$timelineObject.status", "Resolved"] },
+                      then:  {$toDate:"$timelineObject.date"}, // Assuming date is a field in timelineObject
+                      else: null
+                    }
+                  }
+                }
+              }
+            },
+            
+            // Project to calculate the difference between resolvedDate and openDate
+            {
+              $project: {
+                _id: 0,
+                openDate: 1,
+                resolvedDate: 1,
+                period: { $divide: [{ $subtract: ["$resolvedDate", "$openDate"] }, 1000 * 60 * 60 * 24] } // Difference in days
+              }
+            },
 
-        // const grievances = await Grievance.find({}).select('complaint');
-        // let grvs = grievances.map(grievance => grievance.complaint) 
+            // Calculate the average period across all documents
+            {
+                $group: {
+                _id: null, // Group all documents together
+                averagePeriod: { $avg: "$period" } // Calculate the average of the 'period' field
+                }
+            },
+            // Optionally project to reshape the output if needed
+            {
+                $project: {
+                _id: 0,
+                averagePeriod: 1
+                }
+            }
+          ]);
+
+           
           
-       
+          console.log(averagePeriod);
+          
+          
+        
+        // Console log after unwinding the timeline array
+        console.log("Documents after unwinding:");
+        console.log(JSON.stringify(averagePeriod, null, 2));
+  
+
+        
+        // Output the result for verification
+        //console.log(proportionStatus);
+        
+ 
+        ///-----------------------------------------------------------------------------//
+        ///// ---------------Get GBV Summaries -------------------------------------- 
+        ///-----------------------------------------------------------------------------//
+
+
+            filterQuery.gbv = 'Yes';
+      
+
+        //Aggregate by Admin Unit
+      
+
+        ///-----------------------------------------------------------------------------//
+        ///// --------------- Merge All Summaries  -------------------------------------- 
+        ///-----------------------------------------------------------------------------//
 
 
 
@@ -305,10 +411,14 @@ export default defineEventHandler(async (req) => {
          result.byMonth =  byMonth
          result.byMonthStatus =  byMonthStatus
          result.proportionStatus =  proportionStatus
-        //  result.grievances =  grvs
- 
-         
+         result.averageResolutionPeriod =  averagePeriod[0].averagePeriod
          result.total =count
+        //  result.grievances =  grvs
+        // Append for GBVs
+
+  
+         
+     
 
         
         

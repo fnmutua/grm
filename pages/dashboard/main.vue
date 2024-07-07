@@ -41,7 +41,7 @@
 
           <UAccordion color="primary" variant="soft" size="sm" open-icon="i-heroicons-plus"
             close-icon="i-heroicons-minus" :items="[
-              { label: 'Summary', slot: 'Summary', defaultOpen: true, },
+              { label: 'Overall Grievance summary', slot: 'Summary', defaultOpen: true, },
               { label: 'Gender Based Violence Grievances', slot: 'GBV' },]">
 
             <template #GBV>
@@ -79,12 +79,23 @@
 
  
 
-                   
-                <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <div class="font-normal text-gray-700 dark:text-gray-400"> 
-                        <highchart :options="resolutionRateGauge" more :modules="['exporting']" />
+                <div class="block bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                <div class="flex">
+                    <div class="w-1/2 p-4 font-normal text-gray-700 dark:text-gray-400">
+                    <highchart :options="resolutionRateGauge" :modules="['exporting']" />
                     </div>
+                    <div class="w-1/2 p-4 font-normal text-gray-700 dark:text-gray-400">
+                    <highchart :options="escalationRateGauge" :modules="['exporting']" />
+                    </div>
+
+                    
                 </div>
+                <div class="flex flex-col items-center justify-center">
+                    <dt class="mb-2 text-3xl font-extrabold">{{averageResolutionPeriod}} Days</dt>
+                    <dd class="text-gray-500 dark:text-gray-400">Average Resolution period</dd>
+                </div>
+                </div>
+
                 
               
                 
@@ -136,6 +147,7 @@ const counties =ref([])
 const selected_county =ref()
 const selected_subcounty =ref()
 const selected_ward =ref()
+const averageResolutionPeriod =ref(0)
 
 
 // Flters 
@@ -580,6 +592,19 @@ async function fetchSummaries() {
         console.log(resolutionRateGauge.value)
         resolutionRateGauge.value.series[0].data=[resolved_data.percentage]
 
+        //9. Escalation Rate
+          let escalated_data = AllSummary.proportionStatus.find(item => item.status === "Escalated")
+       
+       // console.log('resolved_data',resolved_data.percentage)
+       // resolution_rate.value= resolved_data.percentage;
+       console.log(escalationRateGauge.value)
+       escalationRateGauge.value.series[0].data=[escalated_data.percentage]
+
+
+
+       averageResolutionPeriod.value=AllSummary.averageResolutionPeriod.toFixed(0)
+
+
         //9. get Word Cloud
         //console.log('AllSummary.grievances',AllSummary.grievances)       
 
@@ -615,9 +640,10 @@ async function clearCharts() {
         lineMonthlyByStatus.value.xAxis.categories =  [];
         lineMonthlyByStatus.value.series =  [];
 
-         resolutionRateGauge.value.series[0].data =  [0];
+        resolutionRateGauge.value.series[0].data =  [0];
+        escalationRateGauge.value.series[0].data =  [0];
 
-
+         
     } catch (error) {
         console.error('Error nulllimng summaries:', error);
     }
@@ -848,9 +874,13 @@ const resolutionRateGauge = ref({
         },
         title: {
             text: 'Resolution Rate',
-            
         },
-        
+        subtitle: {
+            text: 'Proportion of grievances marked as resolved',
+        },
+        credits: {
+            enabled: false
+        },
         pane: {
         startAngle: -90,
         endAngle: 89.9,
@@ -866,11 +896,11 @@ const resolutionRateGauge = ref({
         tickPixelInterval: 72,
         tickPosition: 'inside',
         tickColor:   '#FFFFFF',
-        tickLength: 20,
+        tickLength: 25,
         tickWidth: 2,
         minorTickInterval: null,
         labels: {
-            distance: 20,
+            distance: 25,
             style: {
                 fontSize: '14px'
             }
@@ -882,18 +912,128 @@ const resolutionRateGauge = ref({
             color: '#55BF3B', // green
             thickness: 20,
             borderRadius: '50%'
-        }, {
+        }, 
+        {
+            from: 50,
+            to: 75,
+            color: 'orange', // orange
+            thickness: 20
+        },
+        {
+            from: 25,
+            to: 50,
+            color: '#DDDF0D', // yellow
+            thickness: 20
+        },
+        {
             from: 0,
             to: 25,
             color: '#DF5353', // red
             thickness: 20,
             borderRadius: '50%'
-        }, {
-            from: 25,
+        }, ]
+    },
+
+    series: [{
+        name: 'Rate',
+        data: [0],
+        tooltip: {
+            valueSuffix: '%'
+        },
+        dataLabels: {
+            format: '{y} %',
+            borderWidth: 0,
+            color:   '#333333',
+            style: {
+                fontSize: '16px'
+            }
+        },
+        dial: {
+            radius: '80%',
+            backgroundColor: 'gray',
+            baseWidth: 12,
+            baseLength: '0%',
+            rearLength: '0%'
+        },
+        pivot: {
+            backgroundColor: 'gray',
+            radius: 6
+        }
+
+    }]
+    });
+
+
+  const escalationRateGauge = ref({
+        chart: {
+            type: 'gauge',
+            backgroundColor: 'transparent',
+            plotBackgroundImage: null,
+            plotBorderWidth: 0,
+            plotShadow: false,
+            height: '80%'
+
+        },
+        credits: {
+     enabled: false
+},
+        title: {
+            text: 'Escalation',  
+        },
+        subtitle: {
+            text: 'Proportion of grievances escalated',
+        },
+        pane: {
+        startAngle: -90,
+        endAngle: 89.9,
+        background: null,
+        center: ['50%', '75%'],
+        size: '110%'
+    },
+
+    // the value axis
+    yAxis: {
+        min: 0,
+        max: 100,
+        tickPixelInterval: 72,
+        tickPosition: 'inside',
+        tickColor:   '#FFFFFF',
+        tickLength: 25,
+        tickWidth: 2,
+        minorTickInterval: null,
+        labels: {
+            distance: 25,
+            style: {
+                fontSize: '14px'
+            }
+        },
+        lineWidth: 0,
+        plotBands: [{
+            from: 75,
+            to: 100,
+            color: '#55BF3B', // green
+            thickness: 20,
+            borderRadius: '50%'
+        }, 
+        {
+            from: 50,
             to: 75,
+            color: 'orange', // orange
+            thickness: 20
+        },
+        {
+            from: 25,
+            to: 50,
             color: '#DDDF0D', // yellow
             thickness: 20
-        }]
+        },
+        {
+            from: 0,
+            to: 25,
+            color: '#DF5353', // red
+            thickness: 20,
+            borderRadius: '50%'
+        }, ]
     },
 
     series: [{
@@ -931,6 +1071,9 @@ const resolutionRateGauge = ref({
             backgroundColor: 'transparent',
 
         },
+        credits: {
+                enabled: false
+            },
         title: {
             text: 'Monthly Grievances Cases Reported',
             align: 'left'
@@ -978,6 +1121,9 @@ const resolutionRateGauge = ref({
         backgroundColor: 'transparent',
 
     },
+    credits: {
+            enabled: false
+        },
     title: {
         text: 'Monthly  Cases Reported by Status',
         align: 'left'
@@ -1022,6 +1168,9 @@ const MonthlyChartByGender = ref({
         backgroundColor: 'transparent',
 
     },
+    credits: {
+            enabled: false
+        },
     title: {
         text: 'GRV Cases Reported by Gender',
         align: 'left'
@@ -1069,6 +1218,9 @@ const MonthlyChartByLocation = ref({
             singleTouch: true
         }
     },
+    credits: {
+            enabled: false
+        },
     title: {
         text: 'GRV Cases Reported by Location',
         align: 'left'
