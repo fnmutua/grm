@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-12 gap-4 py-10">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-4 py-1">
     <!-- Side Navigation for medium and larger screens -->
     <div class="col-span-2 md:block">
       <AdminSideNav2></AdminSideNav2>
@@ -51,7 +51,10 @@
             <template #Summary>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 divide-x divide-y divide-dashed">
                 <div>
-                  <highchart :options="MonthlyChartByGender" more :modules="['exporting']" />
+                <Ucard>
+                    <highchart :options="MonthlyChartByGender" more :modules="['exporting']" />
+
+                </UCard>
                 </div>  
 
                 <div>
@@ -99,7 +102,7 @@
 
 <script setup>
 definePageMeta({
-  layout: "landing",
+  //layout: "landing",
   middleware: 'auth',
 
 });

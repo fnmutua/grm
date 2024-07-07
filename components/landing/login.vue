@@ -1,54 +1,65 @@
 <template>
   <div class="flex items-center justify-center ">  
-    <UCard :ui="{ body: { base: 'space-y-4' }, style: { width: '90%', maxWidth: '400px' }, shadow: 'shadow' }">
-      <!-- Form Section -->
-      <div class="space-y-4 p-4">
-        <UFormGroup label="Email" name="text">
-          <UInput 
-            id="formattedInput" 
-            v-model="form.username"  
-            class="mr-2"  
-            :state="!errors.username ? 'valid' : 'invalid'"
-          />
-          <div v-if="errors.username" class="text-red-500 text-sm">{{ errors.username }}</div>
-        </UFormGroup>
+   
 
-        <UFormGroup v-if="!showPassword" label="Password" name="password">
-          <div class="flex items-center">
-            <UInput 
-              v-model="form.password" 
-              type="password" 
-              class="mr-2"
-              :state="!errors.password ? 'valid' : 'invalid'"
-            />
-            <UIcon name="i-heroicons-eye" class="text-gray-500 cursor-pointer" @click="togglePassword" />
-          </div>
-          <div v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</div>
-        </UFormGroup>
+    
 
-        <UFormGroup v-if="showPassword" label="Password" name="password">
-          <div class="flex items-center">
-            <UInput 
-              v-model="form.password" 
-              type="text" 
-              class="mr-2"
-              :state="!errors.password ? 'valid' : 'invalid'"
-            />
-            <UIcon name="i-heroicons-eye-slash" class="text-gray-500 cursor-pointer" @click="togglePassword" />
-          </div>
-          <div v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</div>
-        </UFormGroup>
-
-        <div @keyup="handleSubmit">
-          <UButton :loading="loading" label="Sign In" type="button" color="green" block @click="handleSubmit" />
+<div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+    <form class="space-y-6" action="#">
+        <div>
+            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+            <input   id="formattedInput" 
+            v-model="form.username"   type="email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required />
         </div>
-      </div>
-    </UCard>
+ 
+
+        <div  >
+          <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
+             <div   v-if="showPassword" class="flex">
+            <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+              <UIcon name="i-heroicons-eye" class="text-gray-500 cursor-pointer" @click="togglePassword" />
+            </span>
+            <input type="text"  v-model="form.password"  class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="••••••••" required>
+          </div>
+
+
+          <div v-if="!showPassword" class="flex">
+            <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+              <UIcon name="i-heroicons-eye-slash" class="text-gray-500 cursor-pointer" @click="togglePassword" />
+            </span>
+            <input type="password"  v-model="form.password"  class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="••••••••">
+          </div>
+
+         
+
+        </div>
+      
+
+
+        <div class="flex items-start">
+            <div class="flex items-start">
+                <div class="flex items-center h-5">
+                    <input id="remember" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
+                </div>
+                <label for="remember" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+            </div>
+            <a href="#" class="ms-auto text-sm text-blue-700 hover:underline dark:text-blue-500">Lost Password?</a>
+        </div>
+
+
+        <button @click="handleSubmit" class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Login to your account</button>
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
+            Not registered? <a href="#" class="text-green-700 hover:underline dark:text-green-500">Create account</a>
+        </div>
+    </form>
+</div>
+
   </div>
 </template>
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
+const {   signIn, signOut   } = useAuth()
 
 const { redirectedFrom } = useRoute();
 
@@ -56,7 +67,10 @@ definePageMeta({
   layout: "landing",
 });
  
-
+onMounted(async () => {
+  console.log("Mount Signout")
+  await signOut()
+ })
 
 const form = ref({
   username: '',
@@ -66,8 +80,7 @@ const toast = useToast()
 const loading = ref(false);
 const showPassword = ref(false);
 
-const router = useRouter()
-
+ 
  
 //const { logout , login} = useAuth();
 
@@ -84,20 +97,10 @@ const validate = () => {
     };
 
 
-const { signIn } = useAuth()
+ 
 
 
-
-const mySignInHandler = async ({ username, password }: { username: string, password: string }) => {
-  const { error, url } = await signIn('credentials', { username, password, redirect: false })
-  if (error) {
-    // Do your custom error handling here
-    alert('You have made a terrible mistake while entering your credentials')
-  } else {
-    // No error, continue with the sign in, e.g., by following the returned redirect:
-    return navigateTo(url, { external: true })
-  }
-}
+ 
 
 
 const handleSubmit = async () => {

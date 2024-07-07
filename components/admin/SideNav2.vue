@@ -64,6 +64,9 @@
                 </div>
               </template>
             </UAccordion>
+
+ 
+
             </div>
           </div>
         </UCard>
@@ -96,6 +99,9 @@
               </template>
             </UAccordion>
 
+            
+ 
+ 
           </div>
         </div>
       </UCard>
@@ -106,9 +112,7 @@
 <script setup lang="ts">
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'radix-vue';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { watch } from 'vue'
-import { useRouter } from 'nuxt/app'
-
+ 
 const { status   } = useAuth()
 let sessionCheckInterval
 
@@ -124,11 +128,7 @@ const checkSession = () => {
 onMounted(() => {
   sessionCheckInterval = setInterval(checkSession, 6000)
 })
-
-
-
-
-
+ 
 
 const scrollbarHeight = ref(890); // Initial height based on current window size
 
@@ -154,11 +154,7 @@ const isOpen = ref(false);
 // Reactive variable to track sidebar collapse state
 const isCollapsed = ref(false);
 
-// Function to toggle sidebar collapse state
-const toggleCollapse = () => {
-  isCollapsed.value = !isCollapsed.value;
-};
-
+ 
 
 
  const items = [{
@@ -214,10 +210,10 @@ const toggleCollapse = () => {
 },{
   label: 'Settings',
   icon: 'i-heroicons-wrench-screwdriver',
-  roles: ['isAdmin'],
+ 
    links: [
-    { text: 'Buttons', url: '/components/buttons', icon: 'i-heroicons-outline-button' },
-    { text: 'Cards', url: '/components/cards', icon: 'i-heroicons-outline-card' }
+    { text: 'Home', url: '/', icon: 'i-heroicons-home' },
+    { text: 'Logout', url: '/login', icon: 'i-heroicons-outline-card' }
   ]
 }, ]
 
@@ -249,8 +245,7 @@ const filteredLinks = computed(() => {
     .filter(item => item !== null); // Remove items that don't have required roles
 });
 
-console.log('Filtreed by Roles',filteredLinks.value)
-
+ 
 
 </script>
  
