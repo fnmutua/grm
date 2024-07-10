@@ -100,6 +100,11 @@
                             </div>
                     </div> 
 
+                    <div class="block  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                            <div class="font-normal text-gray-700 dark:text-gray-400"> 
+                                <highchart :options="combi" more :modules="['exporting']" />
+                            </div>
+                    </div> 
               
  
               </div>
@@ -1194,10 +1199,157 @@ const MonthlyChartByLocation = ref({
     }
 });
 
+const xcombi = ref({  
+
+    title: {
+        text: 'Sales of petroleum products March, Norway',
+        align: 'left'
+    },
+    xAxis: {
+        categories: [
+            'Jet fuel', 'Duty-free diesel', 'Petrol', 'Diesel', 'Gas oil'
+        ]
+    },
+    yAxis: {
+        title: {
+            text: 'Million liters'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' million liters'
+    },
+    plotOptions: {
+        series: {
+            borderRadius: '25%'
+        }
+    },
+    series: [    {
+        type: 'pie',
+        step: 'center',
+        name: 'Average',
+        center: ['25%','50%'],
+        data: [47, 83.33, 70.66, 239.33, 175.66],
+        marker: {
+            lineWidth: 2,
+            lineColor: ['red','green','blue'],
+            fillColor: 'white'
+        }
+    },
+    {
+            name: 'Percentage',
+            type: 'pie',
+            center: ['75%','50%'],
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Water',
+                    y: 55.02
+                },
+                {
+                    name: 'Fat',
+                    sliced: true,
+                    selected: true,
+                    y: 26.71
+                },
+                {
+                    name: 'Carbohydrates',
+                    y: 1.09
+                },
+                {
+                    name: 'Protein',
+                    y: 15.5
+                },
+                {
+                    name: 'Ash',
+                    y: 1.68
+                }
+            ]
+        }
+      ]
 
 
+})
+
+const  combi = ref({
+    chart: {
+        type: 'pie',
+        backgroundColor: 'transparent',
+
+        
+    events: {
+        render: function() {
+          let chart = this;
+          if (!chart.title1) {
+            chart.title1 = chart.renderer.text('Resolution Rate(%)', chart.plotLeft + chart.plotWidth * 0.20, chart.plotTop + 20).add()
+            chart.title2 = chart.renderer.text('Escalation Rate(%)', chart.plotLeft + chart.plotWidth * 0.70, chart.plotTop + 20).add()
+            chart.title1.verticalAlign = 'middle';
+            chart.title1.floating = true;
+            chart.title1.text = "90%";
+          
+          } else {
+                      chart.title1.attr({
+                          x: chart.plotLeft + chart.plotWidth * 0.25
+                      })
+
+             chart.title1.verticalAlign = 'middle';
+            chart.title1.floating = true;
+
+                      chart.title2.attr({
+                          x: chart.plotLeft + chart.plotWidth * 0.75
+                      })
+          }
+        }
+      },
+    },
+    title: {
+        text: 'Grievance Resolution/Escalation',
+        align: 'left'
+    },
 
 
+    plotOptions: {
+        pie: {
+            borderRadius: '25%',
+            dataLabels: {
+                enabled: true,
+                distance: -50,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'white',
+                    textOutline: 'none'
+                },
+                formatter: function () {
+                    return this.y + '%';
+                }
+            }
+        }
+    },
+    series: [
+        {
+            name: 'Resolution',
+            data: [
+                { name: 'Resolved', y: 58 },
+                { name: 'Unresolved', y: 42 }
+            ],
+            size: '70%',
+            innerSize: '65%',
+            center: ['25%', '50%'],
+            showInLegend: false
+        },
+        {
+            name: 'Escalation',
+            data: [
+                { name: 'Escalated', y: 42 },
+                { name: 'Not Escalated', y: 58 }
+            ],
+            size: '70%',
+            innerSize: '65%',
+            center: ['75%', '50%'],
+            showInLegend: false
+        }
+    ]
+})
+ 
 </script>
 
 <style scoped>
