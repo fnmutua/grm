@@ -546,7 +546,15 @@ const items = (row) => [
 ]
 ]
 
- 
+const tabs = [{
+  label: 'GBV Grievances',
+  icon: 'i-heroicons-information-circle',
+  slot: 'gbv'
+}, {
+  label: 'Non-GBV Grievances',
+  icon: 'i-heroicons-arrow-down-tray',
+  slot: 'nongbv'
+} ]
 
 </script>
 
@@ -562,6 +570,19 @@ const items = (row) => [
 
     <!-- Main Content -->
     <div class="col-span-1 md:col-span-10 p-4">
+      <UTabs :items="tabs" class="w-full">
+    <template #default="{ item, index, selected }">
+      <div class="flex items-center gap-2 relative truncate">
+        <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
+
+        <span class="truncate">{{ item.label }}</span>
+
+        <span v-if="selected" class="absolute -right-4 w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400" />
+      </div>
+    </template>
+  </UTabs>
+  
+<!-- 
       <UCard>
         <div class="lg:hidden">
             <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
@@ -703,7 +724,7 @@ const items = (row) => [
            
           </div>
         </template>
-      </UCard>
+      </UCard> -->
       
             
           
