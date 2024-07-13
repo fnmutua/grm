@@ -49,7 +49,7 @@
 
         <!-- <button @click="handleSubmit" class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Login to your account</button> -->
         <UButton @click="handleSubmit" class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 flex justify-center items-center">
-    Login to your account
+    Login
 </UButton>
 
         <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
