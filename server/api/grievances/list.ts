@@ -7,36 +7,39 @@ const grievanceSchema = new mongoose.Schema({
     // For example:
     title: String,
     description: String,
-    status: String
+    status: String,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 // Define the Mongoose model for grievances
-//const Grievance = mongoose.model('Grievance', grievanceSchema);
+// const Grievance = mongoose.model('Grievance', grievanceSchema);
 
 export default defineEventHandler(async (req) => {
-    const { status,gbv, page, pageCount } = await readBody(req);
+    const { status, gbv, page, pageCount } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
 
     try {
-        await mongoose.connect(mongoString,{dbName:'grm' });
+        await mongoose.connect(mongoString, { dbName: 'grm' });
         console.log('Database connected...');
 
         // Calculate skip value for pagination
         const skip = (page - 1) * pageCount;
-        let qry_obj = {}
-        if(gbv) {
-            qry_obj.status = status
-            qry_obj.gbv = gbv
-        }else {
-            qry_obj.status = status
-            qry_obj.gbv = { $ne: 'Yes' }
-
+        let qry_obj = {};
+        if (gbv) {
+            qry_obj.status = status;
+            qry_obj.gbv = gbv;
+        } else {
+            qry_obj.status = status;
+            qry_obj.gbv = { $ne: 'Yes' };
         }
-        console.log(qry_obj)
+        console.log(qry_obj);
 
-        // Find grievances based on status and include pagination
-        const data = await Grievance.find(qry_obj).skip(skip).limit(pageCount);
- 
+        // Find grievances based on status and include pagination, sorted by createdAt in descending order
+        const data = await Grievance.find(qry_obj).sort({ createdAt: -1 }).skip(skip).limit(pageCount);
+
         if (data.length === 0) {
             return {
                 message: 'Grievances not found',
@@ -66,4 +69,3 @@ export default defineEventHandler(async (req) => {
         // console.log('Database disconnected...');
     }
 });
-

@@ -1,28 +1,26 @@
 import mongoose from 'mongoose';
 import User from "./../../models/user";
- 
- 
 
 export default defineEventHandler(async (req) => {
- 
-
-    const { page, pageCount } = await readBody(req);
+    const { page, pageCount, user_id } = await readBody(req);
     const mongoString = process.env.MONGODB_URI;
 
-   
     try {
-        await mongoose.connect(mongoString,{dbName:'grm' });
+        await mongoose.connect(mongoString, { dbName: 'grm' });
         console.log('Database connected...');
 
         // Calculate skip value for pagination
         const skip = (page - 1) * pageCount;
 
-        // Find   based on status and include pagination
-      // const data = await User.find().skip(skip).limit(pageCount);
-        const data = await User.find().skip(skip).limit(pageCount).select('-password');
+        // Define query conditions to exclude user by user_id
+        const query = { _id: { $ne: (user_id) } };
 
-       // console.log('users',data)
- 
+        // Find users based on query, excluding the specified user
+        const data = await User.find(query)
+            .skip(skip)
+            .limit(pageCount)
+            .select('-password'); // Exclude password field from results
+
         if (data.length === 0) {
             return {
                 message: 'Users not found',
@@ -30,13 +28,13 @@ export default defineEventHandler(async (req) => {
                 code: '0000'
             };
         } else {
-            // Fetch total count of grievances
-            const totalCount = await User.countDocuments( );
+            // Fetch total count of users (excluding the specified user)
+            const totalCount = await User.countDocuments(query);
 
             return {
                 message: 'Users found',
                 data: data,
-                total: totalCount, // Return total count for pagination
+                total: totalCount,
                 code: '0000'
             };
         }
@@ -52,4 +50,3 @@ export default defineEventHandler(async (req) => {
         // console.log('Database disconnected...');
     }
 });
-

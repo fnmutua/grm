@@ -11,10 +11,8 @@ import { ref, computed, watch } from 'vue';
 
 import exportFromJSON from 'export-from-json'
 
-const status = 'Open'
 
- 
-const { data } = useAuth();  // user data from session 
+const sort = ref({ column: 'code', direction: 'asc' })
 
 const toast = useToast()
 const comments = ref(null)
@@ -35,7 +33,6 @@ const filteredRows = computed(() => {
   })
 })
 
-console.log('USerData', data.value.isAdmin)
 console.log('filteredRows', filteredRows)
 
 
@@ -77,6 +74,7 @@ onMounted(async () => {
   await onChange(0)
 });
 
+const status = 'Open'
 
 async function onChange(index) {
   q.value = ''
@@ -505,33 +503,30 @@ const items = (row) => [
   ]
 ]
 
-const tabs = ([{
+const xitems = [{
   key: 'gbv',
   gbv:'Yes',
   label: 'Gender-Based Grievances',
   icon: 'i-heroicons-information-circle',
-  show:data?data.value.isGBV:false,
   description: 'Listed below are the gender-based grievances .'
 }, {
   key: 'nongbv',
-  label:data.value.isGBV ? 'Non-GBV Grievances' : 'Grievances',
+  label: 'Non-GBV Grievances',
   gbv:'No',
   icon: 'i-heroicons-information-circle',
-  show:true,
+
   description: 'Change your password here. After saving, you\'ll be logged out.'
-}])
+}]
 
-const filter_tabs =  tabs.filter(tab => tab.show);
- 
- 
+const accountForm = reactive({ name: 'Benjamin', username: 'benjamincanac' })
+const passwordForm = reactive({ currentPassword: '', newPassword: '' })
 
-console.log('filter_tabs',filter_tabs)
 function onSubmit(form) {
   console.log('Submitted form:', form)
 }
 
 function onTabChange (index) {
-  const item = tabs[index]
+  const item = xitems[index]
   gbv.value=item.gbv
 
   console.log(item.key)
@@ -554,10 +549,10 @@ function onTabChange (index) {
     <!-- Main Content -->
     <div class="col-span-1 md:col-span-10 p-4">
 
-      <UTabs :items="filter_tabs" class="w-full" @change="onTabChange" >
+      <UTabs :items="xitems" class="w-full" @change="onTabChange" >
         <template #item="{ item }">
-          <UCard>
-            <div v-if="item.key === 'gbv'  " class="space-y-3">
+          <UCard @submit.prevent="() => onSubmit(item.key === 'gbv' ? accountForm : passwordForm)">
+            <div v-if="item.key === 'gbv'" class="space-y-3">
               <UCard>
                 <div class="lg:hidden">
                   <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">

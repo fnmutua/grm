@@ -27,17 +27,56 @@ const ShowMultipleActions = ref(false);
 const isOpenRights = ref(false);
 const isEditUser = ref(false);
 
-const roles = [
-  { id: 1, code: "ADMIN", description: "Admin" },
+let roles = [
+ // { id: 1, code: "ADMIN", description: "Admin" },
   { id: 2, code: "USER", description: "User" },
   { id: 3, code: "SETTLEMENT_GRC", description: "Settlement GRC" },
   { id: 4, code: "COUNTY_GRC", description: "County GRC" },
   { id: 5, code: "NATIONAL_GRC", description: "National GRC" },
-  { id: 6, code: "GBV", description: "GBV" },
+  //{ id: 6, code: "GBV", description: "GBV" },
 ];
 
-const checkedRoles = ref([]);
+const isAdmin = data.value.roles.includes("ADMIN");
+const isGBV = data.value.roles.includes("GBV");
 
+// Check if "GBV" should be allocated based on isAdmin and isGBV
+if (isAdmin && isGBV) {
+  // Check if "GBV" role already exists in roles array
+  const gbvExists = roles.some(role => role.code === "GBV");
+
+  // If "GBV" does not exist, push it
+  if (!gbvExists) {
+    roles.push({ id: 6, code: "GBV", description: "GBV" });
+  }
+}
+
+const isSuperAdmin = data.value.roles.includes("SUPER_ADMIN");
+
+// Check if roles should be allocated for super admin
+if (isSuperAdmin) {
+  // Check if "ADMIN" role already exists in roles array
+  const adminExists = roles.some(role => role.code === "ADMIN");
+
+  // If "ADMIN" does not exist, push it
+  if (!adminExists) {
+    roles.push({ id: 1, code: "ADMIN", description: "Admin" });
+  }
+
+  // Check if "GBV" role already exists in roles array
+  const gbvExists = roles.some(role => role.code === "GBV");
+
+  // If "GBV" does not exist, push it
+  if (!gbvExists) {
+    roles.push({ id: 6, code: "GBV", description: "GBV" });
+  }
+}
+
+console.log(roles);
+
+
+
+
+const checkedRoles = ref([]);
 const filteredRows = computed(() => {
   if (!q.value) {
     return users.value;
@@ -88,10 +127,7 @@ const columns = [
 
 const page = ref(1);
 const total = ref(0);
-const pageFrom = computed(() => (page.value - 1) * pageCount.value + 1);
-const pageTo = computed(() =>
-  Math.min(page.value * pageCount.value, total.value)
-);
+ 
 
  
 
@@ -109,6 +145,7 @@ async function onChange(index) {
   try {
     const response = await axios.post("/api/admin/users", {
       page: page.value, // Add page parameter
+      user_id:data.value.id,
       pageCount: pageCount.value, // Add pageCount parameter
     });
 
