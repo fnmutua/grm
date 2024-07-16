@@ -1,18 +1,20 @@
-<script setup >
- 
+<script setup>
+
 definePageMeta({
   layout: "landing",
 });
 
- 
+
 
 import axios from 'axios';
 import { ref, computed, watch } from 'vue';
 
 import exportFromJSON from 'export-from-json'
 
+const status = 'Resolved'
 
-const sort = ref({ column: 'code', direction: 'asc' })
+ 
+const { data } = useAuth();  // user data from session 
 
 const toast = useToast()
 const comments = ref(null)
@@ -33,6 +35,7 @@ const filteredRows = computed(() => {
   })
 })
 
+console.log('USerData', data.value.isAdmin)
 console.log('filteredRows', filteredRows)
 
 
@@ -47,11 +50,7 @@ const columns = [{
   label: 'Settlement',
   sortable: true
 },
-// {
-//   key: 'status',
-//   label: 'Status',
-//   sortable: true
-// },
+
 {
   key: 'complaint',
   label: 'Complaint',
@@ -63,24 +62,7 @@ const columns = [{
   sortable: true,
 
 },
-// {
-//   key: 'acceptance',
-//   label: 'Accepted',
-//   sortable: true,
 
-// },
-
-// {
-//   key: 'completed',
-//   label: 'Outcome',
-
-// },
-
-// {
-//   key: 'expand',
-//   label: 'Details',
-
-// },
 {
   key: 'actions'
 }
@@ -91,25 +73,19 @@ const total = ref(0)
 const pageFrom = computed(() => (page.value - 1) * pageCount.value + 1)
 const pageTo = computed(() => Math.min(page.value * pageCount.value, total.value))
 
-
-
 onMounted(async () => {
   await onChange(0)
 });
 
-onMounted(async () => {
-  await onChange(0)
-});
-
-const status ='Resolved'
 
 async function onChange(index) {
   q.value = ''
-   pending.value = true
+  pending.value = true
 
   try {
     const response = await axios.post('/api/grievances/list', {
       status: status,
+      gbv:gbv.value,
       page: page.value,  // Add page parameter
       pageCount: pageCount.value  // Add pageCount parameter
     });
@@ -142,23 +118,25 @@ async function onChange(index) {
   }
 }
 
-const keyword=ref()
+const keyword = ref()
 
 async function onSearchClear() {
-  keyword.value=null
+  keyword.value = null
   await onChange()
-  page.value=1
+  page.value = 1
 
 }
 
+const gbv=ref('Yes')
 async function onSearch() {
-  console.log('keyword',keyword)
-   pending.value = true
+  console.log('keyword', keyword)
+  pending.value = true
 
   try {
     const response = await axios.post('/api/grievances/search', {
-      keyword:keyword.value,
+      keyword: keyword.value,
       status: status,
+      gbv:gbv.value,
       page: page.value,  // Add page parameter
       pageCount: pageCount.value  // Add pageCount parameter
     });
@@ -167,7 +145,7 @@ async function onSearch() {
       //count[status] = response.data.data.length;
       total.value = response.data.total; // Update total value
       grievances.value = response.data.data;
-     
+
       console.log('Search Count', response.data)
       const extractedGrievances = response.data.data.map(grievance => ({
         id: grievance._id,
@@ -187,7 +165,7 @@ async function onSearch() {
     }
   } catch (error) {
     console.error('Error during login:', error.message);
-   }
+  }
 }
 
 
@@ -195,9 +173,9 @@ const onPageCountChange = async () => {
   // Call onChange function to fetch grievances with updated page count
   //await onChange(selectedTab.value);
 
-  if(keyword){
+  if (keyword) {
     await onSearch(selectedTab.value);
-  }else {
+  } else {
     await onChange(selectedTab.value);
 
   }
@@ -207,9 +185,9 @@ const onPageCountChange = async () => {
 
 const onPageChange = async () => {
   // Call onChange function to fetch grievances with updated page count
-   if(keyword){
+  if (keyword) {
     await onSearch(selectedTab.value);
-  }else {
+  } else {
     await onChange(selectedTab.value);
 
   }
@@ -284,7 +262,7 @@ const onInvestigate = async () => {
       remarks: 'Investigation of the grievance initiated'
     });
 
-   
+
     for (let i = 0; i < selected_rows.value.length; i++) {
       // func(array[i]);
       console.log(selected_rows.value[i])
@@ -309,26 +287,7 @@ const onInvestigate = async () => {
 
 }
 
-const xaskForDocuments = async () => {
-  //downloadLoading.value = true
-  console.log('askForDocuments....', selected_rows.value)
 
-  // Assuming 'array' is your array and 'func' is your function
-  for (let i = 0; i < selected_rows.value.length; i++) {
-    // func(array[i]);
-    console.log(selected_rows.value[i])
-    let msg = 'please provide supporting documentation for grievance ' + selected_rows.value[i] + '.'
-    sendNotification(msg)
-
-  }
-
-  selected_rows.value = []
-  toast.add({ title: 'Notifications sent successfully', color: "primary" });
-
-  //sendNotification('please provide supporting documentation')
-
-
-}
 
 const askForDocuments = async () => {
   //downloadLoading.value = true
@@ -482,7 +441,7 @@ watch(selected, (newValue, oldValue) => {
   // newValue contains the updated selected items array
   // oldValue contains the previous selected items array
   console.log('Selected items changed:', selected);
- 
+
   if (newValue.length > 0) {
     ShowMultipleActions.value = true
     selected_ids.value = newValue.map(obj => obj.id);
@@ -498,14 +457,14 @@ watch(selected, (newValue, oldValue) => {
 
 
 watch(keyword, (newValue, oldValue) => {
- 
+
   console.log('keyword changed:', newValue);
-    if(!newValue ) {
-      //onChange()
-      console.log('Keyword null')
-      onChange()
-    }
- 
+  if (!newValue) {
+    //onChange()
+    console.log('Keyword null')
+    onChange()
+  }
+
 });
 
 
@@ -514,11 +473,11 @@ const isOpen = ref(false)
 
 
 /////////////-----------
- 
+
 const getDetails = async (row) => {
-   console.log('getDetails....', row.id)
-  
-   await navigateTo('/grievances/'+row.id)
+  console.log('getDetails....', row.id)
+
+  await navigateTo('/grievances/' + row.id)
 
 
 }
@@ -543,170 +502,252 @@ const items = (row) => [
     }
   },
 
-]
+  ]
 ]
 
+const tabs = ([{
+  key: 'gbv',
+  gbv:'Yes',
+  label: 'Gender-Based Grievances',
+  icon: 'i-heroicons-information-circle',
+  show:data?data.value.isGBV:false,
+  description: 'Listed below are the gender-based grievances .'
+}, {
+  key: 'nongbv',
+  label:data.value.isGBV ? 'Non-GBV Grievances' : 'Grievances',
+  gbv:'No',
+  icon: 'i-heroicons-information-circle',
+  show:true,
+  description: 'Change your password here. After saving, you\'ll be logged out.'
+}])
+
+const filter_tabs =  tabs.filter(tab => tab.show);
  
+ 
+
+console.log('filter_tabs',filter_tabs)
+function onSubmit(form) {
+  console.log('Submitted form:', form)
+}
+
+function onTabChange (index) {
+  const item = tabs[index]
+  gbv.value=item.gbv
+
+  console.log(item.key)
+  onSearch()
+  //alert(`${item.label} was clicked!`)
+}
 
 </script>
 
 
 <template>
   <div class="grid grid-cols-1 md:grid-cols-12 gap-4 py-10">
-     
+
 
     <!-- Side Navigation for medium and larger screens -->
-    <div  class="col-span-2 md:block">
+    <div class="col-span-2 md:block">
       <AdminSideNav2></AdminSideNav2>
     </div>
 
     <!-- Main Content -->
     <div class="col-span-1 md:col-span-10 p-4">
-      <UCard>
-        <div class="lg:hidden">
-            <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
- 
-            <UInput
-              v-model="keyword"
-              name="q"
-              placeholder="Search..."
-               autocomplete="off"
-               @keyup.enter="onSearch" 
-              :ui="{ icon: { trailing: { pointer: '' } } }"
-               
-            >
-              <template #trailing>
-                <UButton
-                  v-show="keyword"
-                  color="green"
-                  variant="link"
-                  icon="i-heroicons-magnifying-glass-20-solid"
-                  :padded="false"
-                  @click="onSearch()"
-                />
 
-                <UButton
-              icon="i-heroicons-x-mark"
-              size="sm"
-              color="red"
-              v-show="keyword"
-              variant="link"
-              @click="onSearchClear()"
-            /> 
-              </template>
-            </UInput>
-            
+      <UTabs :items="filter_tabs" class="w-full" @change="onTabChange" >
+        <template #item="{ item }">
+          <UCard>
+            <div v-if="item.key === 'gbv'  " class="space-y-3">
+              <UCard>
+                <div class="lg:hidden">
+                  <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">
+                    <UInput v-model="keyword" name="q" placeholder="Search..." autocomplete="off"
+                      @keyup.enter="onSearch" :ui="{ icon: { trailing: { pointer: '' } } }">
+                      <template #trailing>
+                        <UButton v-show="keyword" color="green" variant="link"
+                          icon="i-heroicons-magnifying-glass-20-solid" :padded="false" @click="onSearch()" />
+                        <UButton icon="i-heroicons-x-mark" size="sm" color="red" v-show="keyword" variant="link"
+                          @click="onSearchClear()" />
+                      </template>
+                    </UInput>
+                    <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary"
+                      variant="link" :trailing="false" @click="downloadXLSX" />
+                    <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link"
+                      :trailing="false" @click="onChange(0)" />
+                    <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
+                      <UButton color="primary" variant="outline" size="sm"
+                        trailing-icon="i-heroicons-chevron-down-20-solid" />
+                    </UDropdown>
+                  </div>
 
+                </div>
 
-            <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
-            :trailing="false" @click="downloadXLSX" />
-            <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" 
-              :trailing="false" @click="onChange(0)" />
-            <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
-              <UButton color="primary"  variant="outline"   size="sm"  trailing-icon="i-heroicons-chevron-down-20-solid" />
-            </UDropdown>
-          </div>
+                <div class="hidden md:block">
+                  <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">
 
-        </div>
+                    <UInput v-model="keyword" name="q" placeholder="Search..." autocomplete="off"
+                      @keyup.enter="onSearch" :ui="{ icon: { trailing: { pointer: '' } } }">
+                      <template #trailing>
+                        <UButton v-show="keyword" color="green" variant="link"
+                          icon="i-heroicons-magnifying-glass-20-solid" :padded="false" @click="onSearch()" />
 
-        <div class="hidden md:block">
-          <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2"  >
- 
-            <UInput
-              v-model="keyword"
-              name="q"
-              placeholder="Search..."
-               autocomplete="off"
-               @keyup.enter="onSearch" 
-              :ui="{ icon: { trailing: { pointer: '' } } }"
-            >
-              <template #trailing>
-                <UButton
-                  v-show="keyword"
-                  color="green"
-                  variant="link"
-                  icon="i-heroicons-magnifying-glass-20-solid"
-                  :padded="false"
-                  @click="onSearch()"
-                />
+                        <UButton icon="i-heroicons-x-mark" size="sm" color="red" v-show="keyword" variant="link"
+                          @click="onSearchClear()" />
+                      </template>
+                    </UInput>
+                    <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary"
+                      variant="link" label="Download" :trailing="false" @click="downloadXLSX" />
+                    <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link"
+                      label="Refresh" :trailing="false" @click="onChange(0)" />
+                    <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
+                      <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
+                    </UDropdown>
+                  </div>
 
-                <UButton
-              icon="i-heroicons-x-mark"
-              size="sm"
-              color="red"
-              v-show="keyword"
-              variant="link"
-              @click="onSearchClear()"
-            /> 
-              </template>
-            </UInput>
-            
-          
+                </div>
+                <UTable v-model="selected" :rows="filteredRows" :columns="columns" :loading="pending"
+                  sort-asc-icon="i-heroicons-arrow-up" sort-desc-icon="i-heroicons-arrow-down"
+                  :ui="{ td: { base: 'max-w-[0] truncate  text-transform: normal-case  ' }, default: { checkbox: { color: 'gray' } } }"
+                  @select="select">
+
+                  <template #actions-data="{ row }">
+                    <UDropdown :items="items(row)">
+                      <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" />
+                    </UDropdown>
+                  </template>
 
 
-            <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary" variant="link"
-              label="Download" :trailing="false" @click="downloadXLSX" />
-            <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link" label="Refresh"
-              :trailing="false" @click="onChange(0)" />
-            <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
-              <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
-            </UDropdown>
-          </div>
- 
-        </div>
+                </UTable>
 
-        
+                <template #footer>
+                  <div class="flex flex-wrap justify-between items-center">
+                    <div class="flex items-center gap-1.5">
+                      <span v-if="total > 0" class="text-sm leading-5">Rows per page:</span>
+                      <USelect v-model="pageCount" :options="[3, 5, 10, 20, 30, 40]" @change="onPageCountChange"
+                        @click="onPageChange" class="me-2 w-20" size="xs" v-if="total > 0" />
+                    </div>
 
 
-      <UTable
-              v-model="selected"
-               :rows="filteredRows"
-              :columns="columns"
-              :loading="pending"
-              sort-asc-icon="i-heroicons-arrow-up"
-              sort-desc-icon="i-heroicons-arrow-down"
-               :ui="{ td: { base: 'max-w-[0] truncate  text-transform: normal-case  ' }, default: { checkbox: { color: 'gray' } } }"
-              @select="select">
-          
-            <template #actions-data="{ row }">
-              <UDropdown :items="items(row)">
-            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" />
-              </UDropdown>
-            </template>
 
-            
-          </UTable>
-         
- <template #footer>
-          <div class="flex flex-wrap justify-between items-center">
-            <div class="flex items-center gap-1.5">
-              <span v-if="total > 0" class="text-sm leading-5">Rows per page:</span>
-              <USelect v-model="pageCount" :options="[3, 5, 10, 20, 30, 40]" @change="onPageCountChange"
-                @click="onPageChange" class="me-2 w-20" size="xs" v-if="total > 0" />
+
+                    <UPagination v-if="total > 0" v-model="page" :page-count="pageCount" :total="total"
+                      @click="onPageChange"
+                      :prev-button="{ icon: 'i-heroicons-arrow-small-left-20-solid', color: 'gray' }"
+                      :next-button="{ icon: 'i-heroicons-arrow-small-right-20-solid', trailing: true, color: 'gray' }"
+                      :ui="{
+                        wrapper: 'flex items-center gap-1',
+                        rounded: '!rounded-full min-w-[32px] justify-center',
+                        default: {
+                          activeButton: {
+                            variant: 'outline'
+                          }
+                        }
+                      }" />
+
+                  </div>
+                </template>
+              </UCard>
+
+            </div>
+            <div v-else-if="item.key === 'nongbv'" class="space-y-3">
+              <UCard>
+                <div class="lg:hidden">
+                  <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">
+                    <UInput v-model="keyword" name="q" placeholder="Search..." autocomplete="off"
+                      @keyup.enter="onSearch" :ui="{ icon: { trailing: { pointer: '' } } }">
+                      <template #trailing>
+                        <UButton v-show="keyword" color="green" variant="link"
+                          icon="i-heroicons-magnifying-glass-20-solid" :padded="false" @click="onSearch()" />
+                        <UButton icon="i-heroicons-x-mark" size="sm" color="red" v-show="keyword" variant="link"
+                          @click="onSearchClear()" />
+                      </template>
+                    </UInput>
+                    <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary"
+                      variant="link" :trailing="false" @click="downloadXLSX" />
+                    <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link"
+                      :trailing="false" @click="onChange(0)" />
+                    <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
+                      <UButton color="primary" variant="outline" size="sm"
+                        trailing-icon="i-heroicons-chevron-down-20-solid" />
+                    </UDropdown>
+                  </div>
+
+                </div>
+
+                <div class="hidden md:block">
+                  <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">
+
+                    <UInput v-model="keyword" name="q" placeholder="Search..." autocomplete="off"
+                      @keyup.enter="onSearch" :ui="{ icon: { trailing: { pointer: '' } } }">
+                      <template #trailing>
+                        <UButton v-show="keyword" color="green" variant="link"
+                          icon="i-heroicons-magnifying-glass-20-solid" :padded="false" @click="onSearch()" />
+
+                        <UButton icon="i-heroicons-x-mark" size="sm" color="red" v-show="keyword" variant="link"
+                          @click="onSearchClear()" />
+                      </template>
+                    </UInput>
+                    <UButton v-if="total > 0" icon="i-heroicons-cloud-arrow-down" size="sm" color="primary"
+                      variant="link" label="Download" :trailing="false" @click="downloadXLSX" />
+                    <UButton v-if="total > 0" icon="i-heroicons-arrow-path" size="sm" color="primary" variant="link"
+                      label="Refresh" :trailing="false" @click="onChange(0)" />
+                    <UDropdown v-if="ShowMultipleActions" :items="actions" :popper="{ placement: 'bottom-start' }">
+                      <UButton color="white" label="Actions" trailing-icon="i-heroicons-chevron-down-20-solid" />
+                    </UDropdown>
+                  </div>
+
+                </div>
+                <UTable v-model="selected" :rows="filteredRows" :columns="columns" :loading="pending"
+                  sort-asc-icon="i-heroicons-arrow-up" sort-desc-icon="i-heroicons-arrow-down"
+                  :ui="{ td: { base: 'max-w-[0] truncate  text-transform: normal-case  ' }, default: { checkbox: { color: 'gray' } } }"
+                  @select="select">
+
+                  <template #actions-data="{ row }">
+                    <UDropdown :items="items(row)">
+                      <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" />
+                    </UDropdown>
+                  </template>
+
+
+                </UTable>
+
+                <template #footer>
+                  <div class="flex flex-wrap justify-between items-center">
+                    <div class="flex items-center gap-1.5">
+                      <span v-if="total > 0" class="text-sm leading-5">Rows per page:</span>
+                      <USelect v-model="pageCount" :options="[3, 5, 10, 20, 30, 40]" @change="onPageCountChange"
+                        @click="onPageChange" class="me-2 w-20" size="xs" v-if="total > 0" />
+                    </div>
+
+
+
+
+                    <UPagination v-if="total > 0" v-model="page" :page-count="pageCount" :total="total"
+                      @click="onPageChange"
+                      :prev-button="{ icon: 'i-heroicons-arrow-small-left-20-solid', color: 'gray' }"
+                      :next-button="{ icon: 'i-heroicons-arrow-small-right-20-solid', trailing: true, color: 'gray' }"
+                      :ui="{
+                        wrapper: 'flex items-center gap-1',
+                        rounded: '!rounded-full min-w-[32px] justify-center',
+                        default: {
+                          activeButton: {
+                            variant: 'outline'
+                          }
+                        }
+                      }" />
+
+                  </div>
+                </template>
+              </UCard>
             </div>
 
-               
-              
-
-              <UPagination v-if="total > 0" v-model="page" :page-count="pageCount" :total="total" @click="onPageChange"
-                :prev-button="{ icon: 'i-heroicons-arrow-small-left-20-solid', color: 'gray' }"
-                :next-button="{ icon: 'i-heroicons-arrow-small-right-20-solid', trailing: true,  color: 'gray' }"
-                :ui="{
-                  wrapper: 'flex items-center gap-1',
-                  rounded: '!rounded-full min-w-[32px] justify-center',
-                  default: {
-                    activeButton: {
-                      variant: 'outline'
-                    }
-                  }
-                }" />
-           
-          </div>
+       
+          </UCard>
         </template>
-      </UCard>
-      
-            
-          
+      </UTabs>
+
+
+
     </div>
   </div>
 </template>

@@ -177,17 +177,17 @@ const isCollapsed = ref(false);
     { text: 'Escalated', url: '/grievances/escalated', icon: 'i-heroicons-outline-steps' },
   ] 
 }, 
-{
-  label: 'GBV',
-  icon: 'i-heroicons-face-frown',
-  roles: ['isAdmin', 'isGBV'],
-    links: [
-    { text: 'Open', url: '/gbv/open', icon: 'i-heroicons-outline-clipboard-list' },
-    { text: 'Investigate', url: '/gbv/investigate', icon: 'i-heroicons-outline-steps' },
-    { text: 'Resolved', url: '/gbv/resolved', icon: 'i-heroicons-outline-steps' },
-    { text: 'Escalated', url: '/gbv/escalated', icon: 'i-heroicons-outline-steps' },
-  ] 
-}, 
+// {
+//   label: 'GBV',
+//   icon: 'i-heroicons-face-frown',
+//   roles: ['isAdmin', 'isGBV'],
+//     links: [
+//     { text: 'Open', url: '/gbv/open', icon: 'i-heroicons-outline-clipboard-list' },
+//     { text: 'Investigate', url: '/gbv/investigate', icon: 'i-heroicons-outline-steps' },
+//     { text: 'Resolved', url: '/gbv/resolved', icon: 'i-heroicons-outline-steps' },
+//     { text: 'Escalated', url: '/gbv/escalated', icon: 'i-heroicons-outline-steps' },
+//   ] 
+// }, 
 {
   label: 'Admin Units',
   icon: 'i-heroicons-rectangle-group',
