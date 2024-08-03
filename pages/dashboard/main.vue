@@ -33,7 +33,14 @@
                 </template>
                 </UButton>
             </div>
-            <ColorMode />
+            <div>
+                <ColorMode />
+            <UButton icon='i-heroicons-lock-closed' color="gray" variant="ghost" aria-label="Theme" @click="logoff" />
+
+
+            </div>
+     
+            
             </div>
 
 
@@ -145,6 +152,13 @@ definePageMeta({
 import axios from 'axios';
 import { ref, computed, watch } from 'vue';
  
+const { status ,signOut} = useAuth()
+
+async function logoff() {
+  console.log("Logging off")
+  signOut({ callbackUrl: '/login' })
+
+ } 
 
 /// KPIX
 const total_grievances =ref(0)

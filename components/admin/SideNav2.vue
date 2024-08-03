@@ -69,7 +69,7 @@
       :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
       <div :class="{ 'hidden': isCollapsed }">
         <div>
-          <UAccordion :items="filteredLinks" color="sky" multiple defaultOpen>
+          <UAccordion :items="filteredLinks" color="sky" multiple >
             <template #item="{ item, index, open, close }">
               <div>
                 <div>
@@ -165,6 +165,7 @@ const isCollapsed = ref(false);
 
 const items = [{
   label: 'Dashboards',
+  defaultOpen: true, // This item will be open by default
   icon: 'i-heroicons-chart-bar',
   roles: ['isAdmin', 'isGBV', 'isSettGRC', 'isCountyGRC', 'isNationalGRC'],
   links: [
@@ -206,6 +207,7 @@ const items = [{
 }, {
   label: 'Settings',
   icon: 'i-heroicons-wrench-screwdriver',
+  defaultOpen: true, // This item will be open by default
 
   links: [
     { text: 'Home', url: '/', icon: 'i-heroicons-home' },
