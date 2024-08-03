@@ -31,7 +31,7 @@
         <div class="lg:col-span-1" :class="{ 'hidden': !isCollapsed }">
           <div>
 
-            <UAccordion :items="filteredLinks" multiple default-open color="sky">
+            <UAccordion :items="filteredLinks" multiple default-open  closeOthers color="sky">
               <template #item="{ item, index, open, close }">
                 <div>
                   <div>
@@ -69,7 +69,7 @@
       :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
       <div :class="{ 'hidden': isCollapsed }">
         <div>
-          <UAccordion :items="filteredLinks" color="sky" multiple >
+          <UAccordion :items="filteredLinks" multiple default-open  closeOthers color="sky">
             <template #item="{ item, index, open, close }">
               <div>
                 <div>

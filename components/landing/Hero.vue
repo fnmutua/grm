@@ -15,10 +15,15 @@
         know.
       </p>
       <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-        <LandingLink to="/report">File a Grievance</LandingLink>
-        <LandingLink size="lg" styleName="outline" to="/login">Login</LandingLink>
-        <button @click="navigateToLogin" class="btn btn-lg btn-outline">Login</button>
-
+        <LandingLink target="_blank" to="/report">File a Grievance</LandingLink>
+         <LandingLink
+          size="lg"
+          styleName="outline"
+          rel="noopener"
+           target="_blank"
+          to="/login"
+          >Login</LandingLink
+        > 
       </div>
     </div>
   </main>
