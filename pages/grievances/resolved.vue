@@ -251,7 +251,7 @@ const sendNotification = async (msg) => {
 
 }
 
-
+ 
 const onInvestigate = async () => {
   try {
     const response = await axios.post('/api/grievances/update', {
@@ -259,6 +259,9 @@ const onInvestigate = async () => {
       field: 'status',  // Add page parameter
       field_value: 'Investigate', // Add pageCount parameter
       resolution: null,
+      actor_id: data.value.id,
+      actor_name: data.value.name,
+      action: "Investigation commmenced",
       remarks: 'Investigation of the grievance initiated'
     });
 
@@ -287,8 +290,6 @@ const onInvestigate = async () => {
 
 }
 
-
-
 const askForDocuments = async () => {
   //downloadLoading.value = true
   console.log('markResolved....', comments.value)
@@ -299,7 +300,9 @@ const askForDocuments = async () => {
       ids: selected_ids.value,
       field: 'status',  // Add page parameter
       field_value: 'Investigate', // Add pageCount parameter
-      action: 'Investigate', // Add pageCount parameter
+      action: 'Documents requested', // Add pageCount parameter
+      actor_id: data.value.id,
+      actor_name: data.value.name,
       remarks: 'Complainant requested to provide documentation.'
 
     });
@@ -340,6 +343,9 @@ const escalate = async () => {
       ids: selected_ids.value,
       field: 'status',  // Add page parameter
       field_value: 'Escalated', // Add pageCount parameter,
+      action: 'Escalated', // Add pageCount parameter,
+      actor_id: data.value.id,
+      actor_name: data.value.name,
       remarks: 'The grievance was escalated to the next level for resolution.'
 
     });
@@ -366,7 +372,6 @@ const escalate = async () => {
   selected_rows.value = []
 
 }
-
 const deleteGrv = async () => {
   //downloadLoading.value = true
   console.log('deleteGrv....')

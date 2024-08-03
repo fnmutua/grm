@@ -8,31 +8,6 @@ const router = useRouter()
 const toast = useToast()
 
  
- const schema = object({
-   phone: string()
-      .min(8, 'Must be at least 8 characters')
-      .required('Required'),
-  county: string()
-      .required('Required'),
-  subcounty: string()
-      .required('Required'),
-  ward: string()
-      .required('Required'),
-  settlement: string()
-      .required('Required'),
-  gbv: string()
-      .required('Required'),
-
-
-  complaint: string()
-      .min(25, 'Must be at least 25 characters')
-      .required('Required'),
-   name: string()
-    .test('is-full-name', 'Must include at least two names', value => {
-      return value && value.trim().split(/\s+/).length >= 2;
-    })
-    .required('Required')
-});
 
 const form = reactive({
   name: '',
@@ -43,7 +18,7 @@ const form = reactive({
   ward: '',
   settlement: '',
   complaint: '',
-  gbv:'',
+  gbv:'No',
   file:undefined
 })
  
@@ -253,18 +228,20 @@ async function onSubmit() {
   formData.append('settlement_id', form.settlement)
   formData.append('complaint', form.complaint)
   formData.append('acceptance', 'Pending')
+  formData.append('actor_name', form.name === '' ? 'Anonymous' :  form.name)
   
   
   // create the initialization object 
   let initObject = {
     date: new Date(),
     action: "Created",
-    mode: 'Web',
+    mode: 'Web',   
+    actor_name:  form.name === '' ? 'Anonymous' :  form.name,
     actor: 'Complainant'
   };
 
  // Serialize the array containing the object
-let historyArray = [initObject];
+let historyArray = initObject;
 let historyJson = JSON.stringify(historyArray);
 
 // Append serialized JSON string to FormData

@@ -42,8 +42,11 @@
                 class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300 ms-3">Latest</span>
             </h3>
             <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-              {{ grievance.date }}
+              {{ grievance.date }} |  Actioned by: {{ grievance.actor_name }}
             </time>
+            <p class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+              Actioned by: {{ grievance.actor_name }}
+            </p>
             <p v-if="grievance.status=='Resolved'" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
               {{ grievance.resolution }}
             </p>
@@ -56,6 +59,7 @@
             <p v-if="grievance.status=='Open'" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
               {{ grievance.complaint }}
             </p>
+          
             <a href="#"
               class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
               <UIcon class="px-4" name="i-heroicons-cloud-arrow-down" />
@@ -181,27 +185,7 @@ function maskPhoneNumber(number) {
   }
 }
 
-const grievances = [
-  {
-    status: "Accepted",
-    date: "June 25th 2024",
-    resolution: "Resolution text here",
-    type: "Grievance Resolution Accepted by complainant",
-    latest: true,
-  },
-  {
-    status: "Escalated",
-    date: "March 25th 2025",
-    description: "Complainant not satisfied by SEC GRC. Escalated issue",
-    type: "Grievance Escalated to the County GRC committee",
-  },
-  {
-    status: "Created",
-    date: "March 25th 2025",
-    complaint: "Complaint text here",
-    type: "Grievance Received",
-  },
-]
+ 
 
 let grievance_details = []
 
@@ -218,7 +202,7 @@ async function handleSubmit() {
       // mask phone number 
 
       if (responseData.timeline && responseData.timeline.length > 0) {
-        console.log(responseData.timeline, responseData.timeline.length);
+        console.log('responseData.timeline', responseData.timeline);
 
         responseData.timeline.forEach(historyItem => {
           let event = JSON.parse(historyItem);
@@ -233,6 +217,8 @@ async function handleSubmit() {
             code: responseData.code,
             action: event.action,
             actor: event.actor,
+            actor_name: event.actor_name,
+            actor_id: event.actor_id,
             mode: event.mode
           };
           console.log('obj-->', obj);

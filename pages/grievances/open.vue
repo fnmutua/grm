@@ -56,12 +56,7 @@ const columns = [{
   label: 'Complaint',
   sortable: true,
 },
-{
-  key: 'resolution',
-  label: 'Resolution',
-  sortable: true,
-
-},
+ 
 
 {
   key: 'actions'
@@ -259,6 +254,9 @@ const onInvestigate = async () => {
       field: 'status',  // Add page parameter
       field_value: 'Investigate', // Add pageCount parameter
       resolution: null,
+      actor_id: data.value.id,
+      actor_name: data.value.name,
+      action: "Investigation commmenced",
       remarks: 'Investigation of the grievance initiated'
     });
 
@@ -287,8 +285,6 @@ const onInvestigate = async () => {
 
 }
 
-
-
 const askForDocuments = async () => {
   //downloadLoading.value = true
   console.log('markResolved....', comments.value)
@@ -299,7 +295,9 @@ const askForDocuments = async () => {
       ids: selected_ids.value,
       field: 'status',  // Add page parameter
       field_value: 'Investigate', // Add pageCount parameter
-      action: 'Investigate', // Add pageCount parameter
+      action: 'Documents requested', // Add pageCount parameter
+      actor_id: data.value.id,
+      actor_name: data.value.name,
       remarks: 'Complainant requested to provide documentation.'
 
     });
@@ -331,6 +329,46 @@ const askForDocuments = async () => {
 
 }
 
+
+const markResolved = async () => {
+  //downloadLoading.value = true
+  console.log('markResolved....')
+
+  try {
+    const response = await axios.post('/api/grievances/update', {
+      ids: selected_ids.value,
+      field: 'status',  // Add page parameter
+      field_value: 'Resolved', // Add pageCount parameter,
+      action: 'Resolved', // Add pageCount parameter,
+      actor_id: data.value.id,
+      actor_name: data.value.name,
+       remarks: 'The grievance is now resolved.'
+
+    });
+
+    for (let i = 0; i < selected_rows.value.length; i++) {
+      // func(array[i]);
+      console.log(selected_rows.value[i])
+      let msg = 'your grievance ' + selected_rows.value[i] + ' has been  resolved.'
+      sendNotification(msg)
+    }
+
+    if (response.data.success) {
+      toast.add({ title: 'Resolution is successful', color: "primary" });
+    } else {
+      toast.add({ title: 'Resolution failed', color: "red" });
+
+    }
+    selected_rows.value = []
+
+  } catch (error) {
+    console.error('Error during login:', error.message);
+    // Handle error, maybe show an error message to the user
+  }
+  selected_rows.value = []
+
+}
+
 const escalate = async () => {
   //downloadLoading.value = true
   console.log('escalate....')
@@ -340,6 +378,9 @@ const escalate = async () => {
       ids: selected_ids.value,
       field: 'status',  // Add page parameter
       field_value: 'Escalated', // Add pageCount parameter,
+      action: 'Escalated', // Add pageCount parameter,
+      actor_id: data.value.id,
+      actor_name: data.value.name,
       remarks: 'The grievance was escalated to the next level for resolution.'
 
     });
@@ -417,7 +458,7 @@ const actions = [
     label: 'Mark as Resolved',
     icon: 'i-heroicons-check-badge',
     click: () => {
-      // markResolved()
+      markResolved()
       isOpen.value = true
     }
 

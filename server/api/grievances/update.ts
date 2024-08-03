@@ -7,7 +7,7 @@ import Grievance from "../../models/grievance";
 
   
 export default defineEventHandler(async (req) => {
-  const { ids, field, field_value,resolution,remarks,action } = await readBody(req);
+  const { ids, field, field_value,resolution,remarks,action,actor_id, actor_name } = await readBody(req);
   const mongoString = process.env.MONGODB_URI;
   await mongoose.connect(mongoString, { dbName: 'grm' });
   console.log('Database update connected...');
@@ -32,6 +32,8 @@ export default defineEventHandler(async (req) => {
         action: action,
         remarks: remarks,
         [field]: field_value,
+        actor_id: actor_id,
+        actor_name: actor_name,
         mode: 'System'
       });
       const updateData = {

@@ -151,6 +151,7 @@ async function generateGrievanceReferenceNumber() {
         county: fields.county,
         subcounty: fields.subcounty,
         ward: fields.ward,
+        gbv: fields.gbv,
         settlement: fields.settlement,
         settlement_id: fields.settlement_id,
         complaint: fields.complaint,
@@ -158,6 +159,7 @@ async function generateGrievanceReferenceNumber() {
         status: fields.status ? fields.status : 'Open',
         resolution: fields.resolution ? fields.resolution : 'Pending',
         acceptance: fields.acceptance, // default
+        actor_name: fields.actor_name, // default
         timeline: fields.timeline, // default
       });
  

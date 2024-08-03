@@ -132,7 +132,7 @@ const logOff = async () => {
 
 // Set up the interval to check the session every 60 seconds
 onMounted(() => {
-  sessionCheckInterval = setInterval(checkSession, 6000)
+ // sessionCheckInterval = setInterval(checkSession, 6000)
 })
 
 
