@@ -1,7 +1,8 @@
 <template>
   <main class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
-    <div class="invisible md:visible">
-      <img src="~/assets/img/logo.svg" alt="Logo" class="mx-auto  w-64 h-48 md:w-64 md:h-48" />
+    <!-- <div class="invisible md:visible"> -->
+      <div  >
+        <img src="~/assets/img/logo.svg" alt="Logo" class="mx-auto  w-64 h-48 md:w-64 md:h-48" />
     </div>
 
 
