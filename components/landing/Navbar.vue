@@ -158,7 +158,9 @@ console.log('filtered', filteredLinks.value);
   //  signOut({ callbackUrl: '/login' })
  //  signOut({ callbackUrl: 'http://localhost/login' })
  
-    navigateTo('/login', { external: true })
+ signOut({ callbackUrl: '/login' })
+
+  //  navigateTo('/login', { external: true })
 } 
 
   

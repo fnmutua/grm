@@ -1,134 +1,140 @@
 <template>
- 
-    <!-- Left Column -->
-    <div>
-      <UButton 
-        v-if="isCollapsed" 
-        icon="i-heroicons-bars-2" 
-        color="gray" 
-        variant="ghost"  
-        @click="isOpen = true" 
-      />
 
-      <USlideover v-model="isOpen" side="left" :style="{ width: '250px' }" prevent-close>
-        <UCard class="flex flex-col flex-1" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-          <template #header>
-            <div class="flex items-center justify-between">
-              <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">Menu</h3>
-              <div class="flex gap-5">
-                <AvatarRoot class="bg-blackA3 inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full align-middle">
-                  <AvatarImage
-                    class="h-full w-full rounded-[inherit] object-cover"
-                    src="https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80"
-                    alt="Colm Tuite"
-                  />
-                  <AvatarFallback
-                    class="text-grass11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium"
-                    :delay-ms="600"
-                  >
-                    CT
-                  </AvatarFallback>
-                </AvatarRoot>
-              </div>
-              <UButton 
-                color="gray" 
-                variant="ghost" 
-                icon="i-heroicons-chevron-double-left" 
-                class="-my-1" 
-                @click="isOpen = false" 
-              />
+  <!-- Left Column -->
+  <div>
+    <UButton v-if="isCollapsed" icon="i-heroicons-bars-2" color="gray" variant="ghost" @click="isOpen = true" />
+
+    <USlideover v-model="isOpen" side="left" :style="{ width: '250px' }" prevent-close>
+      <UCard class="flex flex-col flex-1"
+        :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">Menu</h3>
+            <div class="flex gap-5">
+              <AvatarRoot
+                class="bg-blackA3 inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full align-middle">
+                <AvatarImage class="h-full w-full rounded-[inherit] object-cover"
+                  src="https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80"
+                  alt="Colm Tuite" />
+                <AvatarFallback
+                  class="text-grass11 leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium"
+                  :delay-ms="600">
+                  CT
+                </AvatarFallback>
+              </AvatarRoot>
             </div>
-          </template>
-
-          <div class="lg:col-span-1" :class="{ 'hidden': !isCollapsed }">
-            <div>
-
-              <UAccordion :items="filteredLinks" multiple default-open color="sky">
-              <template #item="{ item, index, open, close }">
-                <div>
-                  <div >
-                    <ul>
-                      <li v-for="link in item.links" :key="link.url">
-                     
-                        <ULink
-                          :to="link.url" 
-                          active-class="text-primary"
-                          class="flex items-center p-1.5 pl-6 border-l-2 "
-                          inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200"
-                        >
-                        {{ link.text }}
-                        </ULink>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </template>
-            </UAccordion>
-
- 
-
-            </div>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-chevron-double-left" class="-my-1"
+              @click="isOpen = false" />
           </div>
-        </UCard>
-      </USlideover>
-    </div>
+        </template>
 
-    <div class="grid lg:grid-cols-1">
-      <UCard class="flex flex-col flex-3" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-        <div :class="{ 'hidden': isCollapsed }">
+        <div class="lg:col-span-1" :class="{ 'hidden': !isCollapsed }">
           <div>
-            <UAccordion :items="filteredLinks" color="sky" multiple  defaultOpen >
+
+            <UAccordion :items="filteredLinks" multiple default-open color="sky">
               <template #item="{ item, index, open, close }">
                 <div>
-                  <div >
+                  <div>
                     <ul>
                       <li v-for="link in item.links" :key="link.url">
-                     
-                        <ULink
-                          :to="link.url" 
-                          active-class="text-primary"
-                          class="flex items-center p-1.5 pl-6 border-l-2 "
-                          inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200"
-                        >
+                      <ULink v-if="!link.button" :to="link.url" active-class="text-primary"
+                        class="flex items-center p-1.5 pl-6 border-l-2"
+                        inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200">
                         {{ link.text }}
-                        </ULink>
-                      </li>
+                      </ULink>
+                      <ULink v-else @click="logOff" active-class="text-primary"
+                        class="flex items-center p-1.5 pl-6 border-l-2"
+                        inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200">
+                        Logout
+                      </ULink>
+                    </li>
+
                     </ul>
                   </div>
+
                 </div>
               </template>
             </UAccordion>
 
-            
- 
- 
+
+
           </div>
         </div>
       </UCard>
-    </div>
- 
+    </USlideover>
+  </div>
+
+  <div class="grid lg:grid-cols-1">
+    <UCard class="flex flex-col flex-3"
+      :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+      <div :class="{ 'hidden': isCollapsed }">
+        <div>
+          <UAccordion :items="filteredLinks" color="sky" multiple defaultOpen>
+            <template #item="{ item, index, open, close }">
+              <div>
+                <div>
+                  <ul>
+                    <li v-for="link in item.links" :key="link.url">
+                      <ULink v-if="!link.button" :to="link.url" active-class="text-primary"
+                        class="flex items-center p-1.5 pl-6 border-l-2"
+                        inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200">
+                        {{ link.text }}
+                      </ULink>
+                      <ULink v-else @click="logOff" active-class="text-primary"
+                        class="flex items-center p-1.5 pl-6 border-l-2"
+                        inactive-class="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200">
+                        Logout
+                      </ULink>
+                    </li>
+
+
+                  </ul>
+
+                </div>
+              </div>
+            </template>
+          </UAccordion>
+
+
+
+
+        </div>
+      </div>
+    </UCard>
+  </div>
+
 </template>
 
 <script setup lang="ts">
+import { STATES } from 'mongoose';
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'radix-vue';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+
+const { status ,signOut} = useAuth()
  
-const { status   } = useAuth()
 let sessionCheckInterval
 
 const checkSession = () => {
+  console.log('checkSession')
   if (status.value === 'unauthenticated') {
     console.log("Autologout the user......")
 
     navigateTo('/login', { external: true })
   }
 }
+const logOff = async () => {
+  console.log('logOff')
+   signOut({ callbackUrl: '/login' })
+  console.log('logOff')
+
+   
+}
 
 // Set up the interval to check the session every 60 seconds
 onMounted(() => {
   sessionCheckInterval = setInterval(checkSession, 6000)
 })
- 
+
 
 const scrollbarHeight = ref(890); // Initial height based on current window size
 
@@ -154,10 +160,10 @@ const isOpen = ref(false);
 // Reactive variable to track sidebar collapse state
 const isCollapsed = ref(false);
 
- 
 
 
- const items = [{
+
+const items = [{
   label: 'Dashboards',
   icon: 'i-heroicons-chart-bar',
   roles: ['isAdmin', 'isGBV', 'isSettGRC', 'isCountyGRC', 'isNationalGRC'],
@@ -165,35 +171,25 @@ const isCollapsed = ref(false);
     { text: 'Overview', url: '/dashboard/main', icon: 'i-heroicons-information-circle' },
     { text: 'Map', url: '/dashboard/grv', icon: 'i-heroicons-map' }
   ]
-}, 
+},
 {
   label: 'Grievances',
   roles: ['isAdmin', 'isGBV', 'isSettGRC', 'isCountyGRC', 'isNationalGRC'],
   icon: 'i-heroicons-swatch',
-    links: [
+  links: [
     { text: 'Open', url: '/grievances/open', icon: 'i-heroicons-outline-clipboard-list' },
     { text: 'Investigate', url: '/grievances/investigate', icon: 'i-heroicons-outline-steps' },
     { text: 'Resolved', url: '/grievances/resolved', icon: 'i-heroicons-outline-steps' },
     { text: 'Escalated', url: '/grievances/escalated', icon: 'i-heroicons-outline-steps' },
-  ] 
-}, 
-// {
-//   label: 'GBV',
-//   icon: 'i-heroicons-face-frown',
-//   roles: ['isAdmin', 'isGBV'],
-//     links: [
-//     { text: 'Open', url: '/gbv/open', icon: 'i-heroicons-outline-clipboard-list' },
-//     { text: 'Investigate', url: '/gbv/investigate', icon: 'i-heroicons-outline-steps' },
-//     { text: 'Resolved', url: '/gbv/resolved', icon: 'i-heroicons-outline-steps' },
-//     { text: 'Escalated', url: '/gbv/escalated', icon: 'i-heroicons-outline-steps' },
-//   ] 
-// }, 
+  ]
+},
+
 {
   label: 'Admin Units',
   icon: 'i-heroicons-rectangle-group',
-  roles: ['isAdmin' ],
-   links: [
-   { text: 'Counties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
+  roles: ['isAdmin'],
+  links: [
+    { text: 'Counties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
     { text: 'Subcounties', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
     { text: 'Wards', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' },
     { text: 'Settlements', url: '/theming/best-practices', icon: 'i-heroicons-outline-light-bulb' }
@@ -202,20 +198,20 @@ const isCollapsed = ref(false);
   label: 'Admin',
   icon: 'i-heroicons-user-circle',
   roles: ['isAdmin'],
-   links: [
+  links: [
     { text: 'Users', url: '/admin/users', icon: 'i-heroicons-person' },
     { text: 'GRCS', url: '/admin/users', icon: 'i-heroicons-outline-light-bulb' },
 
   ]
-},{
+}, {
   label: 'Settings',
   icon: 'i-heroicons-wrench-screwdriver',
- 
-   links: [
+
+  links: [
     { text: 'Home', url: '/', icon: 'i-heroicons-home' },
-    { text: 'Logout', url: '/login', icon: 'i-heroicons-outline-card' }
+    { text: 'Logout', url: '/login', icon: 'i-heroicons-outline-card', button: true }
   ]
-}, ]
+},]
 
 const { data } = useAuth();  // user data from session 
 
@@ -245,7 +241,6 @@ const filteredLinks = computed(() => {
     .filter(item => item !== null); // Remove items that don't have required roles
 });
 
- 
+
 
 </script>
- 
