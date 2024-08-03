@@ -901,7 +901,7 @@ const resolutionRateGauge = ref({
         title: {
                 verticalAlign: 'middle',
                 floating: true,
-                text: '98%'
+                text: '0%'
             },
     subtitle: {
         text:  'Resolution Rate'
@@ -961,7 +961,7 @@ const escalationRateGauge = ref({
         title: {
                 verticalAlign: 'middle',
                 floating: true,
-                text: '98%'
+                text: '0%'
             },
     subtitle: {
         text:  'Escalation Rate'

@@ -1,46 +1,38 @@
 <template>
-  <main class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-8">
-    <div class="p-24 md:order-1 hidden md:block">
-      <!-- <img
-        class="rounded-full transition-transform transform hover:scale-125"
-        src="~/assets/img/grm1.png"
-        alt="Starship starts the engine"
-        loading="eager"
-        format="avif"
-        width="512"
-        height="512"
-      /> -->
-      <LandingStatistic :Received="received" :Resolved="resolved" :ResolutionRate="resolution_rate" :lastUpdate="lastUpdate"></LandingStatistic>
-    </div>
+  <main class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
+    <div class="text-center w-full max-w-4xl px-2 sm:px-4 md:px-8">
 
-    <div>
-      <h1 class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight">
+      <div class="invisible md:visible">
+        <img 
+        src="~/assets/img/logo.svg" 
+        alt="Logo" 
+        class="  mx-auto mb-4 w-32 h-32 md:w-64 md:h-64" 
+      /> <!-- Adjust the path as needed -->
+        </div>
+            
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold lg:tracking-tight">
         Grievance Reporting System
       </h1>
-      <p class="text-lg mt-4 text-slate-600 max-w-xl">
+      <p class="text-sm sm:text-base md:text-lg mt-4 text-slate-600 mx-auto">
         Do you have any grievances with the implementation of DRiVE project activities? Use this platform to let us know.
       </p>
-      <div class="mt-6 flex flex-col sm:flex-row gap-3">
-        <LandingLink
-          to="/report"
-           >File a Grievance</LandingLink
-        >
-         <LandingLink
-          size="lg"
-          styleName="outline"
-          to="/grievances/status"
-
-          >Check Status</LandingLink
-        >
+      <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <LandingLink to="/report">File a Grievance</LandingLink>
+        <LandingLink size="lg" styleName="outline" to="/login">Login</LandingLink>
       </div>
     </div>
   </main>
 </template>
 
+
+
+
+
+
 <script setup>
 
 import axios from 'axios';
-import { ref, computed, watch,onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
  
 
  
@@ -88,3 +80,59 @@ async function getAllSummary() {
 }
 
 </script>
+
+
+<style>
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #fff;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo span {
+  font-family: Arial, sans-serif;
+  font-size: 100px;
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+.logo .p {
+  position: relative;
+  margin-right: 10px;
+}
+
+.logo .flag {
+  display: flex;
+  flex-direction: column;
+  height: 100px;
+  width: 20px;
+}
+
+.flag-top {
+  background-color: #000;
+  height: 33.33%;
+  width: 100%;
+}
+
+.flag-middle {
+  background-color: #fff;
+  height: 33.33%;
+  width: 100%;
+}
+
+.flag-bottom {
+  background-color: #388e3c;
+  height: 33.33%;
+  width: 100%;
+}
+
+</style>
