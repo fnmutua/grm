@@ -3,10 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "xbuild": "nuxt build",
+    "build": "nuxt build",
     "start": "nuxt start",
-    "build": "node --max-old-space-size=4096 node_modules/nuxt/bin/nuxt.mjs build",
-
     "dev": "nuxt dev",
     "xdev": "concurrently \"nuxt dev\" \"node server/index.js\"",
     "generate": "nuxt generate",
@@ -22,7 +20,7 @@
     "@tailwindcss/typography": "^0.5.10",
     "autoprefixer": "^10.4.16",
     "mapbox-gl": "^3.4.0",
-    "nuxt": "^3.11.2",
+    "nuxt": "^3.12.4",
     "nuxt-icon": "^0.6.10",
     "nuxt-mapbox": "^1.6.0",
     "nuxt-plotly": "^1.0.14",

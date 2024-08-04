@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: true,
-  sourcemap: false,
+  sourcemap: true,
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
   postcss: {
