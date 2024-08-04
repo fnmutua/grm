@@ -13,7 +13,7 @@ import exportFromJSON from 'export-from-json'
 
 const status = 'Open'
 
- 
+
 const { data } = useAuth();  // user data from session 
 
 const toast = useToast()
@@ -56,7 +56,7 @@ const columns = [{
   label: 'Complaint',
   sortable: true,
 },
- 
+
 
 {
   key: 'actions'
@@ -80,7 +80,7 @@ async function onChange(index) {
   try {
     const response = await axios.post('/api/grievances/list', {
       status: status,
-      gbv:gbv.value,
+      gbv: gbv.value,
       page: page.value,  // Add page parameter
       pageCount: pageCount.value  // Add pageCount parameter
     });
@@ -122,7 +122,7 @@ async function onSearchClear() {
 
 }
 
-const gbv=ref('Yes')
+const gbv = ref('Yes')
 async function onSearch() {
   console.log('keyword', keyword)
   pending.value = true
@@ -131,7 +131,7 @@ async function onSearch() {
     const response = await axios.post('/api/grievances/search', {
       keyword: keyword.value,
       status: status,
-      gbv:gbv.value,
+      gbv: gbv.value,
       page: page.value,  // Add page parameter
       pageCount: pageCount.value  // Add pageCount parameter
     });
@@ -205,6 +205,7 @@ const downloadXLSX = () => {
 const selected = ref([])
 const selected_ids = ref([])
 const selected_rows = ref([])
+const selected_code = ref([])
 
 
 function select(row) {
@@ -221,12 +222,18 @@ function select(row) {
 
 
   console.log('selected_ids....', selected_ids.value)
+  console.log('selected_rows....', selected_rows.value)
+  
 
   if (selected_ids.value.length > 0) {
     ShowMultipleActions.value = true
+
+    handleExpand(selected_rows.value)
   } else {
     ShowMultipleActions.value = false
   }
+
+  
 
 }
 
@@ -342,7 +349,7 @@ const markResolved = async () => {
       action: 'Resolved', // Add pageCount parameter,
       actor_id: data.value.id,
       actor_name: data.value.name,
-       remarks: 'The grievance is now resolved.'
+      remarks: 'The grievance is now resolved.'
 
     });
 
@@ -408,9 +415,9 @@ const escalate = async () => {
 
 }
 
-const deleteGrv = async () => {
+const deleteGrv = async (row) => {
   //downloadLoading.value = true
-  console.log('deleteGrv....')
+  console.log('deleteGrv....', row)
 
   try {
     const response = await axios.post('/api/grievances/delete', {
@@ -539,7 +546,7 @@ const items = (row) => [
     label: 'Delete',
     icon: 'i-heroicons-trash-20-solid',
     click: () => {
-      deleteGrv()
+      deleteGrv(row)
     }
   },
 
@@ -548,37 +555,61 @@ const items = (row) => [
 
 const tabs = ([{
   key: 'gbv',
-  gbv:'Yes',
+  gbv: 'Yes',
   label: 'Gender-Based Grievances',
   icon: 'i-heroicons-information-circle',
-  show:data?data.value.isGBV:false,
+  show: data ? data.value.isGBV : false,
   description: 'Listed below are the gender-based grievances .'
 }, {
   key: 'nongbv',
-  label:data.value.isGBV ? 'Non-GBV Grievances' : 'Grievances',
-  gbv:'No',
+  label: data.value.isGBV ? 'Non-GBV Grievances' : 'Grievances',
+  gbv: 'No',
   icon: 'i-heroicons-information-circle',
-  show:true,
+  show: true,
   description: 'Change your password here. After saving, you\'ll be logged out.'
 }])
 
-const filter_tabs =  tabs.filter(tab => tab.show);
- 
- 
+const filter_tabs = tabs.filter(tab => tab.show);
 
-console.log('filter_tabs',filter_tabs)
+
+
+console.log('filter_tabs', filter_tabs)
 function onSubmit(form) {
   console.log('Submitted form:', form)
 }
 
-function onTabChange (index) {
+function onTabChange(index) {
   const item = tabs[index]
-  gbv.value=item.gbv
+  gbv.value = item.gbv
 
   console.log(item.key)
   onSearch()
   //alert(`${item.label} was clicked!`)
 }
+
+const documents =ref([])
+const doc_columns = [{
+  key: 'grievanceCode',
+  label: 'Grievance Code'
+}, {
+  key: 'fileName',
+  label: 'File Name'
+}]
+
+async function handleExpand(sel_codes) {
+  
+  const form = {
+    grievance_ids:  sel_codes
+}
+  console.log('on Expand',sel_codes)
+  const response = await axios.post('/api/documents/list', form);
+
+  console.log(response.data.data)
+  documents.value=response.data.data
+
+
+}
+
 
 </script>
 
@@ -594,11 +625,10 @@ function onTabChange (index) {
 
     <!-- Main Content -->
     <div class="col-span-1 md:col-span-10 p-4">
-
-      <UTabs :items="filter_tabs" class="w-full" @change="onTabChange" >
+      <UTabs :items="filter_tabs" class="w-full" @change="onTabChange">
         <template #item="{ item }">
           <UCard>
-            <div v-if="item.key === 'gbv'  " class="space-y-3">
+            <div v-if="item.key === 'gbv'" class="space-y-3">
               <UCard>
                 <div class="lg:hidden">
                   <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 items-center space-x-2">
@@ -648,17 +678,39 @@ function onTabChange (index) {
                 </div>
                 <UTable v-model="selected" :rows="filteredRows" :columns="columns" :loading="pending"
                   sort-asc-icon="i-heroicons-arrow-up" sort-desc-icon="i-heroicons-arrow-down"
-                  :ui="{ td: { base: 'max-w-[0] truncate  text-transform: normal-case  ' }, default: { checkbox: { color: 'gray' } } }"
-                  @select="select">
+                  :ui="{ td: { base: 'max-w-[4] truncate text-transform: normal-case' }, default: { checkbox: { color: 'gray' } } }"
+                  @select="select"  >
+                  <template #expand="{ row }">
+                    <tr>
+                      <td :colspan="columns.length">
+                        <div class="p-4">
+                          <pre>{{ row }}</pre>
+                        </div>
+                      </td>
+                    </tr>
 
-                  <template #actions-data="{ row }">
-                    <UDropdown :items="items(row)">
-                      <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" />
-                    </UDropdown>
+                    <UTable :rows="documents" />
+
                   </template>
+                  <template #actions-data="{ row }">
+                    <!-- <UDropdown :items="items(row)">
+                      <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" />
+                    </UDropdown> -->
 
 
+                    <UTooltip text="View Details">
+                      <UButton icon="i-heroicons-ellipsis-horizontal" size="2xs" color="green" variant="outline"
+                        :ui="{ rounded: 'rounded-full' }" square class="mx-2" @click=" getDetails(row)" />
+                    </UTooltip>
+
+                    <UTooltip text="Delete Record">
+                      <UButton icon="i-heroicons-trash" size="2xs" color="red" variant="outline"
+                        :ui="{ rounded: 'rounded-full' }" square @click=" deleteGrv(row)" />
+                    </UTooltip>
+
+                  </template>
                 </UTable>
+
 
                 <template #footer>
                   <div class="flex flex-wrap justify-between items-center">
@@ -690,6 +742,8 @@ function onTabChange (index) {
               </UCard>
 
             </div>
+
+
             <div v-else-if="item.key === 'nongbv'" class="space-y-3">
               <UCard>
                 <div class="lg:hidden">
@@ -740,16 +794,37 @@ function onTabChange (index) {
                 </div>
                 <UTable v-model="selected" :rows="filteredRows" :columns="columns" :loading="pending"
                   sort-asc-icon="i-heroicons-arrow-up" sort-desc-icon="i-heroicons-arrow-down"
-                  :ui="{ td: { base: 'max-w-[0] truncate  text-transform: normal-case  ' }, default: { checkbox: { color: 'gray' } } }"
+                  :ui="{ td: { base: 'max-w-[5] truncate  text-transform: normal-case  ' }, default: { checkbox: { color: 'gray' } } }"
                   @select="select">
 
-                  <template #actions-data="{ row }">
-                    <UDropdown :items="items(row)">
-                      <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-vertical" />
-                    </UDropdown>
+                  <template #expand="{ row }">
+                    <!-- <tr>
+                      <td :colspan="columns.length">
+                        <div class="p-4">
+                          <pre>{{ row }}</pre>
+                        </div>
+                      </td>
+                    </tr> -->
+                    <span>Supporting documentation</span>
+                    <!-- <UTable  :columns="doc_columns"   :rows="documents" /> -->
+                    <UTable   :rows="documents" />
+
                   </template>
+                  <template #actions-data="{ row }">
 
 
+
+                    <UTooltip text="View Details">
+                      <UButton icon="i-heroicons-ellipsis-horizontal" size="2xs" color="green" variant="outline"
+                        :ui="{ rounded: 'rounded-full' }" square class="mx-2" @click=" getDetails(row)" />
+                    </UTooltip>
+
+                    <UTooltip text="Delete Record">
+                      <UButton icon="i-heroicons-trash" size="2xs" color="red" variant="outline"
+                        :ui="{ rounded: 'rounded-full' }" square @click=" deleteGrv(row)" />
+                    </UTooltip>
+
+                  </template>
                 </UTable>
 
                 <template #footer>
@@ -759,10 +834,6 @@ function onTabChange (index) {
                       <USelect v-model="pageCount" :options="[3, 5, 10, 20, 30, 40]" @change="onPageCountChange"
                         @click="onPageChange" class="me-2 w-20" size="xs" v-if="total > 0" />
                     </div>
-
-
-
-
                     <UPagination v-if="total > 0" v-model="page" :page-count="pageCount" :total="total"
                       @click="onPageChange"
                       :prev-button="{ icon: 'i-heroicons-arrow-small-left-20-solid', color: 'gray' }"
@@ -782,7 +853,7 @@ function onTabChange (index) {
               </UCard>
             </div>
 
-       
+
           </UCard>
         </template>
       </UTabs>

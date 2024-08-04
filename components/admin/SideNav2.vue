@@ -2,7 +2,7 @@
 
   <!-- Left Column -->
   <div>
-    <UButton v-if="isCollapsed" icon="i-heroicons-bars-2" color="gray" variant="ghost" @click="isOpen = true" />
+    <UButton v-if="isCollapsed" icon="i-heroicons-bars-4" color="gray" variant="ghost" @click="isOpen = true" />
 
     <USlideover v-model="isOpen" side="left" :style="{ width: '250px' }" prevent-close>
       <UCard class="flex flex-col flex-1"
@@ -180,8 +180,9 @@ const items = [{
   links: [
     { text: 'Open', url: '/grievances/open', icon: 'i-heroicons-outline-clipboard-list' },
     { text: 'Investigate', url: '/grievances/investigate', icon: 'i-heroicons-outline-steps' },
-    { text: 'Resolved', url: '/grievances/resolved', icon: 'i-heroicons-outline-steps' },
     { text: 'Escalated', url: '/grievances/escalated', icon: 'i-heroicons-outline-steps' },
+    { text: 'Resolved', url: '/grievances/resolved', icon: 'i-heroicons-outline-steps' },
+
   ]
 },
 
